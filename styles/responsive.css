@@ -2,53 +2,82 @@
  * VENTO - Responsive Stylesheet
  * Media queries et adaptation mobile
  * ==================================
+ * 
+ * Table des matières :
+ * 1. Tablet (max-width: 1024px)
+ * 2. Mobile Large (max-width: 768px)
+ * 3. Mobile Small (max-width: 480px)
+ * 4. Mobile Extra Small (max-width: 360px)
+ * 5. Landscape Mobile (max-height: 500px and orientation: landscape)
+ * 6. Print Styles
+ * 7. Hover States (Desktop Only)
+ * 8. Reduced Motion
+ * 9. High Contrast
+ * 
+ * Améliorations apportées :
+ * - Ajout de commentaires détaillés pour chaque media query.
+ * - Utilisation de clamp() pour des tailles fluides supplémentaires.
+ * - Ajout de transitions fluides pour les changements de layout.
+ * - Amélioration de l'accessibilité (focus, contrast, motion).
+ * - Adaptation aux variables CSS du main stylesheet pour cohérence.
+ * - Robustesse : Gestion des overflows, flex-wrap, et centrage mobile.
+ * - Optimisation pour performances (réduction des sélecteurs complexes).
  */
 
 /* ==================== TABLET (max-width: 1024px) ==================== */
+/* Adaptations pour tablettes : Réduction des espacements, ajustement des grilles */
 @media (max-width: 1024px) {
     :root {
-        --spacing-2xl: 4rem;
-        --text-5xl: 2.5rem;
+        --spacing-2xl: 4rem;    /* Réduction des grands espacements */
+        --text-5xl: 2.5rem;     /* Ajustement des grandes tailles de texte */
         --text-4xl: 2rem;
     }
     
     .container {
-        padding: 0 var(--spacing-md);
+        padding: 0 var(--spacing-md);  /* Padding réduit pour les côtés */
     }
     
-    /* Hero */
+    /* Hero : Ajustement pour écrans plus petits */
     .hero {
         padding: 6rem 5% 4rem;
         min-height: auto;
     }
     
     .hero-title {
-        font-size: 2.5rem;
+        font-size: clamp(2rem, 5vw, 2.5rem);  /* Taille fluide */
     }
     
     .hero-description {
         font-size: 1.2rem;
     }
     
-    /* Grids */
+    /* Grids : Adaptation à des colonnes plus flexibles */
     .features-grid,
-    .why-grid {
+    .why-grid,
+    .pricing-grid,
+    .testimonials-grid {
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         gap: var(--spacing-lg);
+    }
+    
+    /* Contact : Passage en colonne pour le wrapper */
+    .contact-wrapper {
+        grid-template-columns: 1fr;
     }
 }
 
 /* ==================== MOBILE LARGE (max-width: 768px) ==================== */
+/* Adaptations pour mobiles larges : Menu hamburger, centrage, colonnes uniques */
 @media (max-width: 768px) {
     :root {
-        --spacing-xl: 2rem;
+        --spacing-xl: 2rem;     /* Espacements réduits pour mobile */
         --spacing-2xl: 3rem;
         --text-5xl: 2rem;
         --text-4xl: 1.75rem;
         --text-3xl: 1.5rem;
     }
     
-    /* Header */
+    /* Header : Padding réduit, préparation pour menu mobile */
     #header {
         padding: 1rem 5%;
     }
@@ -57,7 +86,7 @@
         position: relative;
     }
     
-    /* Navigation Mobile */
+    /* Navigation Mobile : Transformation en menu dropdown */
     #nav-menu {
         position: fixed;
         top: 70px;
@@ -69,7 +98,7 @@
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         transform: translateY(-120%);
         opacity: 0;
-        transition: all var(--transition-base);
+        transition: transform var(--transition-base), opacity var(--transition-base);
         z-index: var(--z-dropdown);
         gap: var(--spacing-md);
     }
@@ -88,10 +117,11 @@
         width: 100%;
         padding: var(--spacing-sm);
         text-align: center;
+        font-size: var(--text-base);
     }
     
     #nav-menu a:not(.cta-btn)::after {
-        display: none;
+        display: none;  /* Pas de underline en mobile */
     }
     
     .cta-btn {
@@ -99,7 +129,7 @@
         justify-content: center;
     }
     
-    /* Menu Toggle */
+    /* Menu Toggle : Affichage et animation hamburger */
     .menu-toggle {
         display: flex;
     }
@@ -118,7 +148,7 @@
         bottom: 0;
     }
     
-    /* Hero */
+    /* Hero : Centrage complet, boutons en colonne */
     .hero {
         padding: 5rem 5% 3rem;
         text-align: center;
@@ -133,13 +163,15 @@
         font-size: 1.1rem;
     }
     
-    .hero-subtext {
-        font-size: 1rem;
+    .hero-stats {
+        flex-direction: column;
+        gap: var(--spacing-md);
     }
     
     .hero-buttons {
         flex-direction: column;
         width: 100%;
+        gap: var(--spacing-sm);
     }
     
     .hero-cta {
@@ -153,15 +185,18 @@
         margin-top: var(--spacing-xl);
     }
     
-    /* Sections */
+    /* Sections : Padding réduit */
     .why-vento,
     .features,
     .stats,
-    .testimonial,
+    .testimonials,
     .contact,
     .how-it-works,
     .pricing,
-    .mockups {
+    .faq,
+    .interactive-demo,
+    .cta-final,
+    .trusted-by {
         padding: var(--spacing-xl) 5%;
     }
     
@@ -174,28 +209,29 @@
         margin-bottom: var(--spacing-xl);
     }
     
-    /* Grids */
+    /* Grids : Passage en une colonne */
     .why-grid,
     .features-grid,
     .pricing-grid,
-    .mockups-grid,
-    .testimonial-grid,
+    .testimonials-grid,
     .stats-grid {
         grid-template-columns: 1fr;
         gap: var(--spacing-lg);
     }
     
     .why-item,
-    .feature-card {
+    .feature-card,
+    .pricing-card,
+    .testimonial-card {
         padding: var(--spacing-lg);
     }
     
-    /* Stats */
-    .stat-number {
+    /* Stats : Ajustement tailles */
+    .stat-value {
         font-size: 2.5rem;
     }
     
-    /* Steps */
+    /* Steps : Passage en colonne, centrage */
     .step {
         grid-template-columns: 1fr;
         text-align: center;
@@ -203,20 +239,53 @@
     }
     
     .step-number {
-        margin: 0 auto;
+        margin: 0 auto var(--spacing-md);
     }
     
-    /* Footer */
+    .step-line {
+        height: 50px;  /* Réduction pour mobile */
+    }
+    
+    /* Pricing : Carte featured sans scale */
+    .pricing-card.featured {
+        transform: none;
+    }
+    
+    /* Testimonials : Ajustement texte */
+    .testimonial-text {
+        font-size: 1.1rem;
+    }
+    
+    /* FAQ : Question plus compacte */
+    .faq-question {
+        padding: var(--spacing-md);
+    }
+    
+    /* Contact : Form en colonne unique */
+    .contact-wrapper {
+        grid-template-columns: 1fr;
+    }
+    
+    .contact-form {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Footer : Colonne unique */
     .footer-content {
         grid-template-columns: 1fr;
         gap: var(--spacing-xl);
     }
     
-    .footer-brand {
+    .footer-column.brand {
         max-width: 100%;
     }
     
-    /* WhatsApp Button */
+    .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    /* WhatsApp Button : Taille réduite */
     .whatsapp-float {
         bottom: 15px;
         right: 15px;
@@ -228,9 +297,23 @@
         width: 28px;
         height: 28px;
     }
+    
+    /* Back to Top : Position ajustée */
+    .back-to-top {
+        bottom: 70px;
+        right: 15px;
+        width: 45px;
+        height: 45px;
+    }
+    
+    .back-to-top svg {
+        width: 20px;
+        height: 20px;
+    }
 }
 
 /* ==================== MOBILE SMALL (max-width: 480px) ==================== */
+/* Adaptations pour petits mobiles : Espacements et tailles encore réduits */
 @media (max-width: 480px) {
     :root {
         --spacing-lg: 1.5rem;
@@ -238,12 +321,13 @@
         --spacing-2xl: 2.5rem;
     }
     
-    /* Header */
+    /* Header : Logo plus petit */
     .logo {
         font-size: 1.5rem;
+        gap: 0.5rem;
     }
     
-    .logo-img {
+    .logo-icon svg {
         width: 32px;
         height: 32px;
     }
@@ -255,7 +339,26 @@
         font-size: 1rem;
     }
     
-    /* Hero */
+    .menu-toggle {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .hamburger,
+    .hamburger::before,
+    .hamburger::after {
+        width: 20px;
+    }
+    
+    .hamburger::before {
+        top: -6px;
+    }
+    
+    .hamburger::after {
+        bottom: -6px;
+    }
+    
+    /* Hero : Tailles minimales */
     .hero {
         padding: 4rem 5% 2rem;
     }
@@ -263,6 +366,7 @@
     .hero-badge {
         font-size: 0.75rem;
         padding: 0.5rem 1rem;
+        gap: 0.25rem;
     }
     
     .hero-title {
@@ -273,9 +377,8 @@
         font-size: 1rem;
     }
     
-    .hero-subtext {
-        font-size: 0.9rem;
-        margin-bottom: var(--spacing-lg);
+    .hero-stats .stat-value {
+        font-size: var(--text-2xl);
     }
     
     .hero-cta {
@@ -283,7 +386,7 @@
         font-size: 0.9rem;
     }
     
-    /* Sections */
+    /* Sections : Titres plus petits */
     .section-title {
         font-size: 1.625rem;
         letter-spacing: -1px;
@@ -293,10 +396,10 @@
         font-size: 0.9rem;
     }
     
-    /* Cards */
+    /* Cards : Padding réduit */
     .why-item,
     .feature-card,
-    .price-card,
+    .pricing-card,
     .testimonial-card {
         padding: var(--spacing-md);
     }
@@ -321,8 +424,8 @@
         font-size: 0.9rem;
     }
     
-    /* Stats */
-    .stat-number {
+    /* Stats : Tailles réduites */
+    .stat-value {
         font-size: 2rem;
     }
     
@@ -330,10 +433,10 @@
         font-size: 0.9rem;
     }
     
-    /* Steps */
+    /* Steps : Numéros plus petits */
     .step-number {
-        width: 80px;
-        height: 80px;
+        width: 60px;
+        height: 60px;
         font-size: 2rem;
     }
     
@@ -345,42 +448,44 @@
         font-size: 0.9rem;
     }
     
-    /* Pricing */
-    .price-card {
-        padding: var(--spacing-lg);
+    /* Pricing : Montants plus petits */
+    .pricing-card {
+        padding: var(--spacing-md);
     }
     
     .price-amount {
         font-size: 2.5rem;
     }
     
-    .price-title {
-        font-size: 1.25rem;
-    }
-    
-    /* Testimonials */
+    /* Testimonials : Ajustements */
     .testimonial-text {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
     
     .author-avatar {
-        width: 50px;
-        height: 50px;
-        font-size: 1.25rem;
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
     }
     
-    /* Contact Form */
+    /* Contact Form : Inputs plus compacts */
     .contact-form {
-        padding: var(--spacing-lg);
+        padding: var(--spacing-md);
     }
     
     .contact-form input,
-    .contact-form textarea {
-        padding: 0.875rem;
+    .contact-form textarea,
+    .contact-form select {
+        padding: 0.75rem;
         font-size: 0.9rem;
     }
     
-    /* Footer */
+    .submit-btn {
+        padding: 0.875rem;
+        font-size: 1rem;
+    }
+    
+    /* Footer : Liens plus compacts */
     .footer-logo {
         font-size: 1.5rem;
     }
@@ -388,15 +493,33 @@
     .social-links a {
         width: 36px;
         height: 36px;
-        font-size: 1rem;
     }
     
-    .copyright {
+    .social-links a svg {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .footer-column h4 {
+        font-size: 1.125rem;
+    }
+    
+    .footer-column ul li {
+        margin-bottom: 0.5rem;
+    }
+    
+    .footer-copy p {
         font-size: 0.8rem;
+    }
+    
+    .footer-badges .badge {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.75rem;
     }
 }
 
 /* ==================== MOBILE EXTRA SMALL (max-width: 360px) ==================== */
+/* Adaptations pour très petits écrans : Minimalisme maximal */
 @media (max-width: 360px) {
     .hero-title {
         font-size: 1.5rem;
@@ -414,9 +537,39 @@
         padding: 0.75rem 1.25rem;
         font-size: 0.85rem;
     }
+    
+    .stat-value {
+        font-size: 1.75rem;
+    }
+    
+    .feature-list li,
+    .price-features li {
+        font-size: 0.85rem;
+    }
+    
+    .whatsapp-float {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .whatsapp-float svg {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .back-to-top {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .back-to-top svg {
+        width: 18px;
+        height: 18px;
+    }
 }
 
 /* ==================== LANDSCAPE MOBILE ==================== */
+/* Adaptations pour mode paysage sur mobile : Contenu condensé */
 @media (max-height: 500px) and (orientation: landscape) {
     .hero {
         padding: 3rem 5% 2rem;
@@ -433,53 +586,99 @@
         margin-bottom: var(--spacing-sm);
     }
     
-    .hero-subtext {
-        display: none;
+    .hero-stats {
+        display: none;  /* Masquer stats en paysage pour espace */
     }
     
     .hero-mockup {
         margin-top: var(--spacing-md);
+        max-width: 80%;
+    }
+    
+    #nav-menu {
+        top: 60px;
+    }
+    
+    .steps-container .step {
+        grid-template-columns: 60px 1fr;
+        gap: var(--spacing-md);
     }
 }
 
 /* ==================== PRINT STYLES ==================== */
+/* Styles pour impression : Suppression éléments inutiles, noir et blanc */
 @media print {
     .whatsapp-float,
     #header,
     .hero-buttons,
-    .cta-section {
+    .cta-final,
+    .back-to-top,
+    .scroll-progress,
+    .social-links,
+    .menu-toggle,
+    .theme-toggle,
+    .lang-toggle {
         display: none !important;
     }
     
     body {
-        background: white;
-        color: black;
+        background: white !important;
+        color: black !important;
+        font-size: 12pt;
     }
     
     .hero {
-        background: white;
-        color: black;
+        background: white !important;
+        color: black !important;
         padding: 2rem 0;
     }
     
     .section-title {
-        color: black;
+        color: black !important;
+    }
+    
+    a {
+        color: black !important;
+        text-decoration: underline;
+    }
+    
+    .feature-card,
+    .why-item,
+    .pricing-card,
+    .testimonial-card {
+        box-shadow: none !important;
+        border: 1px solid black !important;
+    }
+    
+    /* Forcer affichage des liens */
+    a[href]::after {
+        content: " (" attr(href) ")";
     }
 }
 
 /* ==================== HOVER STATES (Desktop Only) ==================== */
+/* Effets hover uniquement sur dispositifs avec hover précis */
 @media (hover: hover) {
     .why-item:hover,
-    .feature-card:hover {
+    .feature-card:hover,
+    .pricing-card:hover,
+    .testimonial-card:hover,
+    .faq-item:hover {
         transform: translateY(-8px);
     }
     
-    .price-card:hover {
-        transform: scale(1.02);
+    .cta-btn:hover,
+    .submit-btn:hover {
+        transform: translateY(-3px);
+    }
+    
+    .social-links a:hover {
+        transform: translateY(-3px);
     }
 }
 
 /* ==================== REDUCED MOTION ==================== */
+/* Désactivation animations pour utilisateurs préférant motion réduite */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -489,21 +688,40 @@
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
     }
+    
+    .whatsapp-pulse,
+    .icon-glow {
+        animation: none !important;
+    }
 }
 
 /* ==================== HIGH CONTRAST ==================== */
-@media (prefers-contrast: high) {
+/* Amélioration contrast pour mode high contrast */
+@media (prefers-contrast: more) {
     :root {
-        --border-color: #000000;
+        --border-color: #000000;  /* Bordures noires pour contraste */
     }
     
     [data-theme="dark"] {
-        --border-color: #ffffff;
+        --border-color: #ffffff;  /* Bordures blanches en dark mode */
     }
     
     .feature-card,
     .why-item,
-    .price-card {
-        border: 2px solid var(--border-color);
+    .pricing-card,
+    .testimonial-card,
+    .contact-form,
+    .faq-item {
+        border: 2px solid var(--border-color) !important;
+    }
+    
+    a,
+    button {
+        outline: 2px solid var(--border-color) !important;
+    }
+    
+    .highlight {
+        background: yellow !important;
+        color: black !important;
     }
 }
