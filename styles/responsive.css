@@ -22,6 +22,8 @@
  * - Adaptation aux variables CSS du main stylesheet pour cohérence.
  * - Robustesse : Gestion des overflows, flex-wrap, et centrage mobile.
  * - Optimisation pour performances (réduction des sélecteurs complexes).
+ * - Ultra fluidité : Utilisation de vw/vh/minmax pour grilles, smooth transitions, et media queries progressives.
+ * - Adaptation petit écran : Tailles minimales, stack vertical, touch-friendly (plus grands boutons).
  */
 
 /* ==================== TABLET (max-width: 1024px) ==================== */
@@ -54,8 +56,7 @@
     /* Grids : Adaptation à des colonnes plus flexibles */
     .features-grid,
     .why-grid,
-    .pricing-grid,
-    .testimonials-grid {
+    .steps-container {
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         gap: var(--spacing-lg);
     }
@@ -63,6 +64,12 @@
     /* Contact : Passage en colonne pour le wrapper */
     .contact-wrapper {
         grid-template-columns: 1fr;
+    }
+    
+    /* Transitions pour fluidité */
+    .hero-content,
+    .section-header {
+        transition: all var(--transition-base);
     }
 }
 
@@ -127,6 +134,7 @@
     .cta-btn {
         width: 100%;
         justify-content: center;
+        padding: 1rem;  /* Plus touch-friendly */
     }
     
     /* Menu Toggle : Affichage et animation hamburger */
@@ -163,11 +171,6 @@
         font-size: 1.1rem;
     }
     
-    .hero-stats {
-        flex-direction: column;
-        gap: var(--spacing-md);
-    }
-    
     .hero-buttons {
         flex-direction: column;
         width: 100%;
@@ -188,12 +191,10 @@
     /* Sections : Padding réduit */
     .why-vento,
     .features,
-    .stats,
-    .testimonials,
-    .contact,
     .how-it-works,
-    .pricing,
-    .faq,
+    .mission,
+    .beta-access,
+    .contact,
     .interactive-demo,
     .cta-final,
     .trusted-by {
@@ -209,26 +210,16 @@
         margin-bottom: var(--spacing-xl);
     }
     
-    /* Grids : Passage en une colonne */
+    /* Grids : Passage en une colonne avec minmax pour fluidité */
     .why-grid,
-    .features-grid,
-    .pricing-grid,
-    .testimonials-grid,
-    .stats-grid {
-        grid-template-columns: 1fr;
+    .features-grid {
+        grid-template-columns: minmax(0, 1fr);
         gap: var(--spacing-lg);
     }
     
     .why-item,
-    .feature-card,
-    .pricing-card,
-    .testimonial-card {
+    .feature-card {
         padding: var(--spacing-lg);
-    }
-    
-    /* Stats : Ajustement tailles */
-    .stat-value {
-        font-size: 2.5rem;
     }
     
     /* Steps : Passage en colonne, centrage */
@@ -246,18 +237,13 @@
         height: 50px;  /* Réduction pour mobile */
     }
     
-    /* Pricing : Carte featured sans scale */
-    .pricing-card.featured {
-        transform: none;
-    }
-    
-    /* Testimonials : Ajustement texte */
-    .testimonial-text {
+    /* Mission : Texte plus compact */
+    .mission .section-subtitle {
         font-size: 1.1rem;
     }
     
-    /* FAQ : Question plus compacte */
-    .faq-question {
+    /* Beta Access : Form centrée */
+    .beta-form {
         padding: var(--spacing-md);
     }
     
@@ -285,7 +271,7 @@
         text-align: center;
     }
     
-    /* WhatsApp Button : Taille réduite */
+    /* WhatsApp Button : Taille réduite, position ajustée pour éviter overlap */
     .whatsapp-float {
         bottom: 15px;
         right: 15px;
@@ -309,6 +295,12 @@
     .back-to-top svg {
         width: 20px;
         height: 20px;
+    }
+    
+    /* Fluidité supplémentaire : Transitions sur grilles */
+    .why-grid,
+    .features-grid {
+        transition: gap var(--transition-base);
     }
 }
 
@@ -377,10 +369,6 @@
         font-size: 1rem;
     }
     
-    .hero-stats .stat-value {
-        font-size: var(--text-2xl);
-    }
-    
     .hero-cta {
         padding: 0.875rem 1.5rem;
         font-size: 0.9rem;
@@ -396,11 +384,9 @@
         font-size: 0.9rem;
     }
     
-    /* Cards : Padding réduit */
+    /* Cards : Padding réduit, touch-friendly */
     .why-item,
-    .feature-card,
-    .pricing-card,
-    .testimonial-card {
+    .feature-card {
         padding: var(--spacing-md);
     }
     
@@ -424,15 +410,6 @@
         font-size: 0.9rem;
     }
     
-    /* Stats : Tailles réduites */
-    .stat-value {
-        font-size: 2rem;
-    }
-    
-    .stat-label {
-        font-size: 0.9rem;
-    }
-    
     /* Steps : Numéros plus petits */
     .step-number {
         width: 60px;
@@ -448,27 +425,12 @@
         font-size: 0.9rem;
     }
     
-    /* Pricing : Montants plus petits */
-    .pricing-card {
-        padding: var(--spacing-md);
+    /* Beta Access : Bouton plus grand pour touch */
+    .hero-cta.primary {
+        padding: 1rem;
     }
     
-    .price-amount {
-        font-size: 2.5rem;
-    }
-    
-    /* Testimonials : Ajustements */
-    .testimonial-text {
-        font-size: 1rem;
-    }
-    
-    .author-avatar {
-        width: 40px;
-        height: 40px;
-        font-size: 1rem;
-    }
-    
-    /* Contact Form : Inputs plus compacts */
+    /* Contact Form : Inputs plus compacts, mais touch-friendly (min-height) */
     .contact-form {
         padding: var(--spacing-md);
     }
@@ -478,11 +440,13 @@
     .contact-form select {
         padding: 0.75rem;
         font-size: 0.9rem;
+        min-height: 48px;  /* Pour facilité touch */
     }
     
     .submit-btn {
         padding: 0.875rem;
         font-size: 1rem;
+        min-height: 48px;
     }
     
     /* Footer : Liens plus compacts */
@@ -516,10 +480,16 @@
         padding: 0.4rem 0.8rem;
         font-size: 0.75rem;
     }
+    
+    /* Fluidité : Ajustement vw pour textes */
+    .hero-description,
+    .section-subtitle {
+        font-size: clamp(0.9rem, 4vw, 1rem);
+    }
 }
 
 /* ==================== MOBILE EXTRA SMALL (max-width: 360px) ==================== */
-/* Adaptations pour très petits écrans : Minimalisme maximal */
+/* Adaptations pour très petits écrans : Minimalisme maximal, priorisation touch */
 @media (max-width: 360px) {
     .hero-title {
         font-size: 1.5rem;
@@ -536,6 +506,7 @@
     .hero-cta {
         padding: 0.75rem 1.25rem;
         font-size: 0.85rem;
+        min-height: 48px;  /* Touch-friendly */
     }
     
     .stat-value {
@@ -566,6 +537,15 @@
         width: 18px;
         height: 18px;
     }
+    
+    /* Fluidité extrême : Utilisation vh pour paddings */
+    .hero {
+        padding: 10vh 5% 5vh;
+    }
+    
+    section {
+        padding: 10vh 5%;
+    }
 }
 
 /* ==================== LANDSCAPE MOBILE ==================== */
@@ -586,10 +566,6 @@
         margin-bottom: var(--spacing-sm);
     }
     
-    .hero-stats {
-        display: none;  /* Masquer stats en paysage pour espace */
-    }
-    
     .hero-mockup {
         margin-top: var(--spacing-md);
         max-width: 80%;
@@ -602,6 +578,12 @@
     .steps-container .step {
         grid-template-columns: 60px 1fr;
         gap: var(--spacing-md);
+    }
+    
+    /* Grids horizontales pour paysage */
+    .why-grid,
+    .features-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     }
 }
 
@@ -644,7 +626,6 @@
     
     .feature-card,
     .why-item,
-    .pricing-card,
     .testimonial-card {
         box-shadow: none !important;
         border: 1px solid black !important;
@@ -661,9 +642,7 @@
 @media (hover: hover) {
     .why-item:hover,
     .feature-card:hover,
-    .pricing-card:hover,
-    .testimonial-card:hover,
-    .faq-item:hover {
+    .testimonial-card:hover {
         transform: translateY(-8px);
     }
     
@@ -708,10 +687,8 @@
     
     .feature-card,
     .why-item,
-    .pricing-card,
     .testimonial-card,
-    .contact-form,
-    .faq-item {
+    .contact-form {
         border: 2px solid var(--border-color) !important;
     }
     
