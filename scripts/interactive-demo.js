@@ -158,27 +158,27 @@ class InteractiveMockup {
                     <!-- Total Card -->
                     <rect y="55" width="160" height="70" rx="10" fill="#ffffff" filter="url(#shadow)"/>
                     <text x="15" y="75" font-family="Arial" font-size="11" fill="#718096">Chiffre d'affaires</text>
-                    <text x="15" y="100" font-family="Arial" font-size="24" font-weight="bold" fill="url(#grad1)">125,450</text>
-                    <text x="15" y="115" font-family="Arial" font-size="10" fill="#48bb78">↑ +18% vs hier</text>
+                    <text x="15" y="100" font-family="Arial" font-size="24" font-weight="bold" fill="url(#grad1)">---</text>
+                    <text x="15" y="115" font-family="Arial" font-size="10" fill="#48bb78">Données masquées</text>
                     
                     <!-- Stats Grid -->
                     <rect y="140" width="75" height="60" rx="8" fill="#ffffff" filter="url(#shadow)"/>
                     <text x="12" y="158" font-family="Arial" font-size="9" fill="#718096">Ventes</text>
-                    <text x="12" y="178" font-family="Arial" font-size="18" font-weight="bold" fill="#1a1a1a">47</text>
-                    <text x="12" y="190" font-family="Arial" font-size="8" fill="#667eea">+12</text>
+                    <text x="12" y="178" font-family="Arial" font-size="18" font-weight="bold" fill="#1a1a1a">--</text>
+                    <text x="12" y="190" font-family="Arial" font-size="8" fill="#667eea">Demo</text>
                     
                     <rect x="85" y="140" width="75" height="60" rx="8" fill="#ffffff" filter="url(#shadow)"/>
                     <text x="97" y="158" font-family="Arial" font-size="9" fill="#718096">Clients</text>
-                    <text x="97" y="178" font-family="Arial" font-size="18" font-weight="bold" fill="#1a1a1a">38</text>
-                    <text x="97" y="190" font-family="Arial" font-size="8" fill="#48bb78">+5</text>
+                    <text x="97" y="178" font-family="Arial" font-size="18" font-weight="bold" fill="#1a1a1a">--</text>
+                    <text x="97" y="190" font-family="Arial" font-size="8" fill="#48bb78">Demo</text>
                     
                     <!-- Recent Transaction -->
                     <rect y="215" width="160" height="40" rx="8" fill="#ffffff" filter="url(#shadow)"/>
                     <circle cx="20" cy="235" r="10" fill="#667eea" opacity="0.2"/>
                     <text x="20" y="239" font-family="Arial" font-size="10" text-anchor="middle" fill="#667eea">🛒</text>
-                    <text x="38" y="232" font-family="Arial" font-size="10" fill="#1a1a1a">Eau minérale</text>
-                    <text x="38" y="243" font-family="Arial" font-size="8" fill="#718096">Il y a 2 min</text>
-                    <text x="145" y="238" font-family="Arial" font-size="11" font-weight="bold" fill="#48bb78" text-anchor="end">500F</text>
+                    <text x="38" y="232" font-family="Arial" font-size="10" fill="#1a1a1a">Produit exemple</text>
+                    <text x="38" y="243" font-family="Arial" font-size="8" fill="#718096">Démo interactive</text>
+                    <text x="145" y="238" font-family="Arial" font-size="11" font-weight="bold" fill="#48bb78" text-anchor="end">***</text>
                 </g>
             `,
             
@@ -284,18 +284,18 @@ class InteractiveMockup {
                     <!-- Stats Cards -->
                     <rect y="40" width="80" height="50" rx="6" fill="#ffffff" filter="url(#shadow)"/>
                     <text x="10" y="55" font-family="Arial" font-size="8" fill="#718096">CA TOTAL</text>
-                    <text x="10" y="73" font-family="Arial" font-size="16" font-weight="bold" fill="#667eea">2.4M</text>
-                    <text x="10" y="84" font-family="Arial" font-size="7" fill="#48bb78">↑ +23%</text>
+                    <text x="10" y="73" font-family="Arial" font-size="16" font-weight="bold" fill="#667eea">***</text>
+                    <text x="10" y="84" font-family="Arial" font-size="7" fill="#48bb78">Demo</text>
                     
                     <rect x="90" y="40" width="80" height="50" rx="6" fill="#ffffff" filter="url(#shadow)"/>
                     <text x="100" y="55" font-family="Arial" font-size="8" fill="#718096">VENTES</text>
-                    <text x="100" y="73" font-family="Arial" font-size="16" font-weight="bold" fill="#764ba2">1,247</text>
-                    <text x="100" y="84" font-family="Arial" font-size="7" fill="#48bb78">↑ +12%</text>
+                    <text x="100" y="73" font-family="Arial" font-size="16" font-weight="bold" fill="#764ba2">***</text>
+                    <text x="100" y="84" font-family="Arial" font-size="7" fill="#48bb78">Demo</text>
                     
                     <rect x="180" y="40" width="80" height="50" rx="6" fill="#ffffff" filter="url(#shadow)"/>
                     <text x="190" y="55" font-family="Arial" font-size="8" fill="#718096">CLIENTS</text>
-                    <text x="190" y="73" font-family="Arial" font-size="16" font-weight="bold" fill="#667eea">342</text>
-                    <text x="190" y="84" font-family="Arial" font-size="7" fill="#48bb78">↑ +8%</text>
+                    <text x="190" y="73" font-family="Arial" font-size="16" font-weight="bold" fill="#667eea">***</text>
+                    <text x="190" y="84" font-family="Arial" font-size="7" fill="#48bb78">Demo</text>
                     
                     <!-- Chart -->
                     <rect y="100" width="180" height="75" rx="6" fill="#ffffff" filter="url(#shadow)"/>
