@@ -4,1496 +4,306 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Vento – Gestion de ventes simple et puissante pour commerçants. Optimisez vos ventes, gérez votre stock et vos équipes depuis votre mobile ou PC.">
-    <meta name="keywords" content="gestion ventes, stock, commerçants, app mobile, dashboard desktop">
+    <meta name="keywords" content="gestion ventes, stock, commerçants, app mobile, dashboard desktop, Afrique, offline">
+    <meta name="author" content="Vento">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Vento - Gestion de ventes simple et puissante">
+    <meta property="og:description" content="Vendez plus vite, même sans internet. Solution adaptée aux commerçants africains.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="./assets/images/favicon.svg">
+    
     <title>Vento - Gestion de ventes simple et puissante</title>
-    <style>
-        :root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --text-color: #1a1a1a;
-            --bg-color: #ffffff;
-            --card-bg: #ffffff;
-            --footer-bg: #1a202c;
-            --footer-text: #ffffff;
-            --subtle-text: #718096;
-            --border-color: #e2e8f0;
-        }
-
-        [data-theme="dark"] {
-            --primary-color: #a5b4fc;
-            --secondary-color: #c4b5fd;
-            --text-color: #f3f4f6;
-            --bg-color: #1f2937;
-            --card-bg: #374151;
-            --footer-bg: #111827;
-            --footer-text: #f3f4f6;
-            --subtle-text: #9ca3af;
-            --border-color: #4b5563;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--bg-color);
-            overflow-x: hidden;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        /* Header */
-        header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(var(--bg-color-rgb, 255,255,255), 0.98);
-            backdrop-filter: blur(20px);
-            padding: 1.2rem 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-            box-shadow: 0 4px 30px rgba(0,0,0,0.08);
-            transition: all 0.3s;
-        }
-
-        header.scrolled {
-            padding: 0.8rem 5%;
-            box-shadow: 0 4px 40px rgba(102, 126, 234, 0.15);
-        }
-
-        .logo {
-            font-size: 2rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -2px;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .logo::before {
-            content: '⚡';
-            font-size: 1.5rem;
-        }
-
-        nav {
-            display: flex;
-            gap: 2.5rem;
-            align-items: center;
-        }
-
-        nav a {
-            text-decoration: none;
-            color: var(--subtle-text);
-            font-weight: 500;
-            transition: all 0.3s;
-            font-size: 0.95rem;
-            position: relative;
-        }
-
-        nav a:not(.cta-btn):hover {
-            color: var(--primary-color);
-        }
-
-        nav a:not(.cta-btn)::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--primary-color);
-            transition: width 0.3s;
-        }
-
-        nav a:not(.cta-btn):hover::after {
-            width: 100%;
-        }
-
-        .cta-btn {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: white !important;
-            padding: 0.8rem 2rem;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: all 0.3s;
-            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .cta-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.5);
-        }
-
-        .menu-toggle {
-            display: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--subtle-text);
-        }
-
-        .settings {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .theme-toggle, .lang-toggle {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.2rem;
-            color: var(--subtle-text);
-            transition: color 0.3s;
-        }
-
-        .theme-toggle:hover, .lang-toggle:hover {
-            color: var(--primary-color);
-        }
-
-        /* Hero Section */
-        .hero {
-            margin-top: 80px;
-            padding: 10rem 5% 8rem;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: white;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
-            background-size: 50px 50px;
-            animation: float 30s linear infinite;
-        }
-
-        .hero::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 100px;
-            background: linear-gradient(to top, rgba(255,255,255,0.1), transparent);
-        }
-
-        @keyframes float {
-            from { transform: translateY(0) rotate(0deg); }
-            to { transform: translateY(-100px) rotate(360deg); }
-        }
-
-        .hero-content {
-            max-width: 900px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
-            animation: fadeInUp 1s ease-out;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .hero-badge {
-            display: inline-block;
-            background: rgba(255,255,255,0.2);
-            padding: 0.5rem 1.5rem;
-            border-radius: 50px;
-            margin-bottom: 2rem;
-            font-size: 0.9rem;
-            font-weight: 600;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-
-        .hero h1 {
-            font-size: 4rem;
-            font-weight: 900;
-            margin-bottom: 1.5rem;
-            line-height: 1.15;
-            letter-spacing: -3px;
-        }
-
-        .hero h1 .highlight {
-            background: rgba(255,255,255,0.3);
-            padding: 0 15px;
-            border-radius: 10px;
-        }
-
-        .hero p {
-            font-size: 1.4rem;
-            margin-bottom: 3rem;
-            opacity: 0.95;
-            font-weight: 400;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .hero-subtext {
-            font-size: 1.1rem;
-            opacity: 0.8;
-            margin-bottom: 2rem;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 1.5rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .hero-cta {
-            display: inline-block;
-            background: white;
-            color: var(--primary-color);
-            padding: 1.3rem 3.5rem;
-            border-radius: 50px;
-            font-weight: 700;
-            text-decoration: none;
-            font-size: 1.1rem;
-            transition: all 0.3s;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        }
-
-        .hero-cta:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 50px rgba(0,0,0,0.4);
-        }
-
-        .hero-cta-secondary {
-            display: inline-block;
-            background: transparent;
-            color: white;
-            padding: 1.3rem 3.5rem;
-            border-radius: 50px;
-            font-weight: 600;
-            text-decoration: none;
-            font-size: 1.1rem;
-            border: 2px solid white;
-            transition: all 0.3s;
-        }
-
-        .hero-cta-secondary:hover {
-            background: white;
-            color: var(--primary-color);
-            transform: translateY(-3px);
-        }
-
-        .mockup {
-            margin-top: 5rem;
-            max-width: 1100px;
-            margin-left: auto;
-            margin-right: auto;
-            position: relative;
-        }
-
-        .mockup-img {
-            width: 100%;
-            height: auto;
-            border-radius: 25px;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.3);
-            animation: mockupFloat 3s ease-in-out infinite;
-        }
-
-        @keyframes mockupFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        /* Why Vento Section */
-        .why-vento {
-            padding: 8rem 5%;
-            background: var(--bg-color);
-        }
-
-        .why-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .why-item {
-            text-align: center;
-            padding: 2rem;
-            border-radius: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            background: var(--card-bg);
-            transition: transform 0.3s;
-        }
-
-        .why-item:hover {
-            transform: translateY(-5px);
-        }
-
-        .why-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .why-item h3 {
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .why-item p {
-            color: var(--subtle-text);
-        }
-
-        /* Stats Section */
-        .stats {
-            padding: 5rem 5%;
-            background: var(--bg-color);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .stats-grid {
-            max-width: 1000px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 3rem;
-            text-align: center;
-        }
-
-        .stat-item {
-            animation: fadeInUp 1s ease-out;
-        }
-
-        .stat-number {
-            font-size: 3.5rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            color: var(--subtle-text);
-            font-weight: 500;
-            font-size: 1.1rem;
-        }
-
-        /* Features Section */
-        .features {
-            padding: 8rem 5%;
-            background: linear-gradient(to bottom, #f7fafc 0%, var(--bg-color) 100%);
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 3rem;
-            font-weight: 900;
-            margin-bottom: 1rem;
-            color: var(--text-color);
-            letter-spacing: -2px;
-        }
-
-        .section-subtitle {
-            text-align: center;
-            font-size: 1.2rem;
-            color: var(--subtle-text);
-            margin-bottom: 5rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 3rem;
-            max-width: 1300px;
-            margin: 0 auto;
-        }
-
-        .feature-card {
-            background: var(--card-bg);
-            padding: 3rem;
-            border-radius: 25px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.06);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            transform: scaleX(0);
-            transition: transform 0.3s;
-        }
-
-        .feature-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.2);
-        }
-
-        .feature-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 1.5rem;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
-            transition: all 0.3s;
-        }
-
-        .feature-card:hover .feature-icon {
-            transform: scale(1.1) rotate(5deg);
-        }
-
-        .feature-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: var(--text-color);
-            font-weight: 700;
-        }
-
-        .feature-card p {
-            color: var(--subtle-text);
-            font-size: 1.05rem;
-            line-height: 1.8;
-        }
-
-        /* Mockups Section */
-        .mockups {
-            padding: 8rem 5%;
-            background: var(--bg-color);
-        }
-
-        .mockups-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 3rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .mockup-item {
-            text-align: center;
-        }
-
-        .mockup-item img {
-            width: 100%;
-            border-radius: 25px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-        }
-
-        .mockup-item h3 {
-            margin-top: 1rem;
-            font-size: 1.3rem;
-        }
-
-        /* Pricing Section */
-        .pricing {
-            padding: 8rem 5%;
-            background: var(--bg-color);
-        }
-
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 3rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .price-card {
-            background: var(--card-bg);
-            padding: 3rem;
-            border-radius: 25px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.06);
-            text-align: center;
-            position: relative;
-        }
-
-        .price-card.popular {
-            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.2);
-        }
-
-        .price-card.popular::before {
-            content: 'Populaire';
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: white;
-            padding: 0.5rem 2rem;
-            border-radius: 50px;
-            font-weight: 600;
-        }
-
-        .price-title {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: var(--text-color);
-        }
-
-        .price-amount {
-            font-size: 3rem;
-            font-weight: 900;
-            margin-bottom: 0.5rem;
-        }
-
-        .price-period {
-            color: var(--subtle-text);
-            margin-bottom: 2rem;
-        }
-
-        .price-features {
-            list-style: none;
-            margin-bottom: 2rem;
-        }
-
-        .price-features li {
-            margin-bottom: 1rem;
-            color: var(--text-color);
-        }
-
-        /* How it works */
-        .how-it-works {
-            padding: 8rem 5%;
-            background: var(--bg-color);
-        }
-
-        .steps {
-            max-width: 1000px;
-            margin: 0 auto;
-            display: grid;
-            gap: 4rem;
-        }
-
-        .step {
-            display: grid;
-            grid-template-columns: 100px 1fr;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .step-number {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            font-weight: 900;
-            color: white;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
-        }
-
-        .step-content h3 {
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-color);
-        }
-
-        .step-content p {
-            color: var(--subtle-text);
-            font-size: 1.1rem;
-            line-height: 1.8;
-        }
-
-        /* CTA Section */
-        .cta-section {
-            padding: 8rem 5%;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: white;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cta-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="3" fill="white" opacity="0.05"/></svg>');
-            animation: float 25s linear infinite;
-        }
-
-        .cta-content {
-            max-width: 800px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
-        }
-
-        .cta-section h2 {
-            font-size: 3rem;
-            margin-bottom: 1.5rem;
-            font-weight: 900;
-            letter-spacing: -2px;
-        }
-
-        .cta-section p {
-            font-size: 1.3rem;
-            margin-bottom: 3rem;
-            opacity: 0.95;
-        }
-
-        .cta-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .cta-secondary {
-            display: inline-block;
-            background: white;
-            color: var(--primary-color);
-            padding: 1.3rem 3.5rem;
-            border-radius: 50px;
-            font-weight: 700;
-            text-decoration: none;
-            transition: all 0.3s;
-            font-size: 1.1rem;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        }
-
-        .cta-secondary:hover {
-            transform: scale(1.05);
-            box-shadow: 0 15px 50px rgba(0,0,0,0.4);
-        }
-
-        .whatsapp-cta {
-            background: #25D366;
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .whatsapp-cta::before {
-            content: '📱';
-        }
-
-        /* Testimonial */
-        .testimonial {
-            padding: 8rem 5%;
-            background: #f7fafc;
-        }
-
-        .testimonial-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 3rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .testimonial-card {
-            background: var(--card-bg);
-            padding: 4rem;
-            border-radius: 25px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
-            position: relative;
-        }
-
-        .testimonial-card::before {
-            content: '"';
-            position: absolute;
-            top: -20px;
-            left: 40px;
-            font-size: 8rem;
-            color: var(--primary-color);
-            opacity: 0.2;
-            font-family: Georgia, serif;
-        }
-
-        .testimonial-text {
-            font-size: 1.4rem;
-            color: var(--text-color);
-            margin-bottom: 2rem;
-            line-height: 1.9;
-            position: relative;
-            z-index: 1;
-        }
-
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .author-avatar {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-            font-weight: 700;
-        }
-
-        .author-info {
-            text-align: left;
-        }
-
-        .author-name {
-            font-weight: 700;
-            color: var(--text-color);
-            font-size: 1.1rem;
-        }
-
-        .author-role {
-            color: var(--primary-color);
-            font-size: 0.95rem;
-        }
-
-        /* Contact Section */
-        .contact {
-            padding: 8rem 5%;
-            background: var(--bg-color);
-        }
-
-        .contact-form {
-            max-width: 600px;
-            margin: 0 auto;
-            background: var(--card-bg);
-            padding: 3rem;
-            border-radius: 25px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.06);
-        }
-
-        .contact-form input, .contact-form textarea {
-            width: 100%;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            font-size: 1rem;
-            background: var(--bg-color);
-            color: var(--text-color);
-            transition: border-color 0.3s;
-        }
-
-        .contact-form input:focus, .contact-form textarea:focus {
-            border-color: var(--primary-color);
-            outline: none;
-        }
-
-        .contact-form button {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: white;
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 50px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            width: 100%;
-        }
-
-        .contact-form button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.5);
-        }
-
-        /* Footer */
-        footer {
-            background: var(--footer-bg);
-            color: var(--footer-text);
-            padding: 4rem 5% 2rem;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 3rem;
-            margin-bottom: 3rem;
-        }
-
-        .footer-brand {
-            max-width: 300px;
-        }
-
-        .footer-logo {
-            font-size: 2rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .footer-logo::before {
-            content: '⚡';
-            font-size: 1.5rem;
-        }
-
-        .footer-brand p {
-            color: #a0aec0;
-            line-height: 1.8;
-            margin-bottom: 1.5rem;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .social-links a {
-            width: 40px;
-            height: 40px;
-            background: #2d3748;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-decoration: none;
-            transition: all 0.3s;
-            font-size: 1.2rem;
-        }
-
-        .social-links a:hover {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            transform: translateY(-3px);
-        }
-
-        .footer-section h4 {
-            margin-bottom: 1.5rem;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--footer-text);
-        }
-
-        .footer-section a {
-            display: block;
-            color: #a0aec0;
-            text-decoration: none;
-            margin-bottom: 0.8rem;
-            transition: all 0.3s;
-        }
-
-        .footer-section a:hover {
-            color: var(--primary-color);
-            padding-left: 5px;
-        }
-
-        .copyright {
-            border-top: 1px solid #2d3748;
-            padding-top: 2rem;
-            text-align: center;
-            color: #718096;
-            font-size: 0.95rem;
-        }
-
-        /* WhatsApp Floating Button */
-        .whatsapp-float {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #25D366;
-            color: white;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            transition: all 0.3s;
-            z-index: 1000;
-        }
-
-        .whatsapp-float:hover {
-            transform: scale(1.1);
-        }
-
-        /* Responsive */
-        @media (max-width: 968px) {
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-
-            .hero p {
-                font-size: 1.1rem;
-            }
-
-            nav {
-                display: none;
-                flex-direction: column;
-                gap: 1rem;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background: var(--bg-color);
-                padding: 2rem;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            }
-
-            nav.active {
-                display: flex;
-            }
-
-            .menu-toggle {
-                display: block;
-            }
-
-            .settings {
-                display: flex;
-            }
-
-            .features-grid, .pricing-grid, .why-grid, .mockups-grid, .testimonial-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .footer-content {
-                grid-template-columns: 1fr;
-            }
-
-            .step {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-
-            .step-number {
-                margin: 0 auto;
-            }
-        }
-
-        /* Smooth scroll */
-        html {
-            scroll-behavior: smooth;
-        }
-
-        /* Language hidden content */
-        .en {
-            display: none;
-        }
-    </style>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="./styles/main.css">
+    <link rel="stylesheet" href="./styles/responsive.css">
+    <link rel="stylesheet" href="./styles/animations.css">
 </head>
 <body data-theme="light" data-lang="fr">
-    <!-- WhatsApp Floating Button -->
-    <a href="https://wa.me/1234567890?text=Bonjour%20Vento,%20je%20suis%20intéressé%20par%20votre%20solution" class="whatsapp-float" target="_blank" rel="noopener noreferrer">📱</a>
 
-    <!-- Header -->
+    <!-- ==================== HEADER ==================== -->
     <header id="header">
-        <div class="logo">Vento</div>
-        <nav id="nav-menu">
-            <a href="#home">Home</a>
-            <a href="#why">Pourquoi Vento</a>
-            <a href="#features">Fonctionnalités</a>
-            <a href="#how">Comment ça marche</a>
-            <a href="#pricing">Tarifs</a>
-            <a href="#contact">Contact</a>
-            <a href="#start" class="cta-btn">Commencer</a>
-        </nav>
-        <div class="settings">
-            <button class="lang-toggle" title="Changer langue">🇫🇷 / 🇬🇧</button>
-            <button class="theme-toggle" title="Mode sombre/clair">🌙</button>
-            <div class="menu-toggle" id="menu-toggle">☰</div>
+        <div class="header-container">
+            <div class="logo">
+                <img src="./assets/images/logo.svg" alt="Vento Logo" class="logo-img">
+                <span class="logo-text">Vento</span>
+            </div>
+            
+            <nav id="nav-menu" aria-label="Navigation principale">
+                <a href="#home">Accueil</a>
+                <a href="#why">Pourquoi Vento</a>
+                <a href="#features">Fonctionnalités</a>
+                <a href="#how">Comment ça marche</a>
+                <a href="#pricing">Tarifs</a>
+                <a href="#contact">Contact</a>
+                <a href="#beta" class="cta-btn">Commencer</a>
+            </nav>
+            
+            <div class="header-actions">
+                <button class="lang-toggle" aria-label="Changer de langue" title="FR / EN">
+                    <span class="flag">🇫🇷</span>
+                </button>
+                <button class="theme-toggle" aria-label="Changer le thème" title="Mode sombre/clair">
+                    <span class="theme-icon">🌙</span>
+                </button>
+                <button class="menu-toggle" id="menu-toggle" aria-label="Menu mobile">
+                    <span class="hamburger"></span>
+                </button>
+            </div>
         </div>
     </header>
 
-    <!-- Hero Section -->
+    <!-- ==================== HERO SECTION ==================== -->
     <section class="hero" id="home">
+        <div class="hero-background"></div>
         <div class="hero-content">
-            <div class="hero-badge">🚀 Beta Disponible</div>
-            <h1>Vendez plus vite, <span class="highlight">même sans internet</span></h1>
-            <p class="fr">Vos chiffres du jour sur votre téléphone. Finis les cahiers perdus et les erreurs. Vento travaille pendant que vous dormez.</p>
-            <p class="en">Sell faster, even without internet. Your daily figures on your phone. No more lost notebooks and errors. Vento works while you sleep.</p>
-            <p class="hero-subtext fr">Disponible pour boutiques, marchés et supérettes. Essayez la version gratuite dès aujourd’hui.</p>
-            <p class="hero-subtext en">Available for shops, markets and supermarkets. Try the free version today.</p>
+            <span class="hero-badge">
+                <span class="badge-icon">🚀</span>
+                <span class="lang-fr">Beta Disponible Maintenant</span>
+                <span class="lang-en">Beta Available Now</span>
+            </span>
+            
+            <h1 class="hero-title">
+                <span class="lang-fr">Vendez plus vite, <span class="highlight">même sans internet</span></span>
+                <span class="lang-en">Sell faster, <span class="highlight">even without internet</span></span>
+            </h1>
+            
+            <p class="hero-description">
+                <span class="lang-fr">Vos chiffres du jour sur votre téléphone. Finis les cahiers perdus et les erreurs. Vento travaille pendant que vous dormez.</span>
+                <span class="lang-en">Your daily figures on your phone. No more lost notebooks and errors. Vento works while you sleep.</span>
+            </p>
+            
+            <p class="hero-subtext">
+                <span class="lang-fr">Disponible pour boutiques, marchés et supérettes. Essayez la version gratuite dès aujourd'hui.</span>
+                <span class="lang-en">Available for shops, markets and supermarkets. Try the free version today.</span>
+            </p>
+            
             <div class="hero-buttons">
-                <a href="#beta" class="hero-cta fr">Demander Accès Beta →</a>
-                <a href="#beta" class="hero-cta en">Request Beta Access →</a>
-                <a href="#demo" class="hero-cta-secondary fr">Voir Démo</a>
-                <a href="#demo" class="hero-cta-secondary en">Watch Demo</a>
+                <a href="#beta" class="hero-cta primary">
+                    <span class="lang-fr">Demander Accès Beta</span>
+                    <span class="lang-en">Request Beta Access</span>
+                    <span class="btn-icon">→</span>
+                </a>
+                <a href="#demo" class="hero-cta secondary">
+                    <span class="lang-fr">Voir Démo</span>
+                    <span class="lang-en">Watch Demo</span>
+                    <span class="btn-icon">▶</span>
+                </a>
             </div>
         </div>
-        <div class="mockup">
-            <img src="https://images.ctfassets.net/n3rcstr5ldte/2Z5g2C4fd8DAF4fiCyZUVU/6d0df9c2baf36662594997245642254e/inventory02new.jpg" alt="Vento Mockup on Mobile" class="mockup-img">
+        
+        <div class="hero-mockup">
+            <img src="./assets/images/hero-mockup.svg" alt="Vento App Interface" class="mockup-img" loading="lazy">
         </div>
     </section>
 
-    <!-- Why Vento Section -->
+    <!-- ==================== WHY VENTO SECTION ==================== -->
     <section class="why-vento" id="why">
-        <h2 class="section-title fr">Pourquoi Vento ?</h2>
-        <h2 class="section-title en">Why Vento?</h2>
-        <p class="section-subtitle fr">Simplicité, rapidité, adapté aux réalités africaines</p>
-        <p class="section-subtitle en">Simplicity, speed, adapted to African realities</p>
-        <div class="why-grid">
-            <div class="why-item">
-                <div class="why-icon">💸</div>
-                <h3 class="fr">Moins de pertes, plus de ventes</h3>
-                <h3 class="en">Less losses, more sales</h3>
-                <p class="fr">Suivez votre stock en temps réel et évitez les ruptures.</p>
-                <p class="en">Track your stock in real time and avoid shortages.</p>
-            </div>
-            <div class="why-item">
-                <div class="why-icon">📱</div>
-                <h3 class="fr">Simple à utiliser, même sans formation</h3>
-                <h3 class="en">Easy to use, even without training</h3>
-                <p class="fr">Interface intuitive pour tous les commerçants.</p>
-                <p class="en">Intuitive interface for all merchants.</p>
-            </div>
-            <div class="why-item">
-                <div class="why-icon">🌍</div>
-                <h3 class="fr">Fonctionne sans internet</h3>
-                <h3 class="en">Works without internet</h3>
-                <p class="fr">Vendez partout, synchronisez plus tard.</p>
-                <p class="en">Sell anywhere, sync later.</p>
-            </div>
-            <div class="why-item">
-                <div class="why-icon">🛒</div>
-                <h3 class="fr">Adapté aux réalités africaines</h3>
-                <h3 class="en">Adapted to African realities</h3>
-                <p class="fr">Gérez dettes, notifications, multi-utilisateurs facilement.</p>
-                <p class="en">Manage debts, notifications, multi-users easily.</p>
+        <div class="container">
+            <h2 class="section-title">
+                <span class="lang-fr">Pourquoi Vento ?</span>
+                <span class="lang-en">Why Vento?</span>
+            </h2>
+            <p class="section-subtitle">
+                <span class="lang-fr">Simplicité, rapidité, adapté aux réalités africaines</span>
+                <span class="lang-en">Simplicity, speed, adapted to African realities</span>
+            </p>
+            
+            <div class="why-grid">
+                <div class="why-item">
+                    <div class="why-icon">💸</div>
+                    <h3>
+                        <span class="lang-fr">Moins de pertes, plus de ventes</span>
+                        <span class="lang-en">Less losses, more sales</span>
+                    </h3>
+                    <p>
+                        <span class="lang-fr">Suivez votre stock en temps réel et évitez les ruptures coûteuses.</span>
+                        <span class="lang-en">Track your stock in real-time and avoid costly shortages.</span>
+                    </p>
+                </div>
+                
+                <div class="why-item">
+                    <div class="why-icon">📱</div>
+                    <h3>
+                        <span class="lang-fr">Simple à utiliser</span>
+                        <span class="lang-en">Easy to use</span>
+                    </h3>
+                    <p>
+                        <span class="lang-fr">Interface intuitive, aucune formation nécessaire. Vos employés seront opérationnels en 5 minutes.</span>
+                        <span class="lang-en">Intuitive interface, no training needed. Your staff will be ready in 5 minutes.</span>
+                    </p>
+                </div>
+                
+                <div class="why-item">
+                    <div class="why-icon">🌍</div>
+                    <h3>
+                        <span class="lang-fr">Fonctionne sans internet</span>
+                        <span class="lang-en">Works without internet</span>
+                    </h3>
+                    <p>
+                        <span class="lang-fr">Vendez partout, synchronisez plus tard. Connexion instable ? Aucun problème.</span>
+                        <span class="lang-en">Sell anywhere, sync later. Unstable connection? No problem.</span>
+                    </p>
+                </div>
+                
+                <div class="why-item">
+                    <div class="why-icon">🛒</div>
+                    <h3>
+                        <span class="lang-fr">Adapté aux réalités locales</span>
+                        <span class="lang-en">Adapted to local realities</span>
+                    </h3>
+                    <p>
+                        <span class="lang-fr">Gérez les dettes clients, notifications intelligentes, multi-utilisateurs facilement.</span>
+                        <span class="lang-en">Manage customer debts, smart notifications, multi-users easily.</span>
+                    </p>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Stats Section -->
+    <!-- ==================== STATS SECTION ==================== -->
     <section class="stats">
-        <div class="stats-grid">
-            <div class="stat-item">
-                <div class="stat-number">500+</div>
-                <div class="stat-label fr">Ventes par jour</div>
-                <div class="stat-label en">Sales per day</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">99.9%</div>
-                <div class="stat-label fr">Uptime</div>
-                <div class="stat-label en">Uptime</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">24/7</div>
-                <div class="stat-label fr">Support disponible</div>
-                <div class="stat-label en">Support available</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">100%</div>
-                <div class="stat-label fr">Offline capable</div>
-                <div class="stat-label en">Offline capable</div>
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" data-target="500">0</div>
+                    <div class="stat-label">
+                        <span class="lang-fr">Ventes par jour</span>
+                        <span class="lang-en">Sales per day</span>
+                    </div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number" data-target="99.9">0</div>
+                    <div class="stat-label">
+                        <span class="lang-fr">Fiabilité</span>
+                        <span class="lang-en">Uptime</span>
+                    </div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">
+                        <span class="lang-fr">Support disponible</span>
+                        <span class="lang-en">Support available</span>
+                    </div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number" data-target="100">0</div>
+                    <div class="stat-label">
+                        <span class="lang-fr">Mode offline</span>
+                        <span class="lang-en">Offline capable</span>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Features Section -->
+    <!-- ==================== FEATURES SECTION ==================== -->
     <section class="features" id="features">
-        <h2 class="section-title fr">Fonctionnalités principales</h2>
-        <h2 class="section-title en">Main Features</h2>
-        <p class="section-subtitle fr">Des outils puissants pour simplifier votre quotidien</p>
-        <p class="section-subtitle en">Powerful tools to simplify your daily life</p>
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">📱</div>
-                <h3 class="fr">Mobile Offline</h3>
-                <h3 class="en">Mobile Offline</h3>
-                <p class="fr">Gérez les ventes même sans internet. Synchronisation auto.</p>
-                <p class="en">Manage sales even without internet. Auto sync.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">💻</div>
-                <h3 class="fr">Desktop Analytics</h3>
-                <h3 class="en">Desktop Analytics</h3>
-                <p class="fr">Tableau de bord pour manager et multi-supérettes.</p>
-                <p class="en">Dashboard for managers and multi-stores.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🔔</div>
-                <h3 class="fr">Notifications & Dettes</h3>
-                <h3 class="en">Notifications & Debts</h3>
-                <p class="fr">Restez à jour sur chaque vente et dette.</p>
-                <p class="en">Stay up to date on every sale and debt.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">👥</div>
-                <h3 class="fr">User Management</h3>
-                <h3 class="en">User Management</h3>
-                <p class="fr">Comptes uniques pour chaque utilisateur.</p>
-                <p class="en">Unique accounts for each user.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">📊</div>
-                <h3 class="fr">Reports & Stats</h3>
-                <h3 class="en">Reports & Stats</h3>
-                <p class="fr">Graphiques clairs pour décisions rapides.</p>
-                <p class="en">Clear graphs for quick decisions.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Mockups Section -->
-    <section class="mockups" id="mockups">
-        <h2 class="section-title fr">App Mobile & Dashboard PC</h2>
-        <h2 class="section-title en">Mobile App & PC Dashboard</h2>
-        <p class="section-subtitle fr">Découvrez nos interfaces intuitives</p>
-        <p class="section-subtitle en">Discover our intuitive interfaces</p>
-        <div class="mockups-grid">
-            <div class="mockup-item">
-                <img src="https://designshack.net/wp-content/uploads/responsive-website-app-templates.jpg" alt="Mobile App Mockup">
-                <h3 class="fr">App Mobile</h3>
-                <h3 class="en">Mobile App</h3>
-            </div>
-            <div class="mockup-item">
-                <img src="https://images.ctfassets.net/n3rcstr5ldte/2Z5g2C4fd8DAF4fiCyZUVU/6d0df9c2baf36662594997245642254e/inventory02new.jpg" alt="Desktop Dashboard Mockup">
-                <h3 class="fr">Dashboard PC</h3>
-                <h3 class="en">PC Dashboard</h3>
-            </div>
-        </div>
-    </section>
-
-    <!-- Pricing Section -->
-    <section class="pricing" id="pricing">
-        <h2 class="section-title fr">Tarifs simples et transparents</h2>
-        <h2 class="section-title en">Simple and Transparent Pricing</h2>
-        <p class="section-subtitle fr">Choisissez le plan qui correspond à votre business</p>
-        <p class="section-subtitle en">Choose the plan that fits your business</p>
-        <div class="pricing-grid">
-            <div class="price-card">
-                <h3 class="price-title fr">Starter</h3>
-                <h3 class="price-title en">Starter</h3>
-                <div class="price-amount">0€</div>
-                <div class="price-period fr">/mois (Beta gratuite)</div>
-                <div class="price-period en">/month (Free Beta)</div>
-                <ul class="price-features">
-                    <li class="fr">Accès basique</li>
-                    <li class="en">Basic access</li>
-                    <li class="fr">1 utilisateur</li>
-                    <li class="en">1 user</li>
-                    <li class="fr">Support email</li>
-                    <li class="en">Email support</li>
-                </ul>
-                <a href="#beta" class="cta-btn fr">Commencer</a>
-                <a href="#beta" class="cta-btn en">Get Started</a>
-            </div>
-            <div class="price-card popular">
-                <h3 class="price-title fr">Pro</h3>
-                <h3 class="price-title en">Pro</h3>
-                <div class="price-amount">29€</div>
-                <div class="price-period fr">/mois</div>
-                <div class="price-period en">/month</div>
-                <ul class="price-features">
-                    <li class="fr">Toutes fonctionnalités</li>
-                    <li class="en">All features</li>
-                    <li class="fr">Utilisateurs illimités</li>
-                    <li class="en">Unlimited users</li>
-                    <li class="fr">Support prioritaire</li>
-                    <li class="en">Priority support</li>
-                    <li class="fr">Analytics avancés</li>
-                    <li class="en">Advanced analytics</li>
-                </ul>
-                <a href="#beta" class="cta-btn fr">Commencer</a>
-                <a href="#beta" class="cta-btn en">Get Started</a>
-            </div>
-            <div class="price-card">
-                <h3 class="price-title fr">Enterprise</h3>
-                <h3 class="price-title en">Enterprise</h3>
-                <div class="price-amount fr">Contactez-nous</div>
-                <div class="price-amount en">Contact us</div>
-                <ul class="price-features">
-                    <li class="fr">Solutions personnalisées</li>
-                    <li class="en">Custom solutions</li>
-                    <li class="fr">Dédié account manager</li>
-                    <li class="en">Dedicated account manager</li>
-                    <li class="fr">Intégrations custom</li>
-                    <li class="en">Custom integrations</li>
-                    <li class="fr">Formation incluse</li>
-                    <li class="en">Training included</li>
-                </ul>
-                <a href="#contact" class="cta-btn fr">Contact</a>
-                <a href="#contact" class="cta-btn en">Contact</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- How it works -->
-    <section class="how-it-works" id="how">
-        <h2 class="section-title fr">Comment ça marche ?</h2>
-        <h2 class="section-title en">How it works?</h2>
-        <p class="section-subtitle fr">Démarrez en 3 étapes simples</p>
-        <p class="section-subtitle en">Start in 3 simple steps</p>
-        <div class="steps">
-            <div class="step">
-                <div class="step-number">1</div>
-                <div class="step-content">
-                    <h3 class="fr">Créez votre compte</h3>
-                    <h3 class="en">Create your account</h3>
-                    <p class="fr">Inscription rapide en 2 minutes. Aucune carte bancaire requise pour la beta.</p>
-                    <p class="en">Quick registration in 2 minutes. No credit card required for beta.</p>
+        <div class="container">
+            <h2 class="section-title">
+                <span class="lang-fr">Fonctionnalités principales</span>
+                <span class="lang-en">Main Features</span>
+            </h2>
+            <p class="section-subtitle">
+                <span class="lang-fr">Des outils puissants pour simplifier votre quotidien</span>
+                <span class="lang-en">Powerful tools to simplify your daily life</span>
+            </p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>
+                        <span class="lang-fr">Mobile Offline</span>
+                        <span class="lang-en">Mobile Offline</span>
+                    </h3>
+                    <p>
+                        <span class="lang-fr">Gérez les ventes même sans internet. Synchronisation automatique dès la reconnexion.</span>
+                        <span class="lang-en">Manage sales even without internet. Automatic sync when reconnected.</span>
+                    </p>
                 </div>
-            </div>
-            <div class="step">
-                <div class="step-number">2</div>
-                <div class="step-content">
-                    <h3 class="fr">Configurez votre boutique</h3>
-                    <h3 class="en">Set up your store</h3>
-                    <p class="fr">Ajoutez vos produits, configurez vos utilisateurs et personnalisez vos paramètres.</p>
-                    <p class="en">Add your products, set up users and customize settings.</p>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">💻</div>
+                    <h3>
+                        <span class="lang-fr">Dashboard Desktop</span>
+                        <span class="lang-en">Desktop Dashboard</span>
+                    </h3>
+                    <p>
+                        <span class="lang-fr">Tableau de bord complet pour managers et chaînes de supérettes. Analytics en temps réel.</span>
+                        <span class="lang-en">Complete dashboard for managers and store chains. Real-time analytics.</span>
+                    </p>
                 </div>
-            </div>
-            <div class="step">
-                <div class="step-number">3</div>
-                <div class="step-content">
-                    <h3 class="fr">Commencez à vendre</h3>
-                    <h3 class="en">Start selling</h3>
-                    <p class="fr">Utilisez l'app mobile pour vendre et le dashboard desktop pour analyser vos performances.</p>
-                    <p class="en">Use the mobile app to sell and desktop dashboard to analyze performance.</p>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🔔</div>
+                    <h3>
+                        <span class="lang-fr">Notifications & Dettes</span>
+                        <span class="lang-en">Notifications & Debts</span>
+                    </h3>
+                    <p>
+                        <span class="lang-fr">Restez informé de chaque vente et gérez les crédits clients intelligemment.</span>
+                        <span class="lang-en">Stay informed of every sale and manage customer credits smartly.</span>
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3>
+                        <span class="lang-fr">Gestion Utilisateurs</span>
+                        <span class="lang-en">User Management</span>
+                    </h3>
+                    <p>
+                        <span class="lang-fr">Comptes individuels avec permissions personnalisées. Suivez les performances de chaque vendeur.</span>
+                        <span class="lang-en">Individual accounts with custom permissions. Track each seller's performance.</span>
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>
+                        <span class="lang-fr">Reports & Analytics</span>
+                        <span class="lang-en">Reports & Analytics</span>
+                    </h3>
+                    <p>
+                        <span class="lang-fr">Graphiques clairs et rapports détaillés pour prendre les bonnes décisions rapidement.</span>
+                        <span class="lang-en">Clear graphs and detailed reports for quick, informed decisions.</span>
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>
+                        <span class="lang-fr">Sécurité & Backup</span>
+                        <span class="lang-en">Security & Backup</span>
+                    </h3>
+                    <p>
+                        <span class="lang-fr">Vos données sont cryptées et sauvegardées automatiquement. Zéro risque de perte.</span>
+                        <span class="lang-en">Your data is encrypted and automatically backed up. Zero risk of loss.</span>
+                    </p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="cta-section">
-        <div class="cta-content">
-            <h2 class="fr">Prêt à transformer votre business ?</h2>
-            <h2 class="en">Ready to transform your business?</h2>
-            <p class="fr">Rejoignez Vento et simplifiez votre gestion de ventes. Contactez-nous par WhatsApp ou email.</p>
-            <p class="en">Join Vento and simplify your sales management. Contact us via WhatsApp or email.</p>
-            <div class="cta-buttons">
-                <a href="https://wa.me/1234567890?text=Bonjour%20Vento,%20je%20suis%20intéressé" class="cta-secondary whatsapp-cta fr">Contact WhatsApp</a>
-                <a href="https://wa.me/1234567890?text=Hello%20Vento,%20I'm%20interested" class="cta-secondary whatsapp-cta en">WhatsApp Contact</a>
-                <a href="#contact" class="cta-secondary fr">Envoyer Email</a>
-                <a href="#contact" class="cta-secondary en">Send Email</a>
-            </div>
-        </div>
-    </section>
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/1234567890?text=Bonjour%20Vento" 
+       class="whatsapp-float" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       aria-label="Contactez-nous sur WhatsApp">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+        </svg>
+    </a>
 
-    <!-- Testimonial -->
-    <section class="testimonial" id="testimonials">
-        <h2 class="section-title fr">Témoignages</h2>
-        <h2 class="section-title en">Testimonials</h2>
-        <div class="testimonial-grid">
-            <div class="testimonial-card">
-                <p class="testimonial-text fr">“Avant, je notais tout dans un cahier. Maintenant, je sais combien je gagne chaque jour. Vento m’a libéré.”</p>
-                <p class="testimonial-text en">“Before, I noted everything in a notebook. Now, I know how much I earn each day. Vento has freed me.”</p>
-                <div class="testimonial-author">
-                    <div class="author-avatar">AB</div>
-                    <div class="author-info">
-                        <div class="author-name fr">Aïssatou Baldé</div>
-                        <div class="author-name en">Aïssatou Baldé</div>
-                        <div class="author-role fr">Boutique à Conakry</div>
-                        <div class="author-role en">Shop in Conakry</div>
-                    </div>
-                </div>
-            </div>
-            <div class="testimonial-card">
-                <p class="testimonial-text fr">“Vento m’a permis de gérer mes ventes et mon stock facilement – Paul B., Supérette Conakry”</p>
-                <p class="testimonial-text en">“Vento allowed me to manage my sales and stock easily – Paul B., Supermarket Conakry”</p>
-                <div class="testimonial-author">
-                    <div class="author-avatar">PB</div>
-                    <div class="author-info">
-                        <div class="author-name">Paul B.</div>
-                        <div class="author-role fr">Supérette Conakry</div>
-                        <div class="author-role en">Supermarket Conakry</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section class="contact" id="contact">
-        <h2 class="section-title fr">Contactez-nous</h2>
-        <h2 class="section-title en">Contact Us</h2>
-        <p class="section-subtitle fr">Envoyez-nous un message pour plus d'informations</p>
-        <p class="section-subtitle en">Send us a message for more information</p>
-        <form class="contact-form">
-            <input type="text" placeholder="Votre nom / Your name" required>
-            <input type="email" placeholder="Votre email / Your email" required>
-            <input type="tel" placeholder="Votre téléphone (optionnel) / Your phone (optional)">
-            <textarea placeholder="Votre message / Your message" rows="5" required></textarea>
-            <button type="submit" class="fr">Envoyer</button>
-            <button type="submit" class="en">Send</button>
-        </form>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-brand">
-                <div class="footer-logo">Vento</div>
-                <p class="fr">La solution moderne de gestion de ventes pour commerçants ambitieux. Simplifiez, optimisez, grandissez.</p>
-                <p class="en">The modern sales management solution for ambitious merchants. Simplify, optimize, grow.</p>
-                <div class="social-links">
-                    <a href="https://twitter.com" title="Twitter">𝕏</a>
-                    <a href="https://linkedin.com" title="LinkedIn">in</a>
-                    <a href="https://facebook.com" title="Facebook">f</a>
-                    <a href="https://instagram.com" title="Instagram">📷</a>
-                </div>
-            </div>
-            <div class="footer-section">
-                <h4 class="fr">Produit</h4>
-                <h4 class="en">Product</h4>
-                <a href="#features" class="fr">Fonctionnalités</a>
-                <a href="#features" class="en">Features</a>
-                <a href="#pricing" class="fr">Tarifs</a>
-                <a href="#pricing" class="en">Pricing</a>
-                <a href="#demo" class="fr">Démo</a>
-                <a href="#demo" class="en">Demo</a>
-                <a href="#roadmap" class="fr">Roadmap</a>
-                <a href="#roadmap" class="en">Roadmap</a>
-            </div>
-            <div class="footer-section">
-                <h4 class="fr">Support</h4>
-                <h4 class="en">Support</h4>
-                <a href="#help" class="fr">Centre d'aide</a>
-                <a href="#help" class="en">Help Center</a>
-                <a href="#docs" class="fr">Documentation</a>
-                <a href="#docs" class="en">Documentation</a>
-                <a href="#contact" class="fr">Contact</a>
-                <a href="#contact" class="en">Contact</a>
-                <a href="#status" class="fr">Status</a>
-                <a href="#status" class="en">Status</a>
-            </div>
-            <div class="footer-section">
-                <h4 class="fr">Entreprise</h4>
-                <h4 class="en">Company</h4>
-                <a href="#about" class="fr">À propos</a>
-                <a href="#about" class="en">About</a>
-                <a href="#blog" class="fr">Blog</a>
-                <a href="#blog" class="en">Blog</a>
-                <a href="#careers" class="fr">Carrières</a>
-                <a href="#careers" class="en">Careers</a>
-                <a href="#press" class="fr">Presse</a>
-                <a href="#press" class="en">Press</a>
-            </div>
-        </div>
-        <div class="copyright">
-            © 2025 Vento – All rights reserved. | <a href="#privacy" style="color: #718096;" class="fr">Confidentialité</a> <a href="#privacy" style="color: #718096;" class="en">Privacy</a> | <a href="#terms" style="color: #718096;" class="fr">Conditions</a> <a href="#terms" style="color: #718096;" class="en">Terms</a>
-        </div>
-    </footer>
-
-    <script>
-        // Header scroll effect
-        window.addEventListener('scroll', () => {
-            const header = document.getElementById('header');
-            if (window.scrollY > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-        });
-
-        // Mobile menu toggle
-        const menuToggle = document.getElementById('menu-toggle');
-        const navMenu = document.getElementById('nav-menu');
-
-        menuToggle.addEventListener('click', () => {
-            navMenu.classList.toggle('active');
-        });
-
-        // Theme toggle
-        const themeToggle = document.querySelector('.theme-toggle');
-        themeToggle.addEventListener('click', () => {
-            const body = document.body;
-            if (body.getAttribute('data-theme') === 'light') {
-                body.setAttribute('data-theme', 'dark');
-                themeToggle.textContent = '☀️';
-            } else {
-                body.setAttribute('data-theme', 'light');
-                themeToggle.textContent = '🌙';
-            }
-        });
-
-        // Language toggle
-        const langToggle = document.querySelector('.lang-toggle');
-        langToggle.addEventListener('click', () => {
-            const body = document.body;
-            const currentLang = body.getAttribute('data-lang');
-            const newLang = currentLang === 'fr' ? 'en' : 'fr';
-            body.setAttribute('data-lang', newLang);
-            document.querySelectorAll('.fr, .en').forEach(el => {
-                el.style.display = el.classList.contains(newLang) ? 'block' : 'none';
-            });
-        });
-
-        // Initial language setup
-        document.querySelectorAll('.en').forEach(el => el.style.display = 'none');
-
-        // Intersection Observer for animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -100px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        // Animate elements on scroll
-        document.querySelectorAll('.feature-card, .step, .stat-item, .price-card, .why-item, .testimonial-card, .mockup-item').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
-            el.style.transition = 'all 0.6s ease-out';
-            observer.observe(el);
-        });
-
-        // Stagger effects
-        document.querySelectorAll('.feature-card, .why-item, .price-card, .stat-item, .mockup-item').forEach((el, index) => {
-            el.style.transitionDelay = `${index * 0.1}s`;
-        });
-    </script>
+    <!-- Scripts -->
+    <script src="./scripts/main.js"></script>
+    <script src="./scripts/animations.js"></script>
 </body>
 </html>
