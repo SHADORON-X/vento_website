@@ -1,253 +1,42 @@
-/**
- * VENTO - Responsive Stylesheet
- * Media queries et adaptation mobile
- * ==================================
- * 
- * Table des matières :
- * 1. Tablet (max-width: 1024px)
- * 2. Mobile Large (max-width: 768px)
- * 3. Mobile Small (max-width: 480px)
- * 4. Mobile Extra Small (max-width: 360px)
- * 5. Landscape Mobile (max-height: 500px and orientation: landscape)
- * 6. Print Styles
- * 7. Hover States (Desktop Only)
- * 8. Reduced Motion
- * 9. High Contrast
- * 
- * Améliorations apportées :
- * - Ajout de commentaires détaillés pour chaque media query.
- * - Utilisation de clamp() pour des tailles fluides supplémentaires.
- * - Ajout de transitions fluides pour les changements de layout.
- * - Amélioration de l'accessibilité (focus, contrast, motion).
- * - Adaptation aux variables CSS du main stylesheet pour cohérence.
- * - Robustesse : Gestion des overflows, flex-wrap, et centrage mobile.
- * - Optimisation pour performances (réduction des sélecteurs complexes).
- * - Ultra fluidité : Utilisation de vw/vh/minmax pour grilles, smooth transitions, et media queries progressives.
- * - Adaptation petit écran : Tailles minimales, stack vertical, touch-friendly (plus grands boutons).
- */
+/* ==================== RESPONSIVE DESIGN ==================== */
 
-/* ==================== TABLET (max-width: 1024px) ==================== */
-/* Adaptations pour tablettes : Réduction des espacements, ajustement des grilles */
-@media (max-width: 1024px) {
-    :root {
-        --spacing-2xl: 4rem;    /* Réduction des grands espacements */
-        --text-5xl: 2.5rem;     /* Ajustement des grandes tailles de texte */
-        --text-4xl: 2rem;
-    }
-    
-    .container {
-        padding: 0 var(--spacing-md);  /* Padding réduit pour les côtés */
-    }
-    
-    /* Hero : Ajustement pour écrans plus petits */
-    .hero {
-        padding: 6rem 5% 4rem;
-        min-height: auto;
-    }
-    
-    .hero-title {
-        font-size: clamp(2rem, 5vw, 2.5rem);  /* Taille fluide */
-    }
-    
-    .hero-description {
-        font-size: 1.2rem;
-    }
-    
-    /* Grids : Adaptation à des colonnes plus flexibles */
-    .features-grid,
-    .why-grid,
-    .steps-container {
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: var(--spacing-lg);
-    }
-    
-    /* Contact : Passage en colonne pour le wrapper */
-    .contact-wrapper {
+/* Tablet - 968px and below */
+@media (max-width: 968px) {
+    /* Hero */
+    .hero .container {
         grid-template-columns: 1fr;
-    }
-    
-    /* Transitions pour fluidité */
-    .hero-content,
-    .section-header {
-        transition: all var(--transition-base);
-    }
-}
-
-/* ==================== MOBILE LARGE (max-width: 768px) ==================== */
-/* Adaptations pour mobiles larges : Menu hamburger, centrage, colonnes uniques */
-@media (max-width: 768px) {
-    :root {
-        --spacing-xl: 2rem;     /* Espacements réduits pour mobile */
-        --spacing-2xl: 3rem;
-        --text-5xl: 2rem;
-        --text-4xl: 1.75rem;
-        --text-3xl: 1.5rem;
-    }
-    
-    /* Header : Padding réduit, préparation pour menu mobile */
-    #header {
-        padding: 1rem 5%;
-    }
-    
-    .header-container {
-        position: relative;
-    }
-    
-    /* Navigation Mobile : Transformation en menu dropdown */
-    #nav-menu {
-        position: fixed;
-        top: 70px;
-        left: 0;
-        right: 0;
-        flex-direction: column;
-        background: var(--bg-color);
-        padding: var(--spacing-lg);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        transform: translateY(-120%);
-        opacity: 0;
-        transition: transform var(--transition-base), opacity var(--transition-base);
-        z-index: var(--z-dropdown);
-        gap: var(--spacing-md);
-    }
-    
-    [data-theme="dark"] #nav-menu {
-        background: var(--card-bg);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    }
-    
-    #nav-menu.active {
-        transform: translateY(0);
-        opacity: 1;
-    }
-    
-    #nav-menu a {
-        width: 100%;
-        padding: var(--spacing-sm);
-        text-align: center;
-        font-size: var(--text-base);
-    }
-    
-    #nav-menu a:not(.cta-btn)::after {
-        display: none;  /* Pas de underline en mobile */
-    }
-    
-    .cta-btn {
-        width: 100%;
-        justify-content: center;
-        padding: 1rem;  /* Plus touch-friendly */
-    }
-    
-    /* Menu Toggle : Affichage et animation hamburger */
-    .menu-toggle {
-        display: flex;
-    }
-    
-    .menu-toggle.active .hamburger {
-        background: transparent;
-    }
-    
-    .menu-toggle.active .hamburger::before {
-        transform: rotate(45deg);
-        top: 0;
-    }
-    
-    .menu-toggle.active .hamburger::after {
-        transform: rotate(-45deg);
-        bottom: 0;
-    }
-    
-    /* Hero : Centrage complet, boutons en colonne */
-    .hero {
-        padding: 5rem 5% 3rem;
         text-align: center;
     }
     
-    .hero-title {
-        font-size: 2rem;
-        letter-spacing: -1px;
+    .hero-content {
+        max-width: 100%;
+        order: 1;
     }
     
-    .hero-description {
-        font-size: 1.1rem;
+    .phone-mockup {
+        order: 2;
+        max-width: 350px;
     }
     
     .hero-buttons {
-        flex-direction: column;
-        width: 100%;
-        gap: var(--spacing-sm);
-    }
-    
-    .hero-cta {
-        width: 100%;
         justify-content: center;
-        padding: 1rem 2rem;
-        font-size: 1rem;
     }
     
-    .hero-mockup {
-        margin-top: var(--spacing-xl);
+    .hero-stats {
+        justify-content: center;
     }
     
-    /* Sections : Padding réduit */
-    .why-vento,
-    .features,
-    .how-it-works,
-    .mission,
-    .beta-access,
-    .contact,
-    .interactive-demo,
-    .cta-final,
-    .trusted-by {
-        padding: var(--spacing-xl) 5%;
-    }
-    
-    .section-title {
-        font-size: 1.875rem;
-    }
-    
-    .section-subtitle {
-        font-size: 1rem;
-        margin-bottom: var(--spacing-xl);
-    }
-    
-    /* Grids : Passage en une colonne avec minmax pour fluidité */
-    .why-grid,
+    /* Features */
     .features-grid {
-        grid-template-columns: minmax(0, 1fr);
-        gap: var(--spacing-lg);
-    }
-    
-    .why-item,
-    .feature-card {
-        padding: var(--spacing-lg);
-    }
-    
-    /* Steps : Passage en colonne, centrage */
-    .step {
         grid-template-columns: 1fr;
-        text-align: center;
-        gap: var(--spacing-md);
     }
     
-    .step-number {
-        margin: 0 auto var(--spacing-md);
+    /* Pricing */
+    .pricing-grid {
+        grid-template-columns: 1fr;
     }
     
-    .step-line {
-        height: 50px;  /* Réduction pour mobile */
-    }
-    
-    /* Mission : Texte plus compact */
-    .mission .section-subtitle {
-        font-size: 1.1rem;
-    }
-    
-    /* Beta Access : Form centrée */
-    .beta-form {
-        padding: var(--spacing-md);
-    }
-    
-    /* Contact : Form en colonne unique */
+    /* Contact */
     .contact-wrapper {
         grid-template-columns: 1fr;
     }
@@ -256,14 +45,165 @@
         grid-template-columns: 1fr;
     }
     
-    /* Footer : Colonne unique */
-    .footer-content {
+    /* Access */
+    .access-grid {
         grid-template-columns: 1fr;
-        gap: var(--spacing-xl);
     }
     
-    .footer-column.brand {
-        max-width: 100%;
+    /* Footer */
+    .footer-content {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Mobile - 768px and below */
+@media (max-width: 768px) {
+    /* Header */
+    .menu-toggle {
+        display: flex;
+    }
+    
+    .nav {
+        position: fixed;
+        top: 60px;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        background: var(--bg);
+        padding: 2rem;
+        gap: 1rem;
+        transform: translateY(-120%);
+        opacity: 0;
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        box-shadow: var(--shadow-lg);
+        border-bottom: 1px solid var(--border);
+        z-index: calc(var(--z-fixed) - 1);
+        max-height: calc(100vh - 60px);
+        overflow-y: auto;
+    }
+    
+    .nav.active {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    
+    .nav a {
+        width: 100%;
+        padding: 1rem;
+        text-align: center;
+        border-radius: var(--radius-md);
+        background: var(--bg-secondary);
+    }
+    
+    .nav .cta-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    /* Hero */
+    .hero {
+        min-height: auto;
+        padding-top: calc(60px + var(--space-xl));
+        padding-bottom: var(--space-xl);
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .hero-description {
+        font-size: 1rem;
+    }
+    
+    .hero-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .hero-buttons .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .hero-stats {
+        gap: 1.5rem;
+    }
+    
+    .stat-item {
+        flex: 1;
+        min-width: 100px;
+    }
+    
+    .stat-value {
+        font-size: var(--text-3xl);
+    }
+    
+    /* Phone Mockup */
+    .phone-mockup {
+        max-width: 300px;
+    }
+    
+    .phone-screen {
+        height: 550px;
+    }
+    
+    .phone-nav {
+        padding: 0.625rem 1.25rem;
+        gap: 1.25rem;
+    }
+    
+    .nav-dot {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .nav-dot svg {
+        width: 20px;
+        height: 20px;
+    }
+    
+    /* Sections */
+    .section {
+        padding: var(--space-xl) var(--container-padding);
+    }
+    
+    /* Section Header */
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .section-subtitle {
+        font-size: var(--text-base);
+    }
+    
+    /* Why Grid */
+    .why-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+    }
+    
+    /* Feature Cards */
+    .feature-card.featured {
+        transform: none;
+    }
+    
+    /* Pricing */
+    .price-card.popular {
+        transform: none;
+    }
+    
+    /* Footer */
+    .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    
+    .footer-logo {
+        justify-content: center;
+    }
+    
+    .social-links {
+        justify-content: center;
     }
     
     .footer-bottom {
@@ -271,434 +211,315 @@
         text-align: center;
     }
     
-    /* WhatsApp Button : Taille réduite, position ajustée pour éviter overlap */
-    .whatsapp-float {
-        bottom: 15px;
-        right: 15px;
-        width: 55px;
-        height: 55px;
+    /* Floating Buttons */
+    .whatsapp-btn {
+        bottom: 1.5rem;
+        right: 1.5rem;
+        width: 52px;
+        height: 52px;
     }
     
-    .whatsapp-float svg {
-        width: 28px;
-        height: 28px;
+    .whatsapp-btn svg {
+        width: 26px;
+        height: 26px;
     }
     
-    /* Back to Top : Position ajustée */
     .back-to-top {
-        bottom: 70px;
-        right: 15px;
-        width: 45px;
-        height: 45px;
+        bottom: 5rem;
+        right: 1.5rem;
+        width: 44px;
+        height: 44px;
     }
     
     .back-to-top svg {
         width: 20px;
         height: 20px;
     }
-    
-    /* Fluidité supplémentaire : Transitions sur grilles */
-    .why-grid,
-    .features-grid {
-        transition: gap var(--transition-base);
-    }
 }
 
-/* ==================== MOBILE SMALL (max-width: 480px) ==================== */
-/* Adaptations pour petits mobiles : Espacements et tailles encore réduits */
+/* Small Mobile - 480px and below */
 @media (max-width: 480px) {
-    :root {
-        --spacing-lg: 1.5rem;
-        --spacing-xl: 2rem;
-        --spacing-2xl: 2.5rem;
-    }
-    
-    /* Header : Logo plus petit */
-    .logo {
-        font-size: 1.5rem;
-        gap: 0.5rem;
-    }
-    
-    .logo-icon svg {
-        width: 32px;
-        height: 32px;
-    }
-    
-    .theme-toggle,
-    .lang-toggle {
-        width: 36px;
-        height: 36px;
-        font-size: 1rem;
-    }
-    
-    .menu-toggle {
-        width: 36px;
-        height: 36px;
-    }
-    
-    .hamburger,
-    .hamburger::before,
-    .hamburger::after {
-        width: 20px;
-    }
-    
-    .hamburger::before {
-        top: -6px;
-    }
-    
-    .hamburger::after {
-        bottom: -6px;
-    }
-    
-    /* Hero : Tailles minimales */
-    .hero {
-        padding: 4rem 5% 2rem;
-    }
-    
+    /* Hero */
     .hero-badge {
         font-size: 0.75rem;
         padding: 0.5rem 1rem;
-        gap: 0.25rem;
     }
     
     .hero-title {
         font-size: 1.75rem;
-    }
-    
-    .hero-description {
-        font-size: 1rem;
-    }
-    
-    .hero-cta {
-        padding: 0.875rem 1.5rem;
-        font-size: 0.9rem;
-    }
-    
-    /* Sections : Titres plus petits */
-    .section-title {
-        font-size: 1.625rem;
         letter-spacing: -1px;
     }
     
-    .section-subtitle {
-        font-size: 0.9rem;
+    .hero-description {
+        font-size: 0.9375rem;
     }
     
-    /* Cards : Padding réduit, touch-friendly */
-    .why-item,
-    .feature-card {
-        padding: var(--spacing-md);
+    .hero-stats {
+        flex-direction: column;
+        gap: 1rem;
     }
     
-    .why-icon {
-        font-size: 2.5rem;
+    .stat-item {
+        width: 100%;
     }
     
-    .feature-icon {
-        width: 60px;
-        height: 60px;
-        font-size: 2rem;
+    /* Phone Mockup */
+    .phone-mockup {
+        max-width: 280px;
     }
     
-    .feature-card h3,
-    .why-item h3 {
-        font-size: 1.125rem;
+    .phone-frame {
+        padding: 0.75rem;
     }
     
-    .feature-card p,
-    .why-item p {
-        font-size: 0.9rem;
+    .phone-screen {
+        height: 500px;
     }
     
-    /* Steps : Numéros plus petits */
-    .step-number {
-        width: 60px;
-        height: 60px;
-        font-size: 2rem;
+    .status-bar {
+        padding: 2rem 1rem 0.75rem;
+        font-size: 0.625rem;
     }
     
-    .step-content h3 {
-        font-size: 1.25rem;
-    }
-    
-    .step-content p {
-        font-size: 0.9rem;
-    }
-    
-    /* Beta Access : Bouton plus grand pour touch */
-    .hero-cta.primary {
+    .phone-content {
         padding: 1rem;
     }
     
-    /* Contact Form : Inputs plus compacts, mais touch-friendly (min-height) */
-    .contact-form {
-        padding: var(--spacing-md);
+    .content-header {
+        padding: 1.25rem;
+        margin-bottom: 1.25rem;
     }
     
-    .contact-form input,
-    .contact-form textarea,
-    .contact-form select {
-        padding: 0.75rem;
-        font-size: 0.9rem;
-        min-height: 48px;  /* Pour facilité touch */
+    .content-header h3 {
+        font-size: 1.125rem;
     }
     
-    .submit-btn {
-        padding: 0.875rem;
-        font-size: 1rem;
-        min-height: 48px;
+    .sales-card {
+        padding: 1.25rem;
     }
     
-    /* Footer : Liens plus compacts */
-    .footer-logo {
+    .card-value {
+        font-size: 1.75rem;
+    }
+    
+    .mini-cards {
+        gap: 0.75rem;
+    }
+    
+    .mini-card {
+        padding: 1rem;
+    }
+    
+    .mini-value {
         font-size: 1.5rem;
     }
     
-    .social-links a {
+    .phone-nav {
+        padding: 0.5rem 1rem;
+        gap: 1rem;
+        bottom: 1.5rem;
+    }
+    
+    .nav-dot {
         width: 36px;
         height: 36px;
     }
     
-    .social-links a svg {
-        width: 16px;
-        height: 16px;
-    }
-    
-    .footer-column h4 {
-        font-size: 1.125rem;
-    }
-    
-    .footer-column ul li {
-        margin-bottom: 0.5rem;
-    }
-    
-    .footer-copy p {
-        font-size: 0.8rem;
-    }
-    
-    .footer-badges .badge {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.75rem;
-    }
-    
-    /* Fluidité : Ajustement vw pour textes */
-    .hero-description,
-    .section-subtitle {
-        font-size: clamp(0.9rem, 4vw, 1rem);
-    }
-}
-
-/* ==================== MOBILE EXTRA SMALL (max-width: 360px) ==================== */
-/* Adaptations pour très petits écrans : Minimalisme maximal, priorisation touch */
-@media (max-width: 360px) {
-    .hero-title {
-        font-size: 1.5rem;
-    }
-    
-    .section-title {
-        font-size: 1.5rem;
-    }
-    
-    .hero-buttons {
-        gap: var(--spacing-sm);
-    }
-    
-    .hero-cta {
-        padding: 0.75rem 1.25rem;
-        font-size: 0.85rem;
-        min-height: 48px;  /* Touch-friendly */
-    }
-    
-    .stat-value {
-        font-size: 1.75rem;
-    }
-    
-    .feature-list li,
-    .price-features li {
-        font-size: 0.85rem;
-    }
-    
-    .whatsapp-float {
-        width: 50px;
-        height: 50px;
-    }
-    
-    .whatsapp-float svg {
-        width: 24px;
-        height: 24px;
-    }
-    
-    .back-to-top {
-        width: 40px;
-        height: 40px;
-    }
-    
-    .back-to-top svg {
+    .nav-dot svg {
         width: 18px;
         height: 18px;
     }
     
-    /* Fluidité extrême : Utilisation vh pour paddings */
-    .hero {
-        padding: 10vh 5% 5vh;
+    /* Buttons */
+    .btn {
+        padding: 0.75rem 1.5rem;
+        font-size: var(--text-sm);
     }
     
-    section {
-        padding: 10vh 5%;
+    .btn-lg {
+        padding: 1rem 2rem;
+        font-size: var(--text-base);
+    }
+    
+    /* Cards */
+    .why-card,
+    .feature-card,
+    .price-card {
+        padding: var(--space-lg);
+    }
+    
+    .feature-icon {
+        width: 64px;
+        height: 64px;
+    }
+    
+    .feature-icon svg {
+        width: 32px;
+        height: 32px;
+    }
+    
+    /* Section spacing */
+    .section-header {
+        margin-bottom: var(--space-xl);
+    }
+    
+    /* Contact */
+    .contact-icon {
+        width: 44px;
+        height: 44px;
+        font-size: var(--text-xl);
+    }
+    
+    /* Access */
+    .access-card {
+        padding: var(--space-lg);
+    }
+    
+    .access-icon {
+        font-size: 3rem;
+    }
+    
+    .step-number {
+        width: 36px;
+        height: 36px;
+        font-size: var(--text-base);
+    }
+    
+    /* FAQ */
+    .faq-question {
+        padding: var(--space-md);
+        font-size: var(--text-base);
+    }
+    
+    .faq-question svg {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .faq-item.active .faq-answer {
+        padding: 0 var(--space-md) var(--space-md);
     }
 }
 
-/* ==================== LANDSCAPE MOBILE ==================== */
-/* Adaptations pour mode paysage sur mobile : Contenu condensé */
-@media (max-height: 500px) and (orientation: landscape) {
+/* Landscape Mode for Mobile */
+@media (max-height: 600px) and (orientation: landscape) {
     .hero {
-        padding: 3rem 5% 2rem;
         min-height: auto;
     }
     
-    .hero-title {
-        font-size: 1.75rem;
-        margin-bottom: var(--spacing-sm);
+    .hero .container {
+        grid-template-columns: 1fr 1fr;
     }
     
-    .hero-description {
-        font-size: 1rem;
-        margin-bottom: var(--spacing-sm);
+    .hero-content {
+        text-align: left;
     }
     
-    .hero-mockup {
-        margin-top: var(--spacing-md);
-        max-width: 80%;
+    .phone-mockup {
+        max-width: 280px;
     }
     
-    #nav-menu {
-        top: 60px;
-    }
-    
-    .steps-container .step {
-        grid-template-columns: 60px 1fr;
-        gap: var(--spacing-md);
-    }
-    
-    /* Grids horizontales pour paysage */
-    .why-grid,
-    .features-grid {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    .phone-screen {
+        height: 450px;
     }
 }
 
-/* ==================== PRINT STYLES ==================== */
-/* Styles pour impression : Suppression éléments inutiles, noir et blanc */
+/* Large Screens - 1400px and above */
+@media (min-width: 1400px) {
+    :root {
+        --container-max: 1400px;
+    }
+    
+    .hero-title {
+        font-size: 4.5rem;
+    }
+    
+    .phone-mockup {
+        max-width: 420px;
+    }
+    
+    .phone-screen {
+        height: 700px;
+    }
+}
+
+/* Print Styles */
 @media print {
-    .whatsapp-float,
-    #header,
-    .hero-buttons,
-    .cta-final,
-    .back-to-top,
     .scroll-progress,
-    .social-links,
-    .menu-toggle,
-    .theme-toggle,
-    .lang-toggle {
+    .header,
+    .whatsapp-btn,
+    .back-to-top,
+    .phone-nav,
+    .gradient-orb {
         display: none !important;
     }
     
     body {
-        background: white !important;
-        color: black !important;
-        font-size: 12pt;
+        background: white;
+        color: black;
     }
     
     .hero {
-        background: white !important;
-        color: black !important;
-        padding: 2rem 0;
+        background: white;
+        color: black;
+        page-break-after: always;
     }
     
-    .section-title {
-        color: black !important;
+    .section {
+        page-break-inside: avoid;
     }
     
     a {
-        color: black !important;
         text-decoration: underline;
     }
-    
-    .feature-card,
-    .why-item,
-    .testimonial-card {
-        box-shadow: none !important;
-        border: 1px solid black !important;
-    }
-    
-    /* Forcer affichage des liens */
-    a[href]::after {
-        content: " (" attr(href) ")";
-    }
 }
 
-/* ==================== HOVER STATES (Desktop Only) ==================== */
-/* Effets hover uniquement sur dispositifs avec hover précis */
-@media (hover: hover) {
-    .why-item:hover,
-    .feature-card:hover,
-    .testimonial-card:hover {
-        transform: translateY(-8px);
-    }
-    
-    .cta-btn:hover,
-    .submit-btn:hover {
-        transform: translateY(-3px);
-    }
-    
-    .social-links a:hover {
-        transform: translateY(-3px);
-    }
-}
-
-/* ==================== REDUCED MOTION ==================== */
-/* Désactivation animations pour utilisateurs préférant motion réduite */
-@media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-    }
-    
-    .whatsapp-pulse,
-    .icon-glow {
-        animation: none !important;
-    }
-}
-
-/* ==================== HIGH CONTRAST ==================== */
-/* Amélioration contrast pour mode high contrast */
-@media (prefers-contrast: more) {
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
     :root {
-        --border-color: #000000;  /* Bordures noires pour contraste */
+        --primary: #0000ff;
+        --secondary: #800080;
+        --text: #000000;
+        --bg: #ffffff;
+        --border: #000000;
     }
     
     [data-theme="dark"] {
-        --border-color: #ffffff;  /* Bordures blanches en dark mode */
+        --primary: #00ffff;
+        --secondary: #ff00ff;
+        --text: #ffffff;
+        --bg: #000000;
+        --border: #ffffff;
     }
     
     .feature-card,
-    .why-item,
-    .testimonial-card,
-    .contact-form {
-        border: 2px solid var(--border-color) !important;
+    .why-card,
+    .price-card,
+    .faq-item {
+        border-width: 2px;
+    }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+    /* Increase touch targets */
+    .nav a,
+    .btn,
+    .icon-btn,
+    .nav-dot {
+        min-height: 44px;
+        min-width: 44px;
     }
     
-    a,
-    button {
-        outline: 2px solid var(--border-color) !important;
+    /* Remove hover effects */
+    .feature-card:hover,
+    .why-card:hover,
+    .price-card:hover {
+        transform: none;
     }
     
-    .highlight {
-        background: yellow !important;
-        color: black !important;
+    /* Tap highlight */
+    a, button {
+        -webkit-tap-highlight-color: rgba(102, 126, 234, 0.3);
     }
 }

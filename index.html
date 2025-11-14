@@ -5,1070 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vento - Gestion de ventes pour commerçants africains</title>
     <meta name="description" content="Vento transforme la gestion de commerce en Afrique. Système de vente intelligent, mode offline avancé, analytics en temps réel.">
-   
-    <style>
-        /* ==================== VARIABLES & BASE ==================== */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-       
-        :root {
-            --primary: #667eea;
-            --secondary: #764ba2;
-            --accent: #818cf8;
-            --text: #1a1a1a;
-            --text-light: #64748b;
-            --bg: #ffffff;
-            --bg-secondary: #f8fafc;
-            --border: #e2e8f0;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --shadow: 0 4px 20px rgba(0,0,0,0.1);
-            --shadow-lg: 0 20px 60px rgba(0,0,0,0.15);
-        }
-        [data-theme="dark"] {
-            --text: #f1f5f9;
-            --text-light: #94a3b8;
-            --bg: #0f172a;
-            --bg-secondary: #1e293b;
-            --border: #334155;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            overflow-x: hidden;
-            transition: all 0.3s;
-        }
-        /* ==================== HEADER ==================== */
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            transition: all 0.3s;
-            background: transparent;
-        }
-        header.scrolled {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(20px);
-            box-shadow: var(--shadow);
-            border-bottom: 1px solid var(--border);
-        }
-        [data-theme="dark"] header.scrolled {
-            background: rgba(15, 23, 42, 0.98);
-        }
-        .header-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 1.75rem;
-            font-weight: 900;
-            cursor: pointer;
-            transition: transform 0.3s;
-            z-index: 1001;
-        }
-        .logo:hover { transform: scale(1.05); }
-        .logo-icon {
-            width: 45px;
-            height: 45px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 25px rgba(102, 126, 234, 0.5);
-            position: relative;
-            animation: logoFloat 3s ease-in-out infinite;
-        }
-        @keyframes logoFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-        .logo-icon::before {
-            content: '';
-            position: absolute;
-            inset: -3px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 16px;
-            opacity: 0.4;
-            filter: blur(12px);
-            z-index: -1;
-        }
-        .logo-icon svg {
-            width: 28px;
-            height: 28px;
-            fill: white;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-        }
-        .logo-text {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -1px;
-        }
-        nav {
-            display: flex;
-            align-items: center;
-            gap: 2.5rem;
-        }
-        nav a {
-            color: var(--text-light);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            position: relative;
-            transition: color 0.3s;
-        }
-        nav a:hover { color: var(--primary); }
-        nav a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            transition: width 0.3s;
-        }
-        nav a:hover::after { width: 100%; }
-        .cta-btn {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white !important;
-            padding: 0.85rem 2.5rem;
-            border-radius: 50px;
-            font-weight: 700;
-            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
-            transition: all 0.3s;
-        }
-        .cta-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 35px rgba(102, 126, 234, 0.5);
-        }
-        .cta-btn::after { display: none; }
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        .icon-btn {
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
-            background: var(--bg-secondary);
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-            font-size: 1.3rem;
-        }
-        .icon-btn:hover {
-            background: var(--border);
-            transform: scale(1.1);
-        }
-        .menu-toggle {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            cursor: pointer;
-            width: 42px;
-            height: 42px;
-            justify-content: center;
-            align-items: center;
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            transition: all 0.3s;
-        }
-        .menu-toggle span {
-            width: 22px;
-            height: 2px;
-            background: var(--text);
-            transition: all 0.3s;
-            border-radius: 2px;
-        }
-        .menu-toggle.active span:nth-child(1) {
-            transform: rotate(45deg) translateY(7px);
-        }
-        .menu-toggle.active span:nth-child(2) {
-            opacity: 0;
-        }
-        .menu-toggle.active span:nth-child(3) {
-            transform: rotate(-45deg) translateY(-7px);
-        }
-        /* ==================== HERO ==================== */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10rem 2rem 5rem;
-            position: relative;
-            overflow: hidden;
-        }
-        .hero-bg {
-            position: absolute;
-            inset: 0;
-            z-index: -1;
-        }
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(120px);
-            opacity: 0.25;
-            animation: float 25s ease-in-out infinite;
-        }
-        .orb-1 {
-            width: 700px;
-            height: 700px;
-            background: var(--primary);
-            top: -250px;
-            left: -250px;
-        }
-        .orb-2 {
-            width: 600px;
-            height: 600px;
-            background: var(--secondary);
-            top: 35%;
-            right: -200px;
-            animation-delay: 3s;
-        }
-        .orb-3 {
-            width: 500px;
-            height: 500px;
-            background: var(--accent);
-            bottom: -150px;
-            left: 25%;
-            animation-delay: 6s;
-        }
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(30px, -30px) scale(1.05); }
-            66% { transform: translate(-20px, 20px) scale(0.95); }
-        }
-        .hero-content {
-            max-width: 1300px;
-            text-align: center;
-            animation: fadeInUp 1s ease-out;
-        }
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-            background: rgba(102, 126, 234, 0.1);
-            border: 1px solid rgba(102, 126, 234, 0.3);
-            padding: 0.75rem 2rem;
-            border-radius: 50px;
-            margin-bottom: 2.5rem;
-            font-size: 0.95rem;
-            font-weight: 700;
-            backdrop-filter: blur(10px);
-            animation: badgeFloat 3s ease-in-out infinite;
-        }
-        @keyframes badgeFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-        .pulse-dot {
-            width: 10px;
-            height: 10px;
-            background: var(--success);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-            box-shadow: 0 0 10px var(--success);
-        }
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            50% {
-                opacity: 0.6;
-                transform: scale(1.3);
-            }
-        }
-        .hero-title {
-            font-size: clamp(2.5rem, 9vw, 6rem);
-            font-weight: 900;
-            line-height: 1.1;
-            margin-bottom: 2rem;
-            letter-spacing: -3px;
-        }
-        .gradient-text {
-            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradientMove 4s ease infinite;
-        }
-        @keyframes gradientMove {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        .hero-desc {
-            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
-            color: var(--text-light);
-            max-width: 800px;
-            margin: 0 auto 3.5rem;
-            line-height: 1.9;
-            font-weight: 400;
-        }
-        .hero-stats {
-            display: flex;
-            justify-content: center;
-            gap: 4rem;
-            margin: 3.5rem 0;
-            flex-wrap: wrap;
-        }
-        .stat {
-            text-align: center;
-            padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.7);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            min-width: 150px;
-            transition: all 0.3s;
-        }
-        [data-theme="dark"] .stat {
-            background: rgba(30, 41, 59, 0.7);
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-        .stat:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
-        }
-        .stat-value {
-            font-size: 3.5rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            display: block;
-            line-height: 1;
-        }
-        .stat-label {
-            color: var(--text-light);
-            font-size: 0.95rem;
-            margin-top: 0.75rem;
-            font-weight: 600;
-        }
-        .hero-buttons {
-            display: flex;
-            gap: 1.5rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 5rem;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 1.5rem 4rem;
-            border-radius: 50px;
-            font-weight: 800;
-            font-size: 1.15rem;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 12px 45px rgba(102, 126, 234, 0.4);
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-            position: relative;
-            overflow: hidden;
-        }
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-        .btn-primary:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-        .btn-primary:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 18px 60px rgba(102, 126, 234, 0.5);
-        }
-        .btn-secondary {
-            background: transparent;
-            color: var(--text);
-            padding: 1.5rem 4rem;
-            border-radius: 50px;
-            font-weight: 800;
-            font-size: 1.15rem;
-            border: 3px solid var(--border);
-            cursor: pointer;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        .btn-secondary:hover {
-            border-color: var(--primary);
-            background: rgba(102, 126, 234, 0.05);
-            transform: translateY(-4px);
-        }
-        /* ==================== PHONE MOCKUP ==================== */
-        .phone-mockup {
-            max-width: 380px;
-            margin: 0 auto;
-            position: relative;
-            animation: phoneFloat 8s ease-in-out infinite;
-            filter: drop-shadow(0 30px 80px rgba(0, 0, 0, 0.2));
-        }
-        @keyframes phoneFloat {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            25% { transform: translateY(-15px) rotate(1deg); }
-            75% { transform: translateY(-10px) rotate(-1deg); }
-        }
-        .phone-frame {
-            position: relative;
-            background: #1a1a1a;
-            border-radius: 3.5rem;
-            padding: 1rem;
-            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
-            transition: all 0.5s;
-        }
-        .phone-frame:hover {
-            transform: scale(1.03) rotate(2deg);
-            box-shadow: 0 50px 120px rgba(102, 126, 234, 0.4);
-        }
-        .phone-frame::before {
-            content: '';
-            position: absolute;
-            inset: -4px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
-            border-radius: 3.7rem;
-            opacity: 0.5;
-            filter: blur(25px);
-            z-index: -1;
-            animation: glowPulse 3s ease-in-out infinite;
-        }
-        @keyframes glowPulse {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 0.8; }
-        }
-        .phone-notch {
-            position: absolute;
-            top: 1rem;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 140px;
-            height: 30px;
-            background: #1a1a1a;
-            border-radius: 0 0 22px 22px;
-            z-index: 10;
-            box-shadow: inset 0 -2px 5px rgba(0,0,0,0.5);
-        }
-        .phone-screen {
-            background: linear-gradient(to bottom, #fafbfc, #e8edf2);
-            border-radius: 3rem;
-            height: 650px;
-            overflow: hidden;
-            position: relative;
-        }
-        [data-theme="dark"] .phone-screen {
-            background: linear-gradient(to bottom, #1e293b, #0f172a);
-        }
-        .status-bar {
-            display: flex;
-            justify-content: space-between;
-            padding: 2.5rem 2rem 1rem;
-            font-size: 0.8rem;
-            color: var(--text-light);
-            font-weight: 600;
-        }
-        .phone-content {
-            padding: 2rem;
-            height: calc(100% - 120px);
-            overflow-y: auto;
-        }
-        .phone-content::-webkit-scrollbar {
-            width: 4px;
-        }
-        .phone-content::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 10px;
-        }
-        .content-header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 2rem;
-            border-radius: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
-            animation: slideDown 0.5s ease-out;
-        }
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .content-header h3 {
-            font-size: 1.4rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-        .sales-card {
-            background: white;
-            border-radius: 2rem;
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s;
-            animation: fadeIn 0.5s ease-out;
-        }
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        [data-theme="dark"] .sales-card {
-            background: #1e293b;
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
-        }
-        .sales-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.12);
-        }
-        .sales-value {
-            font-size: 2.5rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: 0.75rem 0;
-            display: block;
-        }
-        .sales-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        .mini-card {
-            background: white;
-            border-radius: 1.5rem;
-            padding: 1.5rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-            transition: all 0.3s;
-        }
-        [data-theme="dark"] .mini-card {
-            background: #1e293b;
-        }
-        .mini-card:hover {
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-        }
-        .mini-value {
-            font-size: 2rem;
-            font-weight: 900;
-            margin: 0.75rem 0;
-            color: var(--text);
-        }
-        .mini-label {
-            font-size: 0.8rem;
-            color: var(--text-light);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .phone-nav {
-            position: absolute;
-            bottom: 2.5rem;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(25px);
-            padding: 1rem 2rem;
-            border-radius: 50px;
-            display: flex;
-            gap: 2rem;
-            box-shadow: 0 12px 45px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-        }
-        [data-theme="dark"] .phone-nav {
-            background: rgba(30, 41, 59, 0.98);
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-        .nav-dot {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: var(--border);
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-        .nav-dot.active {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            transform: scale(1.15);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
-        }
-        .nav-dot.active::after {
-            content: '';
-            position: absolute;
-            inset: -4px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            opacity: 0.3;
-            filter: blur(8px);
-            z-index: -1;
-        }
-        .nav-dot svg {
-            width: 24px;
-            height: 24px;
-            transition: all 0.3s;
-        }
-        .nav-dot.active svg {
-            fill: white;
-            transform: scale(1.1);
-        }
-        /* ==================== SECTIONS ==================== */
-        section {
-            padding: 8rem 2rem;
-            position: relative;
-        }
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        .section-header {
-            text-align: center;
-            margin-bottom: 5rem;
-        }
-        .section-tag {
-            display: inline-block;
-            background: rgba(102, 126, 234, 0.1);
-            color: var(--primary);
-            padding: 0.75rem 2rem;
-            border-radius: 50px;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            font-size: 0.95rem;
-            border: 1px solid rgba(102, 126, 234, 0.2);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .section-title {
-            font-size: clamp(2.5rem, 6vw, 4rem);
-            font-weight: 900;
-            margin-bottom: 1.5rem;
-            letter-spacing: -2px;
-            line-height: 1.1;
-        }
-        .section-subtitle {
-            font-size: 1.3rem;
-            color: var(--text-light);
-            max-width: 700px;
-            margin: 0 auto;
-            line-height: 1.8;
-        }
-        /* ==================== FEATURES ==================== */
-        .features {
-            background: var(--bg-secondary);
-        }
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2.5rem;
-        }
-        .feature-card {
-            background: var(--bg);
-            padding: 3rem;
-            border-radius: 2rem;
-            border: 1px solid var(--border);
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            position: relative;
-            overflow: hidden;
-        }
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.4s;
-        }
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 25px 70px rgba(102, 126, 234, 0.25);
-            border-color: transparent;
-        }
-        .feature-card:hover::before {
-            transform: scaleX(1);
-        }
-        .feature-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 2rem;
-            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
-            transition: all 0.4s;
-            position: relative;
-        }
-        .feature-icon::after {
-            content: '';
-            position: absolute;
-            inset: -5px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 2.3rem;
-            opacity: 0.3;
-            filter: blur(15px);
-            z-index: -1;
-        }
-        .feature-card:hover .feature-icon {
-            transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 15px 45px rgba(102, 126, 234, 0.5);
-        }
-        .feature-icon svg {
-            width: 40px;
-            height: 40px;
-            fill: white;
-        }
-        .feature-card h3 {
-            font-size: 1.75rem;
-            margin-bottom: 1.25rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-        .feature-card p {
-            color: var(--text-light);
-            line-height: 1.9;
-            font-size: 1.05rem;
-        }
-        .feature-list {
-            list-style: none;
-            margin-top: 1.5rem;
-            padding: 0;
-        }
-        .feature-list li {
-            padding: 0.75rem 0;
-            color: var(--text-light);
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        .feature-list li::before {
-            content: '✓';
-            color: var(--success);
-            font-weight: 900;
-            font-size: 1.2rem;
-            width: 24px;
-            height: 24px;
-            background: rgba(16, 185, 129, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        /* ==================== FOOTER ==================== */
-        footer {
-            background: var(--bg-secondary);
-            border-top: 1px solid var(--border);
-            padding: 4rem 2rem;
-        }
-        .footer-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
-            gap: 3rem;
-            margin-bottom: 3rem;
-        }
-        .footer-logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-            font-size: 1.75rem;
-            font-weight: 900;
-        }
-        .footer-desc {
-            color: var(--text-light);
-            line-height: 1.8;
-            margin-bottom: 2rem;
-        }
-        .social-links {
-            display: flex;
-            gap: 1rem;
-        }
-        .social-links a {
-            width: 45px;
-            height: 45px;
-            background: var(--bg);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-            border: 1px solid var(--border);
-        }
-        .social-links a:hover {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-        }
-        .social-links a:hover svg {
-            fill: white;
-        }
-        .social-links svg {
-            width: 20px;
-            height: 20px;
-            fill: var(--text-light);
-            transition: all 0.3s;
-        }
-        .footer-column h4 {
-            margin-bottom: 1.5rem;
-            font-size: 1.1rem;
-            font-weight: 800;
-        }
-        .footer-column ul {
-            list-style: none;
-        }
-        .footer-column ul li {
-            margin-bottom: 1rem;
-        }
-        .footer-column a {
-            color: var(--text-light);
-            text-decoration: none;
-            transition: all 0.3s;
-            font-size: 0.95rem;
-        }
-        .footer-column a:hover {
-            color: var(--primary);
-            padding-left: 5px;
-        }
-        .footer-bottom {
-            border-top: 1px solid var(--border);
-            padding-top: 2rem;
-            text-align: center;
-            color: var(--text-light);
-            font-size: 0.95rem;
-        }
-        /* ==================== WHATSAPP ==================== */
-        .whatsapp-btn {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 65px;
-            height: 65px;
-            background: #25D366;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 6px 25px rgba(37, 211, 102, 0.5);
-            cursor: pointer;
-            transition: all 0.3s;
-            z-index: 999;
-            animation: float 4s ease-in-out infinite;
-        }
-        .whatsapp-btn:hover {
-            transform: scale(1.15);
-            box-shadow: 0 8px 35px rgba(37, 211, 102, 0.7);
-        }
-        .whatsapp-btn svg {
-            width: 38px;
-            height: 38px;
-            fill: white;
-        }
-        .whatsapp-btn::after {
-            content: '';
-            position: absolute;
-            inset: -4px;
-            background: #25D366;
-            border-radius: 50%;
-            opacity: 0.4;
-            filter: blur(12px);
-            z-index: -1;
-            animation: pulse 2s infinite;
-        }
-        /* ==================== BACK TO TOP ==================== */
-        .back-to-top {
-            position: fixed;
-            bottom: 2rem;
-            right: 6rem;
-            width: 55px;
-            height: 55px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
-            opacity: 0;
-            visibility: hidden;
-            transform: scale(0);
-            transition: all 0.3s;
-            z-index: 999;
-        }
-        .back-to-top.show {
-            opacity: 1;
-            visibility: visible;
-            transform: scale(1);
-        }
-        .back-to-top:hover {
-            transform: scale(1.1) translateY(-3px);
-            box-shadow: 0 8px 35px rgba(102, 126, 234, 0.5);
-        }
-        .back-to-top svg {
-            width: 24px;
-            height: 24px;
-            stroke: white;
-            stroke-width: 3;
-        }
-        /* ==================== RESPONSIVE ==================== */
-        @media (max-width: 1024px) {
-            .footer-content {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-        @media (max-width: 768px) {
-            nav {
-                position: fixed;
-                top: 75px;
-                left: 0;
-                right: 0;
-                flex-direction: column;
-                background: var(--bg);
-                padding: 2rem;
-                gap: 1.5rem;
-                transform: translateY(-120%);
-                opacity: 0;
-                transition: all 0.4s;
-                box-shadow: var(--shadow-lg);
-                border-bottom: 1px solid var(--border);
-                z-index: 999;
-            }
-            nav.active {
-                transform: translateY(0);
-                opacity: 1;
-            }
-            nav a {
-                width: 100%;
-                padding: 1rem;
-                text-align: center;
-                border-radius: 12px;
-                background: var(--bg-secondary);
-            }
-            .cta-btn {
-                width: 100%;
-            }
-            .menu-toggle {
-                display: flex;
-            }
-            .hero {
-                padding: 7rem 1.5rem 4rem;
-            }
-            .hero-title {
-                font-size: 2.5rem;
-            }
-            .hero-stats {
-                gap: 2rem;
-            }
-            .hero-buttons {
-                flex-direction: column;
-                width: 100%;
-            }
-            .btn-primary,
-            .btn-secondary {
-                width: 100%;
-                justify-content: center;
-                padding: 1.25rem 2rem;
-            }
-            .phone-mockup {
-                max-width: 300px;
-            }
-            .phone-screen {
-                height: 550px;
-            }
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-            .footer-content {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-            .social-links {
-                justify-content: center;
-            }
-            .whatsapp-btn {
-                bottom: 1.5rem;
-                right: 1.5rem;
-                width: 58px;
-                height: 58px;
-            }
-            .back-to-top {
-                bottom: 1.5rem;
-                right: 5rem;
-                width: 50px;
-                height: 50px;
-            }
-        }
-        /* ==================== UTILITIES ==================== */
-        .hidden { display: none; }
-        .lang-en { display: none; }
-        [data-lang="en"] .lang-fr { display: none; }
-        [data-lang="en"] .lang-en { display: block; }
-    </style>
+    <link rel="stylesheet" href="/styles/sytles.css">
 </head>
 <body data-theme="light" data-lang="fr">
     <!-- ==================== HEADER ==================== -->
@@ -1083,18 +20,12 @@
                 <span class="logo-text">Vento</span>
             </div>
             <nav id="nav">
-                <a href="#home" class="lang-fr">Accueil</a>
-                <a href="#home" class="lang-en">Home</a>
-                <a href="#features" class="lang-fr">Fonctionnalités</a>
-                <a href="#features" class="lang-en">Features</a>
-                <a href="#demo" class="lang-fr">Démo</a>
-                <a href="#demo" class="lang-en">Demo</a>
-                <a href="#faq" class="lang-fr">FAQ</a>
-                <a href="#faq" class="lang-en">FAQ</a>
-                <a href="#contact" class="lang-fr">Contact</a>
-                <a href="#contact" class="lang-en">Contact</a>
-                <a href="#access" class="cta-btn lang-fr">Demander un Accès</a>
-                <a href="#access" class="cta-btn lang-en">Request Access</a>
+                <a href="#home">Accueil</a>
+                <a href="#features">Fonctionnalités</a>
+                <a href="#demo">Démo</a>
+                <a href="#faq">FAQ</a>
+                <a href="#contact">Contact</a>
+                <a href="#" class="cta-btn" id="access-btn">Demander un Accès</a>
             </nav>
             <div class="header-actions">
                 <button class="icon-btn" id="lang-btn" title="Changer de langue">🇫🇷</button>
@@ -1117,50 +48,37 @@
         <div class="hero-content">
             <div class="hero-badge">
                 <span class="pulse-dot"></span>
-                <span class="lang-fr">🔒 Accès Privé — Invitation sur demande</span>
-                <span class="lang-en">🔒 Private Access — Invitation Only</span>
+                🔒 Accès Privé — Invitation sur demande
             </div>
-            <h1 class="hero-title lang-fr">
+            <h1 class="hero-title">
                 La plateforme de gestion<br>
                 <span class="gradient-text">pour commerçants africains</span>
             </h1>
-            <h1 class="hero-title lang-en">
-                The management platform<br>
-                <span class="gradient-text">for African merchants</span>
-            </h1>
-            <p class="hero-desc lang-fr">
+            <p class="hero-desc">
                 Vento transforme la gestion de commerce en Afrique. Système de vente intelligent, mode offline avancé, analytics en temps réel. Rejoignez les pionniers qui révolutionnent leur business.
-            </p>
-            <p class="hero-desc lang-en">
-                Vento transforms business management in Africa. Intelligent sales system, advanced offline mode, real-time analytics. Join the pioneers revolutionizing their business.
             </p>
             <div class="hero-stats">
                 <div class="stat">
                     <span class="stat-value" data-target="250">0</span>
-                    <span class="stat-label lang-fr">Commerçants actifs</span>
-                    <span class="stat-label lang-en">Active Merchants</span>
+                    <span class="stat-label">Commerçants actifs</span>
                 </div>
                 <div class="stat">
                     <span class="stat-value" data-target="99.9">0</span>
-                    <span class="stat-label lang-fr">Fiabilité</span>
-                    <span class="stat-label lang-en">Uptime</span>
+                    <span class="stat-label">Fiabilité</span>
                 </div>
                 <div class="stat">
                     <span class="stat-value" data-target="5">0</span>
-                    <span class="stat-label lang-fr">Pays en Afrique</span>
-                    <span class="stat-label lang-en">African Countries</span>
+                    <span class="stat-label">Pays en Afrique</span>
                 </div>
             </div>
             <div class="hero-buttons">
-                <button class="btn-primary">
-                    <span class="lang-fr">Demander un Accès Privé</span>
-                    <span class="lang-en">Request Private Access</span>
+                <button class="btn-primary" id="access-btn-hero">
+                    <span>Demander un Accès Privé</span>
                     <span>→</span>
                 </button>
-                <button class="btn-secondary">
+                <button class="btn-secondary" id="demo-btn">
                     <span>▶</span>
-                    <span class="lang-fr">Voir la Démo</span>
-                    <span class="lang-en">Watch Demo</span>
+                    <span>Voir la Démo</span>
                 </button>
             </div>
             <!-- PHONE MOCKUP -->
@@ -1173,127 +91,36 @@
                             <span>🔋 100%</span>
                         </div>
                         <div class="phone-content" id="phone-content">
-                            <div id="sales-view">
-                                <div class="content-header">
-                                    <h3 class="lang-fr">Ventes du jour</h3>
-                                    <h3 class="lang-en">Today's Sales</h3>
+                            <div class="content-header">
+                                <h3>Ventes du jour</h3>
+                            </div>
+                            <div class="sales-card">
+                                <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Chiffre d'affaires</div>
+                                <div class="sales-value">***</div>
+                                <div style="font-size: 0.8rem; color: #10b981; font-weight: 600;">Données masquées</div>
+                            </div>
+                            <div class="sales-grid">
+                                <div class="mini-card">
+                                    <div class="mini-label">Ventes</div>
+                                    <div class="mini-value">--</div>
+                                    <div style="font-size: 0.7rem; color: #667eea; font-weight: 700;">Demo</div>
                                 </div>
-                                <div class="sales-card">
-                                    <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;" class="lang-fr">Chiffre d'affaires</div>
-                                    <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;" class="lang-en">Revenue</div>
-                                    <div class="sales-value">***</div>
-                                    <div style="font-size: 0.8rem; color: #10b981; font-weight: 600;" class="lang-fr">Données masquées</div>
-                                    <div style="font-size: 0.8rem; color: #10b981; font-weight: 600;" class="lang-en">Masked Data</div>
-                                </div>
-                                <div class="sales-grid">
-                                    <div class="mini-card">
-                                        <div class="mini-label lang-fr">Ventes</div>
-                                        <div class="mini-label lang-en">Sales</div>
-                                        <div class="mini-value">--</div>
-                                        <div style="font-size: 0.7rem; color: #667eea; font-weight: 700;">Demo</div>
-                                    </div>
-                                    <div class="mini-card">
-                                        <div class="mini-label lang-fr">Clients</div>
-                                        <div class="mini-label lang-en">Customers</div>
-                                        <div class="mini-value">--</div>
-                                        <div style="font-size: 0.7rem; color: #10b981; font-weight: 700;">Demo</div>
-                                    </div>
-                                </div>
-                                <div class="sales-card">
-                                    <div style="display: flex; align-items: center; gap: 1rem;">
-                                        <div style="width: 50px; height: 50px; background: rgba(102, 126, 234, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
-                                            📦
-                                        </div>
-                                        <div style="flex: 1;">
-                                            <div style="font-weight: 700; font-size: 1rem;" class="lang-fr">Produit exemple</div>
-                                            <div style="font-weight: 700; font-size: 1rem;" class="lang-en">Example Product</div>
-                                            <div style="font-size: 0.8rem; color: #64748b;" class="lang-fr">Démo interactive</div>
-                                            <div style="font-size: 0.8rem; color: #64748b;" class="lang-en">Interactive Demo</div>
-                                        </div>
-                                        <div style="font-weight: 900; color: #10b981; font-size: 1.1rem;">***</div>
-                                    </div>
+                                <div class="mini-card">
+                                    <div class="mini-label">Clients</div>
+                                    <div class="mini-value">--</div>
+                                    <div style="font-size: 0.7rem; color: #10b981; font-weight: 700;">Demo</div>
                                 </div>
                             </div>
-                            <div id="stock-view" class="hidden">
-                                <div class="content-header">
-                                    <h3 class="lang-fr">Gestion de Stock</h3>
-                                    <h3 class="lang-en">Stock Management</h3>
-                                </div>
-                                <div class="sales-card">
-                                    <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;" class="lang-fr">Niveau de Stock</div>
-                                    <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;" class="lang-en">Stock Level</div>
-                                    <div class="sales-value">***</div>
-                                    <div style="font-size: 0.8rem; color: #10b981; font-weight: 600;" class="lang-fr">Données masquées</div>
-                                    <div style="font-size: 0.8rem; color: #10b981; font-weight: 600;" class="lang-en">Masked Data</div>
-                                </div>
-                                <div class="sales-grid">
-                                    <div class="mini-card">
-                                        <div class="mini-label lang-fr">Articles Bas</div>
-                                        <div class="mini-label lang-en">Low Items</div>
-                                        <div class="mini-value">--</div>
-                                        <div style="font-size: 0.7rem; color: #f59e0b; font-weight: 700;">Demo</div>
+                            <div class="sales-card">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div style="width: 50px; height: 50px; background: rgba(102, 126, 234, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                                        📦
                                     </div>
-                                    <div class="mini-card">
-                                        <div class="mini-label lang-fr">Entrées</div>
-                                        <div class="mini-label lang-en">Entries</div>
-                                        <div class="mini-value">--</div>
-                                        <div style="font-size: 0.7rem; color: #10b981; font-weight: 700;">Demo</div>
+                                    <div style="flex: 1;">
+                                        <div style="font-weight: 700; font-size: 1rem;">Produit exemple</div>
+                                        <div style="font-size: 0.8rem; color: #64748b;">Démo interactive</div>
                                     </div>
-                                </div>
-                                <div class="sales-card">
-                                    <div style="display: flex; align-items: center; gap: 1rem;">
-                                        <div style="width: 50px; height: 50px; background: rgba(102, 126, 234, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
-                                            📦
-                                        </div>
-                                        <div style="flex: 1;">
-                                            <div style="font-weight: 700; font-size: 1rem;" class="lang-fr">Produit exemple</div>
-                                            <div style="font-weight: 700; font-size: 1rem;" class="lang-en">Example Product</div>
-                                            <div style="font-size: 0.8rem; color: #64748b;" class="lang-fr">Démo interactive</div>
-                                            <div style="font-size: 0.8rem; color: #64748b;" class="lang-en">Interactive Demo</div>
-                                        </div>
-                                        <div style="font-weight: 900; color: #ef4444; font-size: 1.1rem;">***</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="analytics-view" class="hidden">
-                                <div class="content-header">
-                                    <h3 class="lang-fr">Analyses</h3>
-                                    <h3 class="lang-en">Analytics</h3>
-                                </div>
-                                <div class="sales-card">
-                                    <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;" class="lang-fr">Tendances</div>
-                                    <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;" class="lang-en">Trends</div>
-                                    <div class="sales-value">***</div>
-                                    <div style="font-size: 0.8rem; color: #10b981; font-weight: 600;" class="lang-fr">Données masquées</div>
-                                    <div style="font-size: 0.8rem; color: #10b981; font-weight: 600;" class="lang-en">Masked Data</div>
-                                </div>
-                                <div class="sales-grid">
-                                    <div class="mini-card">
-                                        <div class="mini-label lang-fr">Croissance</div>
-                                        <div class="mini-label lang-en">Growth</div>
-                                        <div class="mini-value">--%</div>
-                                        <div style="font-size: 0.7rem; color: #667eea; font-weight: 700;">Demo</div>
-                                    </div>
-                                    <div class="mini-card">
-                                        <div class="mini-label lang-fr">Prédictions</div>
-                                        <div class="mini-label lang-en">Predictions</div>
-                                        <div class="mini-value">--</div>
-                                        <div style="font-size: 0.7rem; color: #10b981; font-weight: 700;">Demo</div>
-                                    </div>
-                                </div>
-                                <div class="sales-card">
-                                    <div style="display: flex; align-items: center; gap: 1rem;">
-                                        <div style="width: 50px; height: 50px; background: rgba(102, 126, 234, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
-                                            📈
-                                        </div>
-                                        <div style="flex: 1;">
-                                            <div style="font-weight: 700; font-size: 1rem;" class="lang-fr">Rapport exemple</div>
-                                            <div style="font-weight: 700; font-size: 1rem;" class="lang-en">Example Report</div>
-                                            <div style="font-size: 0.8rem; color: #64748b;" class="lang-fr">Démo interactive</div>
-                                            <div style="font-size: 0.8rem; color: #64748b;" class="lang-en">Interactive Demo</div>
-                                        </div>
-                                        <div style="font-weight: 900; color: #10b981; font-size: 1.1rem;">***</div>
-                                    </div>
+                                    <div style="font-weight: 900; color: #10b981; font-size: 1.1rem;">***</div>
                                 </div>
                             </div>
                         </div>
@@ -1323,12 +150,9 @@
     <section class="features" id="features">
         <div class="container">
             <div class="section-header">
-                <div class="section-tag lang-fr">Fonctionnalités</div>
-                <div class="section-tag lang-en">Features</div>
-                <h2 class="section-title lang-fr">Tout ce dont vous avez besoin</h2>
-                <h2 class="section-title lang-en">Everything You Need</h2>
-                <p class="section-subtitle lang-fr">Des outils puissants pour gérer votre commerce efficacement</p>
-                <p class="section-subtitle lang-en">Powerful tools to manage your business efficiently</p>
+                <div class="section-tag">Fonctionnalités</div>
+                <h2 class="section-title">Tout ce dont vous avez besoin</h2>
+                <p class="section-subtitle">Des outils puissants pour gérer votre commerce efficacement</p>
             </div>
             <div class="features-grid">
                 <div class="feature-card">
@@ -1337,17 +161,12 @@
                             <path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/>
                         </svg>
                     </div>
-                    <h3 class="lang-fr">Gestion de Stock</h3>
-                    <h3 class="lang-en">Stock Management</h3>
-                    <p class="lang-fr">Suivez votre stock en temps réel. Alertes automatiques pour les ruptures. Gestion multi-magasins optimisée.</p>
-                    <p class="lang-en">Track your stock in real time. Automatic alerts for shortages. Optimized multi-store management.</p>
+                    <h3>Gestion de Stock</h3>
+                    <p>Suivez votre stock en temps réel. Alertes automatiques pour les ruptures. Gestion multi-magasins optimisée.</p>
                     <ul class="feature-list">
-                        <li class="lang-fr">Suivi en temps réel</li>
-                        <li class="lang-en">Real-time tracking</li>
-                        <li class="lang-fr">Alertes intelligentes</li>
-                        <li class="lang-en">Smart alerts</li>
-                        <li class="lang-fr">Multi-magasins</li>
-                        <li class="lang-en">Multi-stores</li>
+                        <li>Suivi en temps réel</li>
+                        <li>Alertes intelligentes</li>
+                        <li>Multi-magasins</li>
                     </ul>
                 </div>
                 <div class="feature-card">
@@ -1356,17 +175,12 @@
                             <path d="M13 2L3 14h8l-2 8 10-12h-8l2-8z"/>
                         </svg>
                     </div>
-                    <h3 class="lang-fr">Vente Offline</h3>
-                    <h3 class="lang-en">Offline Sales</h3>
-                    <p class="lang-fr">Enregistrez vos ventes sans internet. Synchronisation automatique. Données toujours protégées et sécurisées.</p>
-                    <p class="lang-en">Record your sales without internet. Automatic synchronization. Data always protected and secure.</p>
+                    <h3>Vente Offline</h3>
+                    <p>Enregistrez vos ventes sans internet. Synchronisation automatique. Données toujours protégées et sécurisées.</p>
                     <ul class="feature-list">
-                        <li class="lang-fr">100% offline</li>
-                        <li class="lang-en">100% offline</li>
-                        <li class="lang-fr">Sync automatique</li>
-                        <li class="lang-en">Auto sync</li>
-                        <li class="lang-fr">Sécurisé</li>
-                        <li class="lang-en">Secure</li>
+                        <li>100% offline</li>
+                        <li>Sync automatique</li>
+                        <li>Sécurisé</li>
                     </ul>
                 </div>
                 <div class="feature-card">
@@ -1375,17 +189,12 @@
                             <path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/>
                         </svg>
                     </div>
-                    <h3 class="lang-fr">Analytics & Rapports</h3>
-                    <h3 class="lang-en">Analytics & Reports</h3>
-                    <p class="lang-fr">Visualisez vos performances en un coup d'œil. Rapports détaillés avec prédictions intelligentes par IA.</p>
-                    <p class="lang-en">Visualize your performance at a glance. Detailed reports with intelligent AI predictions.</p>
+                    <h3>Analytics & Rapports</h3>
+                    <p>Visualisez vos performances en un coup d'œil. Rapports détaillés avec prédictions intelligentes par IA.</p>
                     <ul class="feature-list">
-                        <li class="lang-fr">Dashboard temps réel</li>
-                        <li class="lang-en">Real-time dashboard</li>
-                        <li class="lang-fr">Rapports PDF</li>
-                        <li class="lang-en">PDF reports</li>
-                        <li class="lang-fr">Prédictions IA</li>
-                        <li class="lang-en">AI predictions</li>
+                        <li>Dashboard temps réel</li>
+                        <li>Rapports PDF</li>
+                        <li>Prédictions IA</li>
                     </ul>
                 </div>
                 <div class="feature-card">
@@ -1394,17 +203,12 @@
                             <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                         </svg>
                     </div>
-                    <h3 class="lang-fr">Multi-Utilisateurs</h3>
-                    <h3 class="lang-en">Multi-Users</h3>
-                    <p class="lang-fr">Gérez plusieurs vendeurs avec permissions personnalisées. Suivez les performances individuelles de chaque membre.</p>
-                    <p class="lang-en">Manage multiple sellers with custom permissions. Track individual performance of each member.</p>
+                    <h3>Multi-Utilisateurs</h3>
+                    <p>Gérez plusieurs vendeurs avec permissions personnalisées. Suivez les performances individuelles de chaque membre.</p>
                     <ul class="feature-list">
-                        <li class="lang-fr">Comptes illimités</li>
-                        <li class="lang-en">Unlimited accounts</li>
-                        <li class="lang-fr">Rôles & permissions</li>
-                        <li class="lang-en">Roles & permissions</li>
-                        <li class="lang-fr">Suivi performance</li>
-                        <li class="lang-en">Performance tracking</li>
+                        <li>Comptes illimités</li>
+                        <li>Rôles & permissions</li>
+                        <li>Suivi performance</li>
                     </ul>
                 </div>
                 <div class="feature-card">
@@ -1413,17 +217,12 @@
                             <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
                         </svg>
                     </div>
-                    <h3 class="lang-fr">Notifications Intelligentes</h3>
-                    <h3 class="lang-en">Smart Notifications</h3>
-                    <p class="lang-fr">Recevez des alertes pertinentes au bon moment. Rappels automatiques pour ne rien manquer d'important.</p>
-                    <p class="lang-en">Receive relevant alerts at the right time. Automatic reminders so you don't miss anything important.</p>
+                    <h3>Notifications Intelligentes</h3>
+                    <p>Recevez des alertes pertinentes au bon moment. Rappels automatiques pour ne rien manquer d'important.</p>
                     <ul class="feature-list">
-                        <li class="lang-fr">SMS & Push</li>
-                        <li class="lang-en">SMS & Push</li>
-                        <li class="lang-fr">Rappels dettes</li>
-                        <li class="lang-en">Debt reminders</li>
-                        <li class="lang-fr">Alertes stock</li>
-                        <li class="lang-en">Stock alerts</li>
+                        <li>SMS & Push</li>
+                        <li>Rappels dettes</li>
+                        <li>Alertes stock</li>
                     </ul>
                 </div>
                 <div class="feature-card">
@@ -1432,112 +231,138 @@
                             <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
                         </svg>
                     </div>
-                    <h3 class="lang-fr">Gestion des Dettes</h3>
-                    <h3 class="lang-en">Debt Management</h3>
-                    <p class="lang-fr">Suivez les crédits clients facilement. Rappels SMS automatiques avec historique complet des transactions.</p>
-                    <p class="lang-en">Easily track customer credits. Automatic SMS reminders with complete transaction history.</p>
+                    <h3>Gestion des Dettes</h3>
+                    <p>Suivez les crédits clients facilement. Rappels SMS automatiques avec historique complet des transactions.</p>
                     <ul class="feature-list">
-                        <li class="lang-fr">Suivi détaillé</li>
-                        <li class="lang-en">Detailed tracking</li>
-                        <li class="lang-fr">Rappels SMS</li>
-                        <li class="lang-en">SMS reminders</li>
-                        <li class="lang-fr">Historique complet</li>
-                        <li class="lang-en">Complete history</li>
+                        <li>Suivi détaillé</li>
+                        <li>Rappels SMS</li>
+                        <li>Historique complet</li>
                     </ul>
                 </div>
             </div>
         </div>
     </section>
-    <!-- ==================== DEMO SECTION ==================== -->
-    <section id="demo">
+    <!-- ==================== TESTIMONIALS ==================== -->
+    <section class="testimonials" id="testimonials">
         <div class="container">
             <div class="section-header">
-                <div class="section-tag lang-fr">Démo</div>
-                <div class="section-tag lang-en">Demo</div>
-                <h2 class="section-title lang-fr">Découvrez Vento en Action</h2>
-                <h2 class="section-title lang-en">Discover Vento in Action</h2>
-                <p class="section-subtitle lang-fr">Regardez notre démo vidéo pour voir comment Vento peut transformer votre commerce.</p>
-                <p class="section-subtitle lang-en">Watch our demo video to see how Vento can transform your business.</p>
+                <div class="section-tag">Témoignages</div>
+                <h2 class="section-title">Ce que disent nos clients</h2>
+                <p class="section-subtitle">Découvrez comment Vento a transformé le quotidien de commerçants comme vous</p>
             </div>
-            <div style="text-align: center;">
-                <video width="100%" controls>
-                    <source src="path/to/demo-video.mp4" type="video/mp4">
-                    <span class="lang-fr">Votre navigateur ne supporte pas la vidéo.</span>
-                    <span class="lang-en">Your browser does not support the video.</span>
-                </video>
-            </div>
-        </div>
-    </section>
-    <!-- ==================== FAQ SECTION ==================== -->
-    <section id="faq">
-        <div class="container">
-            <div class="section-header">
-                <div class="section-tag lang-fr">FAQ</div>
-                <div class="section-tag lang-en">FAQ</div>
-                <h2 class="section-title lang-fr">Questions Fréquentes</h2>
-                <h2 class="section-title lang-en">Frequently Asked Questions</h2>
-                <p class="section-subtitle lang-fr">Réponses aux questions les plus courantes sur Vento.</p>
-                <p class="section-subtitle lang-en">Answers to the most common questions about Vento.</p>
-            </div>
-            <div class="faq-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-                <div class="faq-item" style="background: var(--bg); padding: 2rem; border-radius: 1rem; border: 1px solid var(--border);">
-                    <h3 class="lang-fr">Qu'est-ce que Vento ?</h3>
-                    <h3 class="lang-en">What is Vento?</h3>
-                    <p class="lang-fr">Vento est une plateforme de gestion de ventes pour les commerçants africains.</p>
-                    <p class="lang-en">Vento is a sales management platform for African merchants.</p>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <img src="https://via.placeholder.com/80?text=A" alt="Aïssatou Bah" class="testimonial-photo" loading="lazy">
+                    <p class="testimonial-text">"Depuis que j'utilise Vento, j'ai réduit mes erreurs de stock de 50% et je gagne 2 heures par jour. C'est indispensable !"</p>
+                    <div class="testimonial-author">Aïssatou Bah</div>
+                    <div class="testimonial-business">Boutique "Le Bon Prix"</div>
                 </div>
-                <div class="faq-item" style="background: var(--bg); padding: 2rem; border-radius: 1rem; border: 1px solid var(--border);">
-                    <h3 class="lang-fr">Comment obtenir l'accès ?</h3>
-                    <h3 class="lang-en">How to get access?</h3>
-                    <p class="lang-fr">Demandez un accès privé via le bouton dédié.</p>
-                    <p class="lang-en">Request private access via the dedicated button.</p>
+                <div class="testimonial-card">
+                    <img src="https://via.placeholder.com/80?text=M" alt="Mamadou Diallo" class="testimonial-photo" loading="lazy">
+                    <p class="testimonial-text">"Vento a révolutionné ma gestion des ventes. Le mode offline est parfait pour mon marché !"</p>
+                    <div class="testimonial-author">Mamadou Diallo</div>
+                    <div class="testimonial-business">Épicerie "Diallo Store"</div>
                 </div>
-                <!-- Ajoutez plus de FAQ si nécessaire -->
+                <div class="testimonial-card">
+                    <img src="https://via.placeholder.com/80?text=F" alt="Fatou Camara" class="testimonial-photo" loading="lazy">
+                    <p class="testimonial-text">"Les analytics en temps réel m'aident à prendre de meilleures décisions. Je recommande Vento à tous les commerçants."</p>
+                    <div class="testimonial-author">Fatou Camara</div>
+                    <div class="testimonial-business">Magasin "Camara Market"</div>
+                </div>
+                <div class="testimonial-card">
+                    <img src="https://via.placeholder.com/80?text=S" alt="Sékou Traoré" class="testimonial-photo" loading="lazy">
+                    <p class="testimonial-text">"Gestion des dettes simplifiée et rappels automatiques. Vento est un game-changer pour mon business."</p>
+                    <div class="testimonial-author">Sékou Traoré</div>
+                    <div class="testimonial-business">Commerce "Traoré Goods"</div>
+                </div>
             </div>
         </div>
     </section>
-    <!-- ==================== CONTACT SECTION ==================== -->
-    <section id="contact">
+    <!-- ==================== HOW IT WORKS ==================== -->
+    <section class="how-it-works" id="how-it-works">
         <div class="container">
             <div class="section-header">
-                <div class="section-tag lang-fr">Contact</div>
-                <div class="section-tag lang-en">Contact</div>
-                <h2 class="section-title lang-fr">Contactez-nous</h2>
-                <h2 class="section-title lang-en">Contact Us</h2>
-                <p class="section-subtitle lang-fr">Envoyez-nous un message pour toute question ou demande.</p>
-                <p class="section-subtitle lang-en">Send us a message for any question or request.</p>
+                <div class="section-tag">Démarrage</div>
+                <h2 class="section-title">Comment ça marche ?</h2>
+                <p class="section-subtitle">Démarrez en quelques étapes simples</p>
             </div>
-            <form style="max-width: 600px; margin: 0 auto;">
-                <input type="text" placeholder="Nom / Name" style="width: 100%; padding: 1rem; margin-bottom: 1rem; border-radius: 0.5rem; border: 1px solid var(--border);">
-                <input type="email" placeholder="Email" style="width: 100%; padding: 1rem; margin-bottom: 1rem; border-radius: 0.5rem; border: 1px solid var(--border);">
-                <textarea placeholder="Message" style="width: 100%; padding: 1rem; margin-bottom: 1rem; border-radius: 0.5rem; border: 1px solid var(--border); height: 150px;"></textarea>
-                <button type="submit" class="btn-primary" style="width: 100%;">
-                    <span class="lang-fr">Envoyer</span>
-                    <span class="lang-en">Send</span>
-                </button>
-            </form>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-icon">1</div>
+                    <h3>Demander votre accès</h3>
+                    <p>Complétez le formulaire pour obtenir votre invitation privée.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-icon">2</div>
+                    <h3>Configurez votre boutique</h3>
+                    <p>Notre équipe vous aide à importer vos produits et paramétrer l'app.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-icon">3</div>
+                    <h3>Commencez à vendre</h3>
+                    <p>Enregistrez vos ventes en ligne ou hors ligne, analysez et optimisez.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-icon">4</div>
+                    <h3>Grow your business</h3>
+                    <p>Utilisez les insights pour développer votre commerce efficacement.</p>
+                </div>
+            </div>
         </div>
     </section>
-    <!-- ==================== ACCESS SECTION ==================== -->
-    <section id="access">
+    <!-- ==================== DEMO VIDEO ==================== -->
+    <section class="demo" id="demo">
         <div class="container">
             <div class="section-header">
-                <div class="section-tag lang-fr">Accès</div>
-                <div class="section-tag lang-en">Access</div>
-                <h2 class="section-title lang-fr">Demander un Accès</h2>
-                <h2 class="section-title lang-en">Request Access</h2>
-                <p class="section-subtitle lang-fr">Remplissez le formulaire pour demander un accès privé à Vento.</p>
-                <p class="section-subtitle lang-en">Fill out the form to request private access to Vento.</p>
+                <div class="section-tag">Démo</div>
+                <h2 class="section-title">Découvrez Vento en action</h2>
+                <p class="section-subtitle">Voyez comment notre application transforme la gestion quotidienne</p>
             </div>
-            <form style="max-width: 600px; margin: 0 auto;">
-                <input type="text" placeholder="Nom / Name" style="width: 100%; padding: 1rem; margin-bottom: 1rem; border-radius: 0.5rem; border: 1px solid var(--border);">
-                <input type="email" placeholder="Email" style="width: 100%; padding: 1rem; margin-bottom: 1rem; border-radius: 0.5rem; border: 1px solid var(--border);">
-                <input type="text" placeholder="Pays / Country" style="width: 100%; padding: 1rem; margin-bottom: 1rem; border-radius: 0.5rem; border: 1px solid var(--border);">
-                <button type="submit" class="btn-primary" style="width: 100%;">
-                    <span class="lang-fr">Demander</span>
-                    <span class="lang-en">Request</span>
-                </button>
-            </form>
+            <div class="video-container">
+                <iframe width="100%" height="500" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Vento Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            </div>
+        </div>
+    </section>
+    <!-- ==================== FAQ ==================== -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">FAQ</div>
+                <h2 class="section-title">Foire aux questions</h2>
+                <p class="section-subtitle">Réponses à vos interrogations les plus courantes</p>
+            </div>
+            <div class="faq-accordion">
+                <div class="faq-item">
+                    <button class="faq-question">Est-ce que Vento fonctionne vraiment sans connexion internet ?</button>
+                    <div class="faq-answer">
+                        <p>Oui, Vento dispose d'un mode offline avancé. Vous pouvez enregistrer des ventes, gérer le stock et plus encore sans internet. La synchronisation se fait automatiquement dès que la connexion est rétablie.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">Sur quels appareils puis-je utiliser l'application ?</button>
+                    <div class="faq-answer">
+                        <p>Vento est disponible sur Android, iOS et web. Vous pouvez l'utiliser sur smartphone, tablette ou ordinateur pour une flexibilité maximale.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">Mes données de vente sont-elles en sécurité ?</button>
+                    <div class="faq-answer">
+                        <p>Absolument. Nous utilisons un chiffrement de bout en bout et respectons les standards RGPD. Vos données sont stockées sécuriquement dans le cloud avec backups quotidiens.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">Comment se passe l'installation et la formation ?</button>
+                    <div class="faq-answer">
+                        <p>L'installation est simple et prend moins de 5 minutes. Nous offrons une formation gratuite via des tutoriels vidéo et un support chat pour vous accompagner.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">Quel est le support client proposé ?</button>
+                    <div class="faq-answer">
+                        <p>Support 24/7 via chat, email et téléphone. Pour les plans Pro et Entreprise, un gestionnaire dédié est assigné.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
     <!-- ==================== FOOTER ==================== -->
@@ -1553,11 +378,8 @@
                         </div>
                         <span class="logo-text">Vento</span>
                     </div>
-                    <p class="footer-desc lang-fr">
+                    <p class="footer-desc">
                         La solution moderne de gestion de ventes pour les commerçants africains. Simple. Rapide. Fiable.
-                    </p>
-                    <p class="footer-desc lang-en">
-                        The modern sales management solution for African merchants. Simple. Fast. Reliable.
                     </p>
                     <div class="social-links">
                         <a href="#"><svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
@@ -1566,59 +388,57 @@
                     </div>
                 </div>
                 <div class="footer-column">
-                    <h4 class="lang-fr">Produit</h4>
-                    <h4 class="lang-en">Product</h4>
+                    <h4>Produit</h4>
                     <ul>
-                        <li><a href="#features" class="lang-fr">Fonctionnalités</a></li>
-                        <li><a href="#features" class="lang-en">Features</a></li>
-                        <li><a href="#demo" class="lang-fr">Démo</a></li>
-                        <li><a href="#demo" class="lang-en">Demo</a></li>
-                        <li><a href="#pricing" class="lang-fr">Tarifs</a></li>
-                        <li><a href="#pricing" class="lang-en">Pricing</a></li>
+                        <li><a href="#features">Fonctionnalités</a></li>
+                        <li><a href="#demo">Démo</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
-                    <h4 class="lang-fr">Entreprise</h4>
-                    <h4 class="lang-en">Company</h4>
+                    <h4>Entreprise</h4>
                     <ul>
-                        <li><a href="#" class="lang-fr">À propos</a></li>
-                        <li><a href="#" class="lang-en">About</a></li>
-                        <li><a href="#contact" class="lang-fr">Contact</a></li>
-                        <li><a href="#contact" class="lang-en">Contact</a></li>
-                        <li><a href="#" class="lang-fr">Carrières</a></li>
-                        <li><a href="#" class="lang-en">Careers</a></li>
+                        <li><a href="#">À propos</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="#">Carrières</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
-                    <h4 class="lang-fr">Ressources</h4>
-                    <h4 class="lang-en">Resources</h4>
+                    <h4>Ressources</h4>
                     <ul>
-                        <li><a href="#" class="lang-fr">Centre d'aide</a></li>
-                        <li><a href="#" class="lang-en">Help Center</a></li>
-                        <li><a href="#faq" class="lang-fr">FAQ</a></li>
-                        <li><a href="#faq" class="lang-en">FAQ</a></li>
-                        <li><a href="#" class="lang-fr">Tutoriels</a></li>
-                        <li><a href="#" class="lang-en">Tutorials</a></li>
+                        <li><a href="#">Centre d'aide</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                        <li><a href="#">Tutoriels</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
-                    <h4 class="lang-fr">Légal</h4>
-                    <h4 class="lang-en">Legal</h4>
+                    <h4>Légal</h4>
                     <ul>
-                        <li><a href="#" class="lang-fr">Confidentialité</a></li>
-                        <li><a href="#" class="lang-en">Privacy</a></li>
-                        <li><a href="#" class="lang-fr">Conditions</a></li>
-                        <li><a href="#" class="lang-en">Terms</a></li>
-                        <li><a href="#" class="lang-fr">Cookies</a></li>
-                        <li><a href="#" class="lang-en">Cookies</a></li>
+                        <li><a href="#">Confidentialité</a></li>
+                        <li><a href="#">Conditions</a></li>
+                        <li><a href="#">Cookies</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>© 2025 Vento. <span class="lang-fr">Tous droits réservés.</span><span class="lang-en">All rights reserved.</span></p>
+                <p>© 2025 Vento. Tous droits réservés.</p>
             </div>
         </div>
     </footer>
+    <!-- ACCESS MODAL -->
+    <div class="modal" id="access-modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>Demander un Accès Privé</h2>
+            <form id="access-form">
+                <input type="text" placeholder="Nom" required>
+                <input type="email" placeholder="Votre email" required>
+                <input type="text" placeholder="Nom de votre commerce" required>
+                <input type="text" placeholder="Pays" required>
+                <button type="submit" class="btn-primary">Envoyer la demande</button>
+            </form>
+            <p id="form-message" class="hidden">Merci ! Nous vous contacterons très prochainement.</p>
+        </div>
+    </div>
     <!-- WHATSAPP BUTTON -->
     <a href="https://wa.me/224621234567" target="_blank" class="whatsapp-btn">
         <svg viewBox="0 0 24 24">
@@ -1631,104 +451,6 @@
             <path d="M12 19V5M5 12l7-7 7 7"/>
         </svg>
     </button>
-    <script>
-        // HEADER SCROLL
-        const header = document.getElementById('header');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-        });
-
-        // MENU TOGGLE
-        const menuToggle = document.getElementById('menu-toggle');
-        const nav = document.getElementById('nav');
-        menuToggle.addEventListener('click', () => {
-            menuToggle.classList.toggle('active');
-            nav.classList.toggle('active');
-        });
-
-        // THEME TOGGLE
-        const themeBtn = document.getElementById('theme-btn');
-        const body = document.body;
-        themeBtn.addEventListener('click', () => {
-            if (body.dataset.theme === 'light') {
-                body.dataset.theme = 'dark';
-                themeBtn.textContent = '☀️';
-            } else {
-                body.dataset.theme = 'light';
-                themeBtn.textContent = '🌙';
-            }
-        });
-
-        // LANGUAGE TOGGLE
-        const langBtn = document.getElementById('lang-btn');
-        langBtn.addEventListener('click', () => {
-            if (body.dataset.lang === 'fr') {
-                body.dataset.lang = 'en';
-                langBtn.textContent = '🇺🇸';
-            } else {
-                body.dataset.lang = 'fr';
-                langBtn.textContent = '🇫🇷';
-            }
-        });
-
-        // PHONE VIEWS SWITCH
-        const navDots = document.querySelectorAll('.nav-dot');
-        const salesView = document.getElementById('sales-view');
-        const stockView = document.getElementById('stock-view');
-        const analyticsView = document.getElementById('analytics-view');
-        navDots.forEach(dot => {
-            dot.addEventListener('click', () => {
-                navDots.forEach(d => {
-                    d.classList.remove('active');
-                    d.querySelector('svg').setAttribute('fill', '#94a3b8');
-                });
-                dot.classList.add('active');
-                dot.querySelector('svg').setAttribute('fill', 'white');
-                const view = dot.dataset.view;
-                salesView.classList.add('hidden');
-                stockView.classList.add('hidden');
-                analyticsView.classList.add('hidden');
-                document.getElementById(`${view}-view`).classList.remove('hidden');
-            });
-        });
-
-        // STATS ANIMATION
-        const stats = document.querySelectorAll('.stat-value');
-        const animateStats = () => {
-            stats.forEach(stat => {
-                const target = parseFloat(stat.dataset.target);
-                let count = 0;
-                const increment = target / 100;
-                const update = () => {
-                    count += increment;
-                    if (count < target) {
-                        stat.textContent = Math.round(count);
-                        requestAnimationFrame(update);
-                    } else {
-                        stat.textContent = target;
-                    }
-                };
-                update();
-            });
-        };
-        animateStats(); // Lance l'animation au chargement
-
-        // BACK TO TOP
-        const backToTop = document.getElementById('back-to-top');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 500) {
-                backToTop.classList.add('show');
-            } else {
-                backToTop.classList.remove('show');
-            }
-        });
-        backToTop.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    </script>
+    <script src="/scripts/scripts.js"></script>
 </body>
 </html>
