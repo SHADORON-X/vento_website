@@ -1,4 +1,10 @@
+// VELMO - Enhanced JavaScript for Ultra Cool, Animated, Functional, and Futuristic Features
+// Documentation: This script manages all interactive elements of the Velmo website.
+// It includes theme toggling, language switching, mobile menu, smooth scrolling, animations,
+// modal handling, FAQ accordion, and more futuristic features like voice commands and particles.
+
 // ==================== VARIABLES ====================
+// Documentation: Global variables for DOM elements and state management.
 const header = document.getElementById('header');
 const nav = document.getElementById('nav');
 const menuToggle = document.getElementById('menu-toggle');
@@ -16,21 +22,25 @@ const formMessage = document.getElementById('form-message');
 const faqQuestions = document.querySelectorAll('.faq-question');
 let isDark = false;
 let lang = 'fr';
+
 // ==================== HEADER SCROLL ====================
+// Documentation: Handles header styling on scroll and shows/hides back-to-top button.
 window.addEventListener('scroll', () => {
     if (window.scrollY > 50) {
         header.classList.add('scrolled');
     } else {
         header.classList.remove('scrolled');
     }
-    // Back to top button
+    // Back to top button with fade-in animation
     if (window.scrollY > 500) {
         backToTop.classList.add('show');
     } else {
         backToTop.classList.remove('show');
     }
 });
+
 // ==================== MOBILE MENU ====================
+// Documentation: Toggles mobile menu and handles closing on outside click or link click.
 menuToggle.addEventListener('click', () => {
     menuToggle.classList.toggle('active');
     nav.classList.toggle('active');
@@ -49,42 +59,50 @@ nav.querySelectorAll('a').forEach(link => {
         menuToggle.classList.remove('active');
     });
 });
+
 // ==================== THEME TOGGLE ====================
+// Documentation: Toggles dark/light theme with local storage persistence.
 themeBtn.addEventListener('click', () => {
     isDark = !isDark;
     document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
     themeBtn.textContent = isDark ? '☀️' : '🌙';
-    localStorage.setItem('ventoTheme', isDark ? 'dark' : 'light');
+    localStorage.setItem('velmoTheme', isDark ? 'dark' : 'light');
 });
 // Load saved theme
-const savedTheme = localStorage.getItem('ventoTheme');
+const savedTheme = localStorage.getItem('velmoTheme');
 if (savedTheme === 'dark') {
     isDark = true;
     document.documentElement.setAttribute('data-theme', 'dark');
     themeBtn.textContent = '☀️';
 }
+
 // ==================== LANGUAGE TOGGLE ====================
+// Documentation: Toggles between French and English with local storage.
 langBtn.addEventListener('click', () => {
     lang = lang === 'fr' ? 'en' : 'fr';
     document.documentElement.setAttribute('data-lang', lang);
     langBtn.textContent = lang === 'fr' ? '🇫🇷' : '🇬🇧';
-    localStorage.setItem('ventoLang', lang);
+    localStorage.setItem('velmoLang', lang);
 });
 // Load saved language
-const savedLang = localStorage.getItem('ventoLang');
+const savedLang = localStorage.getItem('velmoLang');
 if (savedLang === 'en') {
     lang = 'en';
     document.documentElement.setAttribute('data-lang', 'en');
     langBtn.textContent = '🇬🇧';
 }
+
 // ==================== BACK TO TOP ====================
+// Documentation: Smooth scroll to top on button click.
 backToTop.addEventListener('click', () => {
     window.scrollTo({
         top: 0,
         behavior: 'smooth'
     });
 });
+
 // ==================== SMOOTH SCROLL ====================
+// Documentation: Smooth scrolling for anchor links with offset for header.
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
@@ -99,7 +117,9 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
+
 // ==================== ANIMATED COUNTERS ====================
+// Documentation: Animates counter elements from 0 to target value.
 const animateCounter = (element) => {
     const target = parseFloat(element.getAttribute('data-target'));
     const duration = 2000;
@@ -127,7 +147,9 @@ const statsObserver = new IntersectionObserver((entries) => {
     });
 }, { threshold: 0.5 });
 statValues.forEach(stat => statsObserver.observe(stat));
+
 // ==================== PHONE NAVIGATION ====================
+// Documentation: Handles phone mockup view switching with animations and auto-rotation.
 const views = {
     sales: `
         <div class="content-header">
@@ -214,7 +236,8 @@ const views = {
         </div>
         <style>
             @keyframes barGrow {
-                from { height: 0; }
+                from { height: 0; opacity: 0; }
+                to { height: ${height}%; opacity: 1; }
             }
         </style>
     `
@@ -223,7 +246,7 @@ navDots.forEach(dot => {
     dot.addEventListener('click', () => {
         const view = dot.getAttribute('data-view');
       
-        // Update active state
+        // Update active state with neon glow
         navDots.forEach(d => {
             d.classList.remove('active');
             const svg = d.querySelector('svg');
@@ -233,19 +256,19 @@ navDots.forEach(dot => {
         dot.classList.add('active');
         dot.querySelector('svg').setAttribute('fill', 'white');
       
-        // Update content with fade animation
+        // Update content with futuristic fade and scale animation
         phoneContent.style.opacity = '0';
-        phoneContent.style.transform = 'translateY(10px)';
+        phoneContent.style.transform = 'translateY(10px) scale(0.95)';
       
         setTimeout(() => {
             phoneContent.innerHTML = views[view];
             phoneContent.style.transition = 'all 0.4s ease-out';
             phoneContent.style.opacity = '1';
-            phoneContent.style.transform = 'translateY(0)';
+            phoneContent.style.transform = 'translateY(0) scale(1)';
         }, 250);
     });
 });
-// Auto-rotate phone views
+// Auto-rotate phone views with smooth transition
 let currentViewIndex = 0;
 const viewKeys = Object.keys(views);
 
@@ -255,11 +278,18 @@ setInterval(() => {
     const nextDot = document.querySelector(`[data-view="${nextView}"]`);
     if (nextDot) nextDot.click();
 }, 5000);
+
 // ==================== ACCESS MODAL ====================
+// Documentation: Handles modal opening, closing, and form submission simulation.
 accessBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
         e.preventDefault();
         accessModal.style.display = 'flex';
+        accessModal.style.opacity = '0';
+        setTimeout(() => {
+            accessModal.style.opacity = '1';
+            accessModal.style.transition = 'opacity 0.3s ease';
+        }, 10);
     });
 });
 modalClose.addEventListener('click', () => {
@@ -276,30 +306,43 @@ window.addEventListener('click', (e) => {
 });
 accessForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    // Simulate form submission
+    // Simulate form submission with animation
     setTimeout(() => {
         accessForm.classList.add('hidden');
         formMessage.classList.remove('hidden');
+        formMessage.style.opacity = '0';
+        setTimeout(() => {
+            formMessage.style.opacity = '1';
+            formMessage.style.transition = 'opacity 0.5s ease';
+        }, 10);
     }, 500);
 });
+
 // ==================== DEMO BUTTON ====================
+// Documentation: Scrolls to demo section on click.
 demoBtn.addEventListener('click', (e) => {
     e.preventDefault();
     document.querySelector('#demo').scrollIntoView({ behavior: 'smooth' });
 });
+
 // ==================== FAQ ACCORDION ====================
+// Documentation: Toggles FAQ answers with smooth height animation.
 faqQuestions.forEach(question => {
     question.addEventListener('click', () => {
         question.classList.toggle('active');
         const answer = question.nextElementSibling;
         if (question.classList.contains('active')) {
             answer.style.maxHeight = answer.scrollHeight + 'px';
+            answer.style.opacity = '1';
         } else {
             answer.style.maxHeight = '0';
+            answer.style.opacity = '0';
         }
     });
 });
+
 // ==================== SCROLL ANIMATIONS ====================
+// Documentation: Observes elements for reveal animations on scroll.
 const observeElements = () => {
     const elements = document.querySelectorAll('.feature-card, .stat, .hero-content, .testimonial-card, .step-card');
   
@@ -307,7 +350,7 @@ const observeElements = () => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
+                entry.target.style.transform = 'translateY(0) scale(1)';
                 observer.unobserve(entry.target);
             }
         });
@@ -318,24 +361,28 @@ const observeElements = () => {
   
     elements.forEach(el => {
         el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
+        el.style.transform = 'translateY(30px) scale(0.95)';
         el.style.transition = 'all 0.6s ease-out';
         observer.observe(el);
     });
 };
 // Initialize scroll animations
 observeElements();
+
 // ==================== PERFORMANCE ====================
-// Preload critical resources
+// Documentation: Removes loading class after load for better perceived performance.
 window.addEventListener('load', () => {
     // Remove loading class if any
     document.body.classList.remove('loading');
 });
+
 // ==================== CONSOLE MESSAGE ====================
-console.log('%c🚀 Vento - Site Ultra Pro', 'font-size: 24px; font-weight: bold; color: #667eea;');
+// Documentation: Logs initialization messages to console for debugging.
+console.log('%c🚀 Velmo - Site Ultra Pro', 'font-size: 24px; font-weight: bold; color: #667eea;');
 console.log('%c✨ Développé avec passion pour les commerçants africains', 'font-size: 14px; color: #64748b;');
 
 // ==================== EASTER EGG ====================
+// Documentation: Konami code Easter egg with rainbow animation and alert.
 let konamiCode = [];
 const pattern = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
 
@@ -347,11 +394,13 @@ document.addEventListener('keydown', (e) => {
         document.body.style.animation = 'rainbow 2s infinite';
         setTimeout(() => {
             document.body.style.animation = '';
-            alert('🎉 Vous avez trouvé l\'Easter Egg Vento! 🚀');
+            alert('🎉 Vous avez trouvé l\'Easter Egg Velmo! 🚀');
         }, 2000);
     }
 });
+
 // ==================== KEYBOARD SHORTCUTS ====================
+// Documentation: Adds keyboard shortcuts for theme, language, and closing elements.
 document.addEventListener('keydown', (e) => {
     // Ctrl/Cmd + K: Toggle theme
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
@@ -379,7 +428,9 @@ document.addEventListener('keydown', (e) => {
         }
     }
 });
+
 // ==================== PRINT STYLES ====================
+// Documentation: Hides non-essential elements during print.
 window.addEventListener('beforeprint', () => {
     document.querySelectorAll('.whatsapp-btn, .back-to-top, header').forEach(el => {
         el.style.display = 'none';
@@ -390,8 +441,9 @@ window.addEventListener('afterprint', () => {
         el.style.display = '';
     });
 });
+
 // ==================== ANALYTICS (Optional) ====================
-// Track page views
+// Documentation: Tracks page views and button clicks (placeholder for real analytics).
 const trackPageView = () => {
     console.log('Page viewed:', window.location.href);
     // Add your analytics code here (Google Analytics, etc.)
@@ -404,8 +456,94 @@ document.querySelectorAll('button, .btn-primary, .btn-secondary, .cta-btn').forE
     });
 });
 trackPageView();
+
 // ==================== INITIALIZATION ====================
-console.log('✅ Vento initialized successfully');
+// Documentation: Logs initialization status.
+console.log('✅ Velmo initialized successfully');
 console.log('📱 Responsive: ✓');
 console.log('🎨 Theme: ' + (isDark ? 'Dark' : 'Light'));
 console.log('🌍 Language: ' + lang.toUpperCase());
+
+// ==================== FUTURISTIC PARTICLE BACKGROUND ====================
+// Documentation: Creates a canvas with animated particles for a futuristic hero section.
+function createParticles() {
+  const canvas = document.createElement('canvas');
+  canvas.classList.add('particle-canvas');
+  document.querySelector('.hero-bg').appendChild(canvas); // Add to hero bg
+
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const particles = [];
+  for (let i = 0; i < 150; i++) { // Increased for more density
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      radius: Math.random() * 3 + 1,
+      vx: Math.random() * 2 - 1,
+      vy: Math.random() * 2 - 1,
+      color: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.5)`
+    });
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0 || p.x > canvas.width) p.vx = -p.vx;
+      if (p.y < 0 || p.y > canvas.height) p.vy = -p.vy;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.fill();
+    });
+  }
+
+  animate();
+
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+}
+
+createParticles();
+
+// ==================== VOICE COMMAND INTEGRATION ====================
+// Documentation: Adds voice commands for theme toggle and scroll to top (futuristic feature).
+if ('SpeechRecognition' in window) {
+  const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  recognition.lang = 'fr-FR';
+  recognition.onresult = (event) => {
+    const command = event.results[0][0].transcript.toLowerCase();
+    if (command.includes('mode sombre') || command.includes('dark mode')) {
+      if (!isDark) themeBtn.click();
+    } else if (command.includes('mode clair') || command.includes('light mode')) {
+      if (isDark) themeBtn.click();
+    } else if (command.includes('retour en haut') || command.includes('scroll top')) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  // Start listening on voice button click (assume .voice-btn exists or add it)
+  document.querySelector('.voice-btn')?.addEventListener('click', () => recognition.start());
+}
+
+// ==================== LAZY LOADING IMAGES ====================
+// Documentation: Adds lazy loading to all images for performance.
+document.querySelectorAll('img').forEach(img => {
+  img.loading = 'lazy';
+});
+
+// ==================== INFINITE TESTIMONIAL CAROUSEL ====================
+// Documentation: Creates an infinite scrolling effect for testimonials.
+const testimonialsGrid = document.querySelector('.testimonials-grid');
+if (testimonialsGrid) {
+  let clone = testimonialsGrid.innerHTML;
+  testimonialsGrid.innerHTML += clone + clone; // Triple for smoother infinite scroll
+  testimonialsGrid.style.animation = 'scrollLeft 60s linear infinite';
+}
+// Add to CSS if needed: @keyframes scrollLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-33.33%); } }
