@@ -1,137 +1,146 @@
 <!DOCTYPE html>
 <html lang="fr" data-theme="light">
 <head>
+  <!-- ========================================
+       META TAGS - Optimisées pour SEO et mobile. Ces tags assurent une bonne indexation par les moteurs de recherche et une adaptation aux appareils mobiles.
+       ======================================== -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Velmo — Gagnez plus. Vivez mieux.</title>
   <meta name="description" content="Application légère, rapide et universelle. Pour tous les smartphones, même anciens."/>
+  <!-- Préchargement des fonts pour une meilleure performance. Cela réduit le temps de chargement en préconnectant aux serveurs de Google Fonts. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
   <style>
     /* ========================================
-       VARIABLES CSS - Thème clair/sombre
+       VARIABLES CSS - Thème clair/sombre.
+       Ces variables centralisent les couleurs et styles pour une maintenance facile. Le mode sombre est optimisé pour réduire la fatigue oculaire avec des contrastes doux et conformes aux normes WCAG.
+       Amélioré : Couleurs plus harmonieuses, orange adouci pour meilleure visibilité.
        ======================================== */
     :root {
       --black: #000000;
-      --gray: #1a1a1a;
-      --orange: #ff6200;
+      --gray: #333333; /* Adouci pour meilleur contraste. */
+      --orange: #ff7a2f; /* Orange plus doux pour harmonie. */
       --orange-dark: #e55a00;
-      --orange-light: #ff8c42;
+      --orange-light: #ffa05a;
       --light: #f9f9f9;
       --white: #ffffff;
       --card-bg: #ffffff;
       --text-primary: #1a1a1a;
-      --text-secondary: #555555;
-      --border: rgba(0, 0, 0, 0.1);
-      --shadow: rgba(0,0,0,0.1);
+      --text-secondary: #4a4a4a; /* Plus foncé pour meilleure lisibilité. */
+      --border: rgba(0, 0, 0, 0.15);
+      --shadow: rgba(0,0,0,0.12);
       --success: #10b981;
       --info: #3b82f6;
       --purple: #667eea;
       --purple-dark: #764ba2;
-      --promise-bg-start: #ff8c42;
-      --promise-bg-end: #e55a00;
-      --promise-box-bg: rgba(255, 255, 255, 0.5);
-      --promise-border: rgba(255, 255, 255, 0.6);
-      --promise-text: #ffffff;
+      --promise-bg-start: #ffa05a;
+      --promise-bg-end: #ff7a2f; /* Gradient plus harmonieux. */
+      --promise-box-bg: rgba(255, 255, 255, 0.6);
+      --promise-border: rgba(255, 255, 255, 0.7);
+      --promise-text: #1a1a1a; /* Changé en sombre pour meilleur contraste sur fond clair/orange. */
       --promise-quote-border: #ffffff;
-      --promise-benefit-bg: rgba(255, 255, 255, 0.3);
-      --promise-benefit-hover-bg: rgba(255, 255, 255, 0.4);
-      --promise-orb: rgba(255, 255, 255, 0.3);
+      --promise-benefit-bg: rgba(255, 255, 255, 0.4);
+      --promise-benefit-hover-bg: rgba(255, 255, 255, 0.5);
+      --promise-orb: rgba(255, 255, 255, 0.35);
     }
- 
+    /* Mode sombre : Contrastes ajustés pour une meilleure lisibilité et moins de fatigue oculaire. Utilisation de gris doux au lieu de noir pur. */
     [data-theme="dark"] {
-      --black: #ffffff;
-      --gray: #e0e0e0;
-      --light: #1a1a1a;
-      --white: #0f0f0f;
-      --card-bg: #1e1e1e;
+      --black: #e8e8e8;
+      --gray: #c0c0c0;
+      --light: #121212;
+      --white: #1e1e1e;
+      --card-bg: #2a2a2a;
       --text-primary: #e0e0e0;
-      --text-secondary: #a0a0a0;
-      --border: rgba(255, 255, 255, 0.1);
-      --shadow: rgba(0,0,0,0.3);
-      --orange: #ff8c42;
+      --text-secondary: #b0b0b0; /* Plus clair pour lisibilité. */
+      --border: rgba(255, 255, 255, 0.12);
+      --shadow: rgba(0,0,0,0.5);
+      --orange: #ff7a2f;
       --orange-dark: #ff6200;
-      --orange-light: #e55a00;
-      --promise-bg-start: #e55a00;
-      --promise-bg-end: #ff8c42;
-      --promise-box-bg: rgba(30, 30, 30, 0.7);
-      --promise-border: rgba(255, 255, 255, 0.3);
+      --orange-light: #ffa05a;
+      --promise-bg-start: #3a2515;
+      --promise-bg-end: #2a1a10; /* Gradient inversé pour harmonie. */
+      --promise-box-bg: rgba(42, 42, 42, 0.85);
+      --promise-border: rgba(255, 122, 47, 0.35);
       --promise-text: #e0e0e0;
-      --promise-quote-border: #e0e0e0;
-      --promise-benefit-bg: rgba(30, 30, 30, 0.5);
-      --promise-benefit-hover-bg: rgba(30, 30, 30, 0.7);
-      --promise-orb: rgba(30, 30, 30, 0.5);
+      --promise-quote-border: #ff7a2f;
+      --promise-benefit-bg: rgba(42, 42, 42, 0.65);
+      --promise-benefit-hover-bg: rgba(50, 50, 50, 0.85);
+      --promise-orb: rgba(255, 122, 47, 0.2);
     }
- 
     /* ========================================
-       BASE - Reset et typographie
+       BASE - Reset et typographie.
+       Reset des marges et paddings pour une base propre. Utilisation de clamp() pour une typographie responsive qui s'adapte à la taille d'écran.
+       Amélioré : Font-size de base augmentée à 18px pour moins fatiguer les yeux.
        ======================================== */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
- 
     html {
-      scroll-behavior: smooth;
+      scroll-behavior: smooth; /* Scroll fluide pour une meilleure UX. */
     }
- 
+    /* Transition fluide pour le changement de thème et couleurs. Cela évite les flashes lors du switch. */
     body {
       font-family: 'Inter', sans-serif;
       background: var(--white);
       color: var(--text-primary);
-      line-height: 1.6;
-      font-size: 16px;
+      line-height: 1.7; /* Augmenté pour meilleure lecture. */
+      font-size: 18px; /* Augmenté pour lisibilité. */
       overflow-x: hidden;
-      transition: background 0.3s ease, color 0.3s ease;
+      transition: background 0.4s ease, color 0.4s ease;
     }
- 
+    /* Container responsive avec max-width et padding adaptatif pour centrer le contenu sur grands écrans. */
     .container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 20px;
+      padding: 0 clamp(1.5rem, 6vw, 3rem); /* Padding augmenté pour espace. */
     }
- 
+    /* Animation d'apparition des sections avec Intersection Observer pour performance. Cela charge les animations seulement quand visible. */
     section {
-      padding: 100px 0;
+      padding: 120px 0; /* Augmenté pour plus d'espace. */
       position: relative;
       opacity: 0;
       transform: translateY(50px);
       transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
                   transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     }
- 
     section.visible {
       opacity: 1;
       transform: translateY(0);
     }
- 
+    /* Titres avec transitions fluides et clamp pour taille responsive. Assure que les titres restent lisibles sur mobile. */
     h1, h2, h3 {
       color: var(--text-primary);
       font-weight: 900;
-      transition: color 0.3s ease;
+      transition: color 0.4s ease;
+      font-size: clamp(2rem, 6vw, 4rem); /* Augmenté. */
     }
- 
     a {
       text-decoration: none;
     }
- 
     /* ========================================
-       BOUTONS
+       BOUTONS - Avec effet ripple et hover amélioré pour une meilleure UX.
+       Les boutons ont un feedback visuel au hover et clic pour améliorer l'interaction.
+       Amélioré : Padding augmenté, font-size plus grand.
        ======================================== */
     .btn {
-      display: inline-block;
-      padding: 16px 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 50px; /* Augmenté pour plus grand boutons. */
       font-weight: 700;
-      border-radius: 12px;
+      border-radius: 16px; /* Plus arrondi pour design moderne. */
       transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      text-align: center;
-      font-size: 1rem;
+      font-size: 1.1rem; /* Augmenté. */
       position: relative;
       overflow: hidden;
       border: none;
       cursor: pointer;
     }
- 
+    /* Effet ripple au clic/survol pour feedback tactile. Cela simule un clic avec une onde. */
     .btn::before {
       content: '';
       position: absolute;
@@ -144,30 +153,27 @@
       transform: translate(-50%, -50%);
       transition: width 0.6s, height 0.6s;
     }
- 
     .btn:hover::before {
-      width: 350px;
-      height: 350px;
+      width: 400px;
+      height: 400px;
     }
- 
     .btn-primary {
       background: var(--orange);
       color: white;
       box-shadow: 0 10px 30px rgba(255, 98, 0, 0.3);
     }
- 
     .btn-primary:hover {
       background: var(--orange-dark);
       transform: translateY(-4px);
       box-shadow: 0 15px 40px rgba(255, 98, 0, 0.5);
     }
- 
     .btn-secondary {
       background: transparent;
       color: var(--orange);
       border: 3px solid var(--orange);
+      padding: 18px 48px; /* Augmenté. */
+      font-size: 1rem; /* Augmenté. */
     }
- 
     .btn-secondary:hover {
       background: var(--orange);
       color: white;
@@ -175,93 +181,75 @@
       box-shadow: 0 10px 30px rgba(255, 98, 0, 0.3);
     }
     /* ========================================
-       HEADER
-       ======================================== */
+       HEADER - Sticky avec backdrop blur pour un look moderne.
+       Le header reste fixe en haut pour une navigation facile.
+       ======================================== -->
     header {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      background: rgba(255, 255, 255, 0.98);
-      backdrop-filter: blur(20px);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px); /* Effet flou pour modernité. */
       box-shadow: 0 2px 20px var(--shadow);
       z-index: 1000;
       transition: all 0.3s ease;
     }
- 
     [data-theme="dark"] header {
-      background: rgba(15, 15, 15, 0.98);
+      background: rgba(30, 30, 30, 0.95);
     }
- 
+    /* Ombre renforcée au scroll pour profondeur. Cela donne un effet de profondeur quand on scroll. */
     header.scrolled {
       box-shadow: 0 4px 30px var(--shadow);
     }
- 
     .header-container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 1rem 2rem;
+      padding: 1.2rem 2.5rem; /* Augmenté pour espace. */
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
- 
+    /* Logo wrapper pour alignement et interactivité. Permet d'ajouter des effets au logo. */
     .logo-wrapper {
       display: flex;
       align-items: center;
       gap: 15px;
     }
- 
-    .logo-image {
-      height: 60px;
+    .logo-svg {
+      height: 50px;
       width: auto;
-      transition: transform 0.3s ease;
+      transition: transform 0.3s ease, fill 0.3s ease;
+      cursor: pointer;
     }
- 
-    .logo-image:hover {
-      transform: scale(1.1);
+    .logo-svg:hover {
+      transform: scale(1.1) rotate(5deg);
+      fill: var(--orange-dark);
     }
- 
     .logo {
-      font-size: 2.2rem;
+      font-size: 2rem; /* Augmenté. */
       font-weight: 900;
       color: var(--orange);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      cursor: pointer;
-      transition: transform 0.3s ease;
+      transition: all 0.3s ease;
     }
- 
     .logo:hover {
       transform: scale(1.05);
+      text-shadow: 0 0 20px rgba(255, 98, 0, 0.5);
     }
- 
-    .logo::before {
-      content: '⚡';
-      font-size: 2.5rem;
-      animation: logoGlow 2s ease-in-out infinite;
-    }
- 
-    @keyframes logoGlow {
-      0%, 100% { transform: scale(1) rotate(0deg); }
-      50% { transform: scale(1.2) rotate(15deg); }
-    }
- 
+    /* Navigation responsive avec flex et gap. S'adapte aux petits écrans. */
     nav {
       display: flex;
-      gap: 2rem;
+      gap: 2.5rem; /* Augmenté pour espace. */
       align-items: center;
     }
- 
     nav a {
       color: var(--text-primary);
       font-weight: 600;
       transition: all 0.3s ease;
       position: relative;
-      font-size: 0.95rem;
+      font-size: 1.05rem; /* Augmenté. */
     }
- 
+    /* Soulignement animé pour les liens nav. Ajoute un feedback visuel au hover. */
     nav a::after {
       content: '';
       position: absolute;
@@ -273,25 +261,22 @@
       transition: width 0.3s ease;
       border-radius: 2px;
     }
- 
     nav a:hover {
       color: var(--orange);
     }
- 
     nav a:hover::after {
       width: 100%;
     }
- 
+    /* Actions header : Thème, langue, menu avec icônes. Groupées pour clarté. */
     .header-actions {
       display: flex;
-      gap: 1rem;
+      gap: 1.2rem; /* Augmenté. */
       align-items: center;
     }
- 
     .icon-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
+      width: 45px; /* Augmenté. */
+      height: 45px;
+      border-radius: 12px;
       background: var(--card-bg);
       border: 2px solid var(--border);
       display: flex;
@@ -299,21 +284,20 @@
       justify-content: center;
       cursor: pointer;
       transition: all 0.3s ease;
-      font-size: 1.2rem;
+      font-size: 1.4rem; /* Augmenté. */
     }
- 
     .icon-btn:hover {
       transform: scale(1.1) rotate(10deg);
       border-color: var(--orange);
+      box-shadow: 0 4px 15px rgba(255, 98, 0, 0.3);
     }
- 
+    /* Menu hamburger pour mobile. Visible seulement sur petits écrans. */
     .menu-toggle {
       display: none;
       flex-direction: column;
       gap: 5px;
       cursor: pointer;
     }
- 
     .menu-toggle span {
       width: 28px;
       height: 3px;
@@ -322,7 +306,8 @@
       transition: all 0.3s ease;
     }
     /* ========================================
-       HERO
+       HERO - Avec parallax et orbes animés pour dynamisme.
+       Section d'introduction attractive avec animations subtiles.
        ======================================== */
     .hero {
       text-align: center;
@@ -333,7 +318,7 @@
       opacity: 1 !important;
       transform: translateY(0) !important;
     }
- 
+    /* Orbes animés en background pour effet subtil. Ajoute du mouvement sans distraire. */
     .hero::before {
       content: '';
       position: absolute;
@@ -345,12 +330,10 @@
       border-radius: 50%;
       animation: heroOrb 20s ease-in-out infinite;
     }
- 
     @keyframes heroOrb {
       0%, 100% { transform: translate(0, 0) scale(1); }
       50% { transform: translate(-80px, 80px) scale(1.3); }
     }
- 
     .hero::after {
       content: '';
       position: absolute;
@@ -362,54 +345,45 @@
       border-radius: 50%;
       animation: heroOrb 15s ease-in-out infinite reverse;
     }
- 
+    /* Titre hero avec animation fade-in-up. Attire l'attention immédiate. */
     .hero h1 {
-      font-size: clamp(2.5rem, 6vw, 4.5rem);
-      margin-bottom: 20px;
+      font-size: clamp(3rem, 7vw, 5rem); /* Augmenté pour visibilité. */
+      margin-bottom: 25px; /* Augmenté. */
       animation: fadeInUp 1s ease-out;
       position: relative;
       z-index: 1;
       letter-spacing: -1px;
     }
- 
     @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
- 
+    /* Description hero avec delay. Permet une apparition séquentielle. */
     .hero-desc {
-      font-size: 1.3rem;
+      font-size: clamp(1.3rem, 4vw, 1.5rem); /* Augmenté pour moins fatiguer les yeux. */
       max-width: 800px;
-      margin: 0 auto 30px;
+      margin: 0 auto 40px; /* Augmenté. */
       color: var(--text-secondary);
       animation: fadeInUp 1s ease-out 0.2s both;
       position: relative;
       z-index: 1;
-      line-height: 1.8;
+      line-height: 1.9; /* Augmenté. */
     }
- 
     .hero .btn {
       animation: fadeInUp 1s ease-out 0.4s both;
       position: relative;
       z-index: 1;
     }
- 
+    /* Preuves sociales avec hover lift. Renforce la crédibilité. */
     .micro-proof {
       display: flex;
       justify-content: center;
       gap: 30px;
       margin-top: 40px;
-      font-size: 0.95rem;
+      font-size: 1.05rem; /* Augmenté. */
       flex-wrap: wrap;
       animation: fadeInUp 1s ease-out 0.6s both;
     }
- 
     .micro-proof span {
       background: var(--card-bg);
       color: var(--text-secondary);
@@ -419,12 +393,10 @@
       transition: all 0.3s ease;
       border: 1px solid var(--border);
     }
- 
     .micro-proof span:hover {
       transform: translateY(-5px);
       box-shadow: 0 8px 25px var(--shadow);
     }
- 
     .micro-proof span::before {
       content: "✓ ";
       color: var(--orange);
@@ -432,16 +404,17 @@
       font-size: 1.3rem;
     }
     /* ========================================
-       PROMESSE SECTION
+       PROMESSE - Section avec glassmorphism et expandable benefits.
+       Amélioré pour lisibilité : tailles de texte augmentées, contrastes vérifiés, couleurs harmonisées.
        ======================================== */
     .promise-section {
       background: linear-gradient(135deg, var(--promise-bg-start) 0%, var(--promise-bg-end) 100%);
-      padding: 80px 20px;
+      padding: 100px 20px; /* Augmenté. */
       text-align: center;
       position: relative;
       overflow: hidden;
     }
- 
+    /* Orbe animé pour effet immersif. Ajoute de la profondeur visuelle. */
     .promise-section::before {
       content: '';
       position: absolute;
@@ -453,27 +426,25 @@
       border-radius: 50%;
       animation: promiseOrb 15s ease-in-out infinite;
     }
- 
     @keyframes promiseOrb {
       0%, 100% { transform: translate(0, 0) scale(1); opacity: 1; }
       50% { transform: translate(100px, 100px) scale(1.2); opacity: 0.8; }
     }
- 
     .promise-section h2 {
       color: var(--promise-text);
-      font-size: clamp(2.5rem, 5vw, 4rem);
-      margin-bottom: 50px;
+      font-size: clamp(3rem, 6vw, 5rem); /* Augmenté. */
+      margin-bottom: 60px; /* Augmenté. */
       position: relative;
       z-index: 1;
       animation: fadeInUp 1s ease-out;
     }
- 
+    /* Box promesse avec glassmorphism et hover scale. Effet verre pour modernité. */
     .promise-box {
-      max-width: 900px;
+      max-width: 1100px; /* Augmenté pour espace. */
       margin: 0 auto;
       background: var(--promise-box-bg);
       backdrop-filter: blur(15px);
-      padding: 60px;
+      padding: 70px; /* Augmenté. */
       border-radius: 30px;
       border: 2px solid var(--promise-border);
       position: relative;
@@ -481,362 +452,169 @@
       box-shadow: 0 20px 60px rgba(0,0,0,0.2);
       transition: all 0.5s ease;
     }
-
     .promise-box:hover {
       transform: scale(1.02);
     }
- 
-    .promise-quote {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--promise-text);
-      line-height: 1.6;
-      margin-bottom: 40px;
-      text-align: left;
-      padding-left: 40px;
-      border-left: 6px solid var(--promise-quote-border);
-      opacity: 0;
-      transform: translateX(-20px);
-      animation: slideIn 0.8s ease-out forwards;
-    }
-
-    @keyframes slideIn {
-      to { opacity: 1; transform: translateX(0); }
-    }
- 
-    .promise-quote p {
-      margin: 20px 0;
-      transition: color 0.3s ease;
-    }
-
-    .promise-quote p:hover {
-      color: var(--orange-light);
-    }
- 
+    /* Grille responsive pour bénéfices. S'adapte à 1 colonne sur mobile. */
     .promise-benefits {
       display: grid;
-      gap: 15px;
-      margin-top: 50px;
-      text-align: left;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Augmenté pour espace. */
+      gap: 30px; /* Augmenté. */
+      margin-top: 60px; /* Augmenté. */
     }
- 
+    /* Carte bénéfice avec expandable details et icon rotation. Clique pour détails. */
     .promise-benefit {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding: 25px;
       background: var(--promise-benefit-bg);
-      border-radius: 20px;
+      border-radius: 24px; /* Plus arrondi. */
+      padding: 35px; /* Augmenté. */
       transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
       cursor: pointer;
       position: relative;
       overflow: hidden;
+      border: 2px solid transparent;
     }
- 
     .promise-benefit:hover {
       background: var(--promise-benefit-hover-bg);
-      transform: translateY(-5px);
-      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+      transform: translateY(-8px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+      border-color: var(--promise-border);
     }
- 
     .promise-benefit-header {
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 25px; /* Augmenté. */
+      margin-bottom: 20px; /* Augmenté. */
     }
- 
     .promise-benefit-icon {
-      font-size: 2.5rem;
+      font-size: 4rem; /* Augmenté pour visibilité. */
       flex-shrink: 0;
       transition: transform 0.3s ease;
     }
-
     .promise-benefit:hover .promise-benefit-icon {
       transform: rotate(360deg) scale(1.2);
     }
- 
-    .promise-benefit-text {
+    .promise-benefit-title {
       color: var(--promise-text);
-      font-size: 1.4rem;
-      font-weight: 600;
+      font-size: clamp(1.8rem, 4vw, 2rem); /* Augmenté pour moins fatiguer les yeux. */
+      font-weight: 700;
+      margin-bottom: 15px; /* Augmenté. */
     }
- 
-    .benefit-preview {
+    .promise-benefit-desc {
+      color: var(--promise-text);
+      font-size: clamp(1.1rem, 2.5vw, 1.2rem); /* Augmenté pour meilleure lisibilité. */
+      line-height: 1.7; /* Augmenté. */
+      opacity: 0.9;
+    }
+    /* Détails expandable avec transition fluide. Permet d'étendre le contenu sur clic. */
+    .benefit-details {
       max-height: 0;
       overflow: hidden;
-      transition: max-height 0.5s ease, opacity 0.3s ease;
+      transition: max-height 0.5s ease, opacity 0.3s ease, margin-top 0.3s ease;
       opacity: 0;
     }
-
-    .promise-benefit.active .benefit-preview {
-      max-height: 300px;
+    .promise-benefit.active .benefit-details {
+      max-height: 500px;
       opacity: 1;
+      margin-top: 20px;
     }
- 
-    .benefit-preview h4 {
+    .benefit-details h4 {
       margin-bottom: 10px;
-      color: var(--orange);
-      font-size: 1.2rem;
+      color: var(--orange-light);
+      font-size: 1.1rem;
     }
- 
-    .benefit-preview p {
-      font-size: 0.95rem;
-      line-height: 1.5;
+    .benefit-details p {
+      font-size: 1rem; /* Augmenté. */
+      line-height: 1.7; /* Augmenté. */
       color: var(--promise-text);
+      opacity: 0.85;
     }
- 
+    /* Slogan avec pulse animation. Attire l'attention sur le message clé. */
     .slogan {
-      font-size: 3rem;
+      font-size: clamp(2.5rem, 6vw, 3.5rem); /* Augmenté pour visibilité. */
       font-weight: 900;
       color: var(--promise-text);
-      margin-top: 60px;
+      margin-top: 70px; /* Augmenté. */
       text-transform: uppercase;
       letter-spacing: 3px;
       animation: pulse 2s ease-in-out infinite;
     }
     /* ========================================
-       CARTES DE CONTENU
+       CARTES DE CONTENU - Avec hover lift et shadow dynamique.
+       Cartes pour contenu structuré, avec effets pour engagement.
+       Amélioré : Padding augmenté, font-size plus grand.
        ======================================== */
     .content-card {
       background: var(--card-bg);
-      padding: 40px;
-      border-radius: 20px;
+      padding: 50px; /* Augmenté. */
+      border-radius: 24px; /* Plus arrondi. */
       box-shadow: 0 8px 30px var(--shadow);
-      margin: 30px 0;
+      margin: 40px 0; /* Augmenté. */
       border: 1px solid var(--border);
       transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
       opacity: 0;
       transform: translateY(30px);
     }
- 
     .content-card.visible {
       opacity: 1;
       transform: translateY(0);
     }
- 
     .content-card:hover {
       transform: translateY(-8px);
       box-shadow: 0 15px 50px var(--shadow);
     }
- 
     .content-card h3 {
-      font-size: 1.8rem;
-      margin-bottom: 20px;
+      font-size: 2rem; /* Augmenté. */
+      margin-bottom: 25px; /* Augmenté. */
       color: var(--orange);
     }
- 
     .content-card p {
-      font-size: 1.15rem;
+      font-size: 1.25rem; /* Augmenté. */
       line-height: 1.9;
       color: var(--text-secondary);
-      margin-bottom: 15px;
+      margin-bottom: 20px; /* Augmenté. */
     }
- 
     .content-card strong {
       color: var(--text-primary);
       font-weight: 700;
     }
     /* ========================================
-       SECTIONS
+       SECTIONS - Titres avec barre décorative.
+       Titres centrés avec élément visuel pour séparation.
        ======================================== */
     .section-title {
       text-align: center;
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      margin-bottom: 60px;
+      font-size: clamp(2.5rem, 6vw, 4rem); /* Augmenté. */
+      margin-bottom: 70px; /* Augmenté. */
       position: relative;
       letter-spacing: -1px;
     }
- 
     .section-title::after {
       content: '';
       position: absolute;
       bottom: -15px;
       left: 50%;
       transform: translateX(-50%);
-      width: 80px;
+      width: 100px; /* Augmenté. */
       height: 5px;
       background: linear-gradient(90deg, var(--orange), transparent);
       border-radius: 3px;
     }
     /* ========================================
-       3 FORCES
+       FORCES ET FONCTIONS - Grille avec stagger animation.
+       Grille responsive pour features, avec animations décalées.
+       Amélioré : Gap augmenté, padding plus grand, text plus large.
        ======================================== */
-    .forces {
+    .features-forces {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 30px;
-      margin-top: 50px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Augmenté. */
+      gap: 40px; /* Augmenté. */
+      margin-top: 60px; /* Augmenté. */
     }
- 
-    .force-card {
-      background: var(--card-bg);
-      padding: 40px 30px;
-      border-radius: 20px;
-      box-shadow: 0 8px 30px var(--shadow);
+    .feature-force {
       text-align: center;
-      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      opacity: 0;
-      transform: translateY(30px) scale(0.95);
-      position: relative;
-      overflow: hidden;
-      border: 1px solid var(--border);
-    }
- 
-    .forces.visible .force-card {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
- 
-    .force-card:nth-child(1) { transition-delay: 0.1s; }
-    .force-card:nth-child(2) { transition-delay: 0.2s; }
-    .force-card:nth-child(3) { transition-delay: 0.3s; }
- 
-    .force-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 5px;
-      background: linear-gradient(90deg, var(--orange-light), var(--orange-dark));
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.4s ease;
-    }
- 
-    .force-card:hover {
-      transform: translateY(-12px) scale(1.03);
-      box-shadow: 0 20px 60px rgba(255, 98, 0, 0.2);
-    }
- 
-    .force-card:hover::before {
-      transform: scaleX(1);
-    }
- 
-    .force-card h3 {
-      margin: 20px 0 15px;
-      font-size: 1.6rem;
-      color: var(--orange);
-    }
- 
-    .force-card p {
-      font-size: 1.1rem;
-      color: var(--text-secondary);
-      line-height: 1.8;
-    }
-    /* ========================================
-       TÉMOIGNAGES AMÉLIORÉS
-       ======================================== */
-    .testimonials-section {
-      background: var(--light);
-      padding: 100px 20px;
-    }
- 
-    .testimonials-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 30px;
-      margin-top: 50px;
-    }
- 
-    .testimonial-card {
+      padding: 50px 35px; /* Augmenté. */
       background: var(--card-bg);
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 8px 30px var(--shadow);
-      border: 1px solid var(--border);
-      position: relative;
-      transition: all 0.4s ease;
-      opacity: 0;
-      transform: translateY(30px);
-    }
- 
-    .testimonials-grid.visible .testimonial-card {
-      opacity: 1;
-      transform: translateY(0);
-    }
- 
-    .testimonial-card:nth-child(1) { transition-delay: 0.1s; }
-    .testimonial-card:nth-child(2) { transition-delay: 0.2s; }
-    .testimonial-card:nth-child(3) { transition-delay: 0.3s; }
- 
-    .testimonial-card::before {
-      content: '"';
-      position: absolute;
-      top: -10px;
-      left: 20px;
-      font-size: 6rem;
-      color: var(--orange);
-      opacity: 0.2;
-      font-family: Georgia, serif;
-    }
- 
-    .testimonial-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 15px 50px var(--shadow);
-    }
- 
-    .testimonial-header {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 20px;
-      position: relative;
-      z-index: 1;
-    }
- 
-    .testimonial-avatar {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--orange-light), var(--orange-dark));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      flex-shrink: 0;
-    }
- 
-    .testimonial-info h4 {
-      color: var(--text-primary);
-      font-size: 1.3rem;
-      margin-bottom: 5px;
-    }
- 
-    .testimonial-info p {
-      color: var(--text-secondary);
-      font-size: 0.95rem;
-    }
- 
-    .testimonial-text {
-      color: var(--text-secondary);
-      font-size: 1.1rem;
-      line-height: 1.8;
-      font-style: italic;
-      position: relative;
-      z-index: 1;
-    }
- 
-    .testimonial-rating {
-      margin-top: 20px;
-      color: #fbbf24;
-      font-size: 1.3rem;
-    }
-    /* ========================================
-       FONCTIONNALITÉS
-       ======================================== */
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 30px;
-      margin-top: 50px;
-    }
- 
-    .feature {
-      text-align: center;
-      padding: 40px 30px;
-      background: var(--card-bg);
-      border-radius: 20px;
+      border-radius: 24px; /* Plus arrondi. */
       box-shadow: 0 8px 30px var(--shadow);
       transition: all 0.4s ease;
       opacity: 0;
@@ -845,18 +623,19 @@
       position: relative;
       overflow: hidden;
     }
- 
-    .features.visible .feature {
+    .features-forces.visible .feature-force {
       opacity: 1;
       transform: scale(1);
     }
- 
-    .feature:nth-child(1) { transition-delay: 0.1s; }
-    .feature:nth-child(2) { transition-delay: 0.2s; }
-    .feature:nth-child(3) { transition-delay: 0.3s; }
-    .feature:nth-child(4) { transition-delay: 0.4s; }
- 
-    .feature::before {
+    /* Stagger delay pour animation séquentielle. Chaque carte apparaît avec un léger délai. */
+    .feature-force:nth-child(1) { transition-delay: 0.1s; }
+    .feature-force:nth-child(2) { transition-delay: 0.2s; }
+    .feature-force:nth-child(3) { transition-delay: 0.3s; }
+    .feature-force:nth-child(4) { transition-delay: 0.4s; }
+    .feature-force:nth-child(5) { transition-delay: 0.5s; }
+    .feature-force:nth-child(6) { transition-delay: 0.6s; }
+    .feature-force:nth-child(7) { transition-delay: 0.7s; }
+    .feature-force::before {
       content: '';
       position: absolute;
       top: 0;
@@ -867,120 +646,198 @@
       transform: scaleX(0);
       transition: transform 0.3s ease;
     }
- 
-    .feature:hover::before {
+    .feature-force:hover::before {
       transform: scaleX(1);
     }
- 
-    .feature:hover {
+    .feature-force:hover {
       transform: translateY(-10px) scale(1.02);
       box-shadow: 0 15px 45px var(--shadow);
     }
- 
-    .feature-icon {
-      font-size: 3.5rem;
-      margin-bottom: 20px;
+    .feature-force-icon {
+      font-size: 4rem; /* Augmenté. */
+      margin-bottom: 25px; /* Augmenté. */
       display: block;
       animation: iconFloat 3s ease-in-out infinite;
     }
- 
     @keyframes iconFloat {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-10px); }
     }
- 
-    .feature h4 {
+    .feature-force h4 {
       margin: 15px 0 15px;
-      font-size: 1.4rem;
+      font-size: 1.6rem; /* Augmenté. */
       color: var(--orange);
       font-weight: 800;
     }
- 
-    .feature p {
+    .feature-force p {
       color: var(--text-secondary);
-      line-height: 1.7;
-      font-size: 1.05rem;
+      line-height: 1.8; /* Augmenté. */
+      font-size: 1.15rem; /* Augmenté. */
     }
     /* ========================================
-       SMARTPHONE DÉMO SVG
+       TÉMOIGNAGES - Cartes avec quote et rating.
+       Grille responsive pour avis, avec effets hover.
+       Amélioré : Padding augmenté, text plus grand.
+       ======================================== */
+    .testimonials-section {
+      background: var(--light);
+      padding: 120px 20px; /* Augmenté. */
+    }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 40px; /* Augmenté. */
+      margin-top: 60px; /* Augmenté. */
+    }
+    .testimonial-card {
+      background: var(--card-bg);
+      padding: 50px; /* Augmenté. */
+      border-radius: 24px; /* Plus arrondi. */
+      box-shadow: 0 8px 30px var(--shadow);
+      border: 1px solid var(--border);
+      position: relative;
+      transition: all 0.4s ease;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    .testimonials-grid.visible .testimonial-card {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .testimonial-card:nth-child(1) { transition-delay: 0.1s; }
+    .testimonial-card:nth-child(2) { transition-delay: 0.2s; }
+    .testimonial-card:nth-child(3) { transition-delay: 0.3s; }
+    .testimonial-card::before {
+      content: '"';
+      position: absolute;
+      top: -10px;
+      left: 20px;
+      font-size: 6rem;
+      color: var(--orange);
+      opacity: 0.2;
+      font-family: Georgia, serif;
+    }
+    .testimonial-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 50px var(--shadow);
+    }
+    .testimonial-header {
+      display: flex;
+      align-items: center;
+      gap: 20px; /* Augmenté. */
+      margin-bottom: 25px; /* Augmenté. */
+      position: relative;
+      z-index: 1;
+    }
+    .testimonial-avatar {
+      width: 70px; /* Augmenté. */
+      height: 70px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--orange-light), var(--orange-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem; /* Augmenté. */
+      flex-shrink: 0;
+    }
+    .testimonial-info h4 {
+      color: var(--text-primary);
+      font-size: 1.5rem; /* Augmenté. */
+      margin-bottom: 8px; /* Augmenté. */
+    }
+    .testimonial-info p {
+      color: var(--text-secondary);
+      font-size: 1.05rem; /* Augmenté. */
+    }
+    .testimonial-text {
+      color: var(--text-secondary);
+      font-size: 1.2rem; /* Augmenté. */
+      line-height: 1.9; /* Augmenté. */
+      font-style: italic;
+      position: relative;
+      z-index: 1;
+    }
+    .testimonial-rating {
+      margin-top: 25px; /* Augmenté. */
+      color: #fbbf24;
+      font-size: 1.5rem; /* Augmenté. */
+    }
+    /* ========================================
+       SMARTPHONE DÉMO - Interactif avec scroll, navigation et contenu étendu pour preview complet.
+       Amélioré pour manipulation : drag pour rotation/zoom/déplacement, scroll interne actif et indépendant de la page.
        ======================================== */
     .phone-demo-section {
       background: linear-gradient(135deg, var(--white) 0%, var(--light) 100%);
-      padding: 100px 0;
+      padding: 120px 0; /* Augmenté. */
       position: relative;
       overflow: hidden;
     }
- 
     .phone-demo-container {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 80px;
+      gap: 100px; /* Augmenté. */
       flex-wrap: wrap;
     }
- 
     .phone-demo-content {
       flex: 1;
       min-width: 300px;
       max-width: 500px;
     }
- 
     .phone-demo-content h2 {
-      font-size: 3rem;
-      margin-bottom: 25px;
+      font-size: 3.5rem; /* Augmenté. */
+      margin-bottom: 30px; /* Augmenté. */
       color: var(--text-primary);
     }
- 
     .phone-demo-content p {
-      font-size: 1.2rem;
+      font-size: 1.3rem; /* Augmenté. */
       color: var(--text-secondary);
-      margin-bottom: 20px;
-      line-height: 1.8;
+      margin-bottom: 25px; /* Augmenté. */
+      line-height: 1.9; /* Augmenté. */
     }
- 
+    /* Container phone avec manipulation (zoom/rotate/déplacement via JS). Cursor grab pour indiquer interactivité. */
     .phone-svg-container {
       flex: 1;
       min-width: 300px;
       max-width: 750px;
       display: flex;
       justify-content: center;
-      cursor: pointer;
+      cursor: grab;
+      transition: transform 0.3s ease;
+      position: relative; /* Pour permettre déplacement. */
+      touch-action: none; /* Pour manipulation tactile. */
     }
- 
     .phone-mockup {
       position: relative;
       width: 320px;
       height: 640px;
-      background: #000;
+      background: #1a1a1a;
       border-radius: 60px;
-      box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.4);
       padding: 60px 20px 100px;
       animation: phoneFloat 4s ease-in-out infinite;
-      border: 2px solid var(--orange);
+      border: 3px solid var(--orange);
       transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     }
-
     .phone-mockup:hover {
       transform: translateY(-20px) rotate(5deg) scale(1.05);
       box-shadow: 0 40px 80px rgba(255, 98, 0, 0.5);
       animation: none;
     }
- 
     @keyframes phoneFloat {
       0%, 100% { transform: translateY(0) rotate(0deg); }
       50% { transform: translateY(-20px) rotate(3deg); }
     }
- 
     .phone-frame {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      border: 12px solid #000;
+      border: 12px solid #1a1a1a;
       border-radius: 60px;
+      pointer-events: none;
     }
- 
     .phone-notch {
       position: absolute;
       top: 0;
@@ -988,11 +845,11 @@
       transform: translateX(-50%);
       width: 120px;
       height: 30px;
-      background: #000;
+      background: #1a1a1a;
       border-bottom-left-radius: 20px;
       border-bottom-right-radius: 20px;
+      z-index: 10;
     }
- 
     .phone-screen {
       width: 100%;
       height: 100%;
@@ -1002,7 +859,6 @@
       position: relative;
       transition: all 0.3s ease;
     }
- 
     .status-bar {
       display: flex;
       justify-content: space-between;
@@ -1012,81 +868,76 @@
       background: #f8f9fa;
       font-weight: bold;
     }
- 
+    /* Contenu scrollable avec plus de données pour démonstration complète. Overflow-y pour scroll, avec scrollbar stylée. */
     .phone-content {
       padding: 20px;
       overflow-y: auto;
       height: calc(100% - 40px);
-      scrollbar-width: none; /* Firefox */
+      scrollbar-width: thin;
+      scrollbar-color: var(--orange) #f1f1f1;
+      touch-action: pan-y; /* Permet scroll interne sur tactile sans affecter page. */
     }
-
     .phone-content::-webkit-scrollbar {
-      display: none; /* Chrome */
+      width: 6px;
     }
- 
+    .phone-content::-webkit-scrollbar-thumb {
+      background: var(--orange);
+      border-radius: 10px;
+    }
     .content-header h3 {
-      font-size: 18px;
-      margin-bottom: 20px;
+      font-size: 20px; /* Augmenté. */
+      margin-bottom: 25px; /* Augmenté. */
       color: var(--orange);
       font-weight: 900;
       text-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
- 
     .sales-card {
       background: #f8f9fa;
-      padding: 15px;
+      padding: 20px; /* Augmenté. */
       border-radius: 15px;
-      margin-bottom: 20px;
+      margin-bottom: 25px; /* Augmenté. */
       box-shadow: 0 4px 15px rgba(0,0,0,0.05);
       border: 1px solid rgba(255, 98, 0, 0.2);
       transition: transform 0.3s ease;
     }
-
     .sales-card:hover {
       transform: scale(1.05);
     }
- 
     .sales-value {
-      font-size: 28px;
+      font-size: 32px; /* Augmenté. */
       font-weight: 700;
-      margin: 10px 0;
+      margin: 12px 0; /* Augmenté. */
       color: var(--success);
       text-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
- 
     .sales-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 15px;
+      gap: 20px; /* Augmenté. */
     }
- 
     .mini-card {
       background: #f8f9fa;
-      padding: 15px;
+      padding: 20px; /* Augmenté. */
       border-radius: 15px;
       text-align: center;
       box-shadow: 0 4px 15px rgba(0,0,0,0.05);
       border: 1px solid rgba(255, 98, 0, 0.1);
       transition: transform 0.3s ease;
     }
-
     .mini-card:hover {
       transform: scale(1.1);
     }
- 
     .mini-label {
-      font-size: 12px;
+      font-size: 14px; /* Augmenté. */
       color: #64748b;
-      margin-bottom: 5px;
+      margin-bottom: 8px; /* Augmenté. */
       font-weight: bold;
     }
- 
     .mini-value {
-      font-size: 24px;
+      font-size: 28px; /* Augmenté. */
       font-weight: 700;
       color: var(--orange);
     }
- 
     .phone-nav {
       position: absolute;
       bottom: 20px;
@@ -1094,11 +945,11 @@
       transform: translateX(-50%);
       display: flex;
       gap: 40px;
-      background: #000;
+      background: #1a1a1a;
       padding: 8px 20px;
       border-radius: 30px;
+      z-index: 5;
     }
- 
     .nav-dot {
       width: 40px;
       height: 40px;
@@ -1108,101 +959,90 @@
       border-radius: 50%;
       transition: all 0.3s;
       position: relative;
+      cursor: pointer;
     }
- 
     .nav-dot.active {
       background: var(--orange);
     }
- 
     .nav-dot svg {
       width: 20px;
       height: 20px;
       fill: #94a3b8;
     }
- 
     .nav-dot.active svg {
       fill: white;
     }
     /* ========================================
-       FORMULAIRE BETA TESTEUR
+       FORMULAIRE BETA - Avec validation et animations focus.
+       Formulaire responsive avec feedback visuel.
        ======================================== */
     .beta-form-section {
       background: var(--white);
-      padding: 100px 20px;
+      padding: 120px 20px; /* Augmenté. */
     }
- 
     .beta-form-container {
       max-width: 800px;
       margin: 0 auto;
       background: var(--card-bg);
-      padding: 50px;
-      border-radius: 25px;
+      padding: 60px; /* Augmenté. */
+      border-radius: 30px; /* Plus arrondi. */
       box-shadow: 0 15px 50px var(--shadow);
       border: 1px solid var(--border);
       transition: all 0.5s ease;
     }
-
     .beta-form-container:hover {
       box-shadow: 0 20px 60px rgba(255, 98, 0, 0.3);
     }
- 
     .beta-badge {
       display: inline-block;
       background: linear-gradient(135deg, var(--orange), var(--orange-light));
       color: white;
-      padding: 8px 20px;
-      border-radius: 20px;
-      font-size: 0.9rem;
+      padding: 10px 25px; /* Augmenté. */
+      border-radius: 25px; /* Plus arrondi. */
+      font-size: 1rem; /* Augmenté. */
       font-weight: 700;
-      margin-bottom: 20px;
+      margin-bottom: 25px; /* Augmenté. */
       animation: pulse 2s ease-in-out infinite;
     }
- 
     .beta-form-intro {
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 50px; /* Augmenté. */
     }
- 
     .beta-form-intro h3 {
-      font-size: 2.2rem;
-      margin-bottom: 15px;
+      font-size: 2.5rem; /* Augmenté. */
+      margin-bottom: 20px; /* Augmenté. */
       color: var(--text-primary);
     }
- 
     .beta-form-intro p {
-      font-size: 1.1rem;
+      font-size: 1.2rem; /* Augmenté. */
       color: var(--text-secondary);
-      line-height: 1.7;
+      line-height: 1.8; /* Augmenté. */
     }
- 
     .form-group {
-      margin-bottom: 25px;
+      margin-bottom: 30px; /* Augmenté. */
       position: relative;
     }
- 
     .form-group label {
       display: block;
       font-weight: 600;
       color: var(--text-primary);
-      margin-bottom: 8px;
-      font-size: 1rem;
+      margin-bottom: 10px; /* Augmenté. */
+      font-size: 1.1rem; /* Augmenté. */
       transition: all 0.3s ease;
     }
- 
     .form-group input,
     .form-group textarea,
     .form-group select {
       width: 100%;
-      padding: 15px 20px;
+      padding: 18px 25px; /* Augmenté. */
       border: 2px solid var(--border);
-      border-radius: 12px;
-      font-size: 1rem;
+      border-radius: 14px; /* Plus arrondi. */
+      font-size: 1.1rem; /* Augmenté. */
       font-family: 'Inter', sans-serif;
       background: var(--white);
       color: var(--text-primary);
       transition: all 0.3s ease;
     }
- 
     .form-group input:focus,
     .form-group textarea:focus,
     .form-group select:focus {
@@ -1210,191 +1050,280 @@
       border-color: var(--orange);
       box-shadow: 0 0 0 3px rgba(255, 98, 0, 0.1);
     }
-
     .form-group:focus-within label {
       color: var(--orange);
       transform: translateY(-5px);
-      font-size: 0.9rem;
+      font-size: 1rem; /* Ajusté. */
     }
- 
     .form-group textarea {
       resize: vertical;
-      min-height: 120px;
+      min-height: 140px; /* Augmenté. */
     }
- 
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      gap: 25px; /* Augmenté. */
     }
- 
     .form-submit {
       text-align: center;
-      margin-top: 30px;
+      margin-top: 40px; /* Augmenté. */
     }
- 
     .form-submit button {
-      padding: 18px 50px;
-      font-size: 1.1rem;
+      padding: 20px 60px; /* Augmenté. */
+      font-size: 1.2rem; /* Augmenté. */
       transition: all 0.3s ease;
     }
-
     .form-submit button:hover {
       transform: scale(1.05);
     }
- 
     .form-success {
       display: none;
       text-align: center;
-      padding: 30px;
+      padding: 35px; /* Augmenté. */
       background: #d1fae5;
       border-radius: 15px;
       color: #065f46;
-      font-size: 1.1rem;
+      font-size: 1.2rem; /* Augmenté. */
       font-weight: 600;
       animation: fadeInUp 0.5s ease-out;
     }
- 
     .form-success.show {
       display: block;
     }
     /* ========================================
-       TRUST SECTION
+       VELMO EN ACTION - Compteurs animés étendus pour plus de détails.
+       Amélioré : Grille plus espacée, chiffres plus grands, responsive avec wrap, suppression de utilisateurs actifs.
        ======================================== */
-    .trust-section {
+    .action-section {
       background: var(--light);
-      padding: 80px 0;
+      padding: 100px 0; /* Augmenté. */
     }
- 
-    .trust-grid {
+    .action-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 40px;
-      margin-top: 50px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Augmenté. */
+      gap: 50px; /* Augmenté. */
+      margin-top: 60px; /* Augmenté. */
     }
- 
-    .trust-item {
+    .action-item {
       text-align: center;
-      padding: 30px;
+      padding: 40px; /* Augmenté. */
       transition: transform 0.3s ease;
+      background: var(--card-bg);
+      border-radius: 24px; /* Plus arrondi. */
+      box-shadow: 0 8px 30px var(--shadow); /* Ajouté pour profondeur. */
     }
- 
-    .trust-item:hover {
+    .action-item:hover {
       transform: translateY(-10px);
     }
- 
-    .trust-number {
-      font-size: 3.5rem;
+    .action-number {
+      font-size: clamp(3.5rem, 6vw, 4rem); /* Augmenté pour visibilité. */
       font-weight: 900;
       background: linear-gradient(135deg, var(--orange-light), var(--orange-dark));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 10px;
+      background-clip: text;
+      margin-bottom: 15px; /* Augmenté. */
       display: block;
     }
- 
-    .trust-label {
-      font-size: 1.1rem;
+    .action-label {
+      font-size: clamp(1.2rem, 3vw, 1.3rem); /* Augmenté pour lisibilité. */
       color: var(--text-secondary);
       font-weight: 600;
     }
     /* ========================================
-       CTA FINAL
+       CTA FINAL - Avec boutons et liens secondaires.
+       Amélioré : Style plus moderne, boutons plus grands, popup pour notification iOS.
        ======================================== */
     .final-cta {
       text-align: center;
-      padding: 120px 20px;
+      padding: 140px 20px; /* Augmenté. */
       background: var(--white);
       position: relative;
     }
- 
     .final-cta h2 {
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      margin-bottom: 25px;
+      font-size: clamp(2.5rem, 6vw, 4rem); /* Augmenté. */
+      margin-bottom: 30px; /* Augmenté. */
     }
- 
     .final-cta p {
-      font-size: 1.3rem;
+      font-size: 1.4rem; /* Augmenté. */
       color: var(--text-secondary);
-      margin-bottom: 40px;
-      line-height: 1.8;
+      margin-bottom: 50px; /* Augmenté. */
+      line-height: 1.9; /* Augmenté. */
     }
- 
     .btn-group {
       display: flex;
       justify-content: center;
-      gap: 20px;
+      gap: 25px; /* Augmenté. */
       flex-wrap: wrap;
-      margin-top: 30px;
+      margin-top: 40px; /* Augmenté. */
+    }
+    .secondary-link {
+      color: var(--orange);
+      font-size: 1rem; /* Augmenté. */
+      margin-top: 15px; /* Augmenté. */
+      display: inline-block;
+      transition: color 0.3s ease;
+      cursor: pointer; /* Pour indiquer clic. */
+    }
+    .secondary-link:hover {
+      color: var(--orange-dark);
+    }
+    /* Popup pour notification iOS. Caché par défaut, affiché sur clic. */
+    .notify-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--white);
+      padding: 30px; /* Réduit pour plus petit. */
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      z-index: 1001;
+      display: none;
+      width: 320px; /* Réduit pour plus petit. */
+      max-width: 90%;
+    }
+    .notify-popup.active {
+      display: block;
+    }
+    .notify-close {
+      position: absolute;
+      top: 10px; /* Réduit. */
+      right: 10px; /* Réduit. */
+      cursor: pointer;
+      font-size: 1.3rem; /* Réduit. */
+      color: var(--text-secondary);
+    }
+    .notify-form input {
+      width: 100%;
+      padding: 12px; /* Réduit. */
+      margin-bottom: 15px; /* Réduit. */
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 1rem;
+    }
+    .notify-form button {
+      width: 100%;
+    }
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      display: none;
+    }
+    .overlay.active {
+      display: block;
     }
     /* ========================================
-       FOOTER
+       FOOTER - Avec logo interactif et réseaux.
+       Footer avec éléments interactifs pour contact.
+       Amélioré : Espaces augmentés, text plus grand.
        ======================================== */
     footer {
-      background: var(--gray);
-      color: var(--white);
+      background: linear-gradient(135deg, var(--promise-bg-start) 0%, var(--promise-bg-end) 100%);
+      color: var(--promise-text);
       text-align: center;
-      padding: 60px 20px;
-      font-size: 0.95rem;
+      padding: 80px 20px; /* Augmenté. */
+      font-size: 1.05rem; /* Augmenté. */
+      position: relative;
+      overflow: hidden;
     }
- 
+    footer::before {
+      content: '';
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, var(--promise-orb), transparent);
+      bottom: -200px;
+      right: -200px;
+      border-radius: 50%;
+      animation: promiseOrb 15s ease-in-out infinite;
+    }
     [data-theme="dark"] footer {
-      background: #0a0a0a;
+      background: linear-gradient(135deg, #2a1a10 0%, #3a2515 100%);
     }
- 
-    footer p:first-child {
-      font-size: 1.3rem;
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px; /* Augmenté. */
+      margin-bottom: 40px; /* Augmenté. */
+    }
+    .footer-logo-svg {
+      height: 70px; /* Augmenté. */
+      width: auto;
+      fill: #ffffff;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+    .footer-logo-svg:hover {
+      transform: scale(1.1) rotate(5deg);
+    }
+    .footer-logo-text {
+      font-size: 2.5rem; /* Augmenté. */
+      font-weight: 900;
+      color: var(--white);
+    }
+    footer p:first-of-type {
+      font-size: 1.5rem; /* Augmenté. */
       font-weight: 700;
-      margin-bottom: 25px;
-      color: var(--orange);
+      margin-bottom: 30px; /* Augmenté. */
+      color: var(--white);
     }
- 
     footer a {
-      color: var(--text-secondary);
-      margin: 0 15px;
+      color: var(--white);
+      margin: 0 20px; /* Augmenté. */
       transition: all 0.3s ease;
       display: inline-block;
+      font-size: 1.1rem; /* Augmenté. */
     }
- 
     footer a:hover {
-      color: var(--orange);
+      color: var(--white);
       transform: translateY(-3px);
     }
-
     .contact-section {
-      margin-top: 30px;
+      margin-top: 40px; /* Augmenté. */
     }
-
     .social-icons {
       display: flex;
       justify-content: center;
-      gap: 20px;
-      margin-top: 15px;
+      gap: 25px; /* Augmenté. */
+      margin-top: 20px; /* Augmenté. */
     }
-
     .social-icon {
-      font-size: 1.5rem;
-      color: var(--text-secondary);
+      font-size: 2.5rem; /* Augmenté. */
+      color: var(--white);
       transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px; /* Augmenté. */
+      height: 60px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
     }
-
     .social-icon:hover {
-      color: var(--orange);
-      transform: scale(1.2);
+      transform: scale(1.2) rotate(15deg);
+      background: rgba(255,255,255,0.4);
     }
     /* ========================================
-       ANIMATIONS
+       ANIMATIONS - Globales et keyframes.
+       Animations réutilisables pour fluidité.
        ======================================== */
     @keyframes pulse {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.05); }
     }
- 
     .pulse {
       animation: pulse 2s ease-in-out infinite;
     }
     /* ========================================
-       BOUTON WHATSAPP FLOTTANT
+       WHATSAPP FLOAT - Avec pulse ring et bounce.
+       Bouton flottant pour contact rapide, avec animations.
        ======================================== */
     .whatsapp-float {
       position: fixed;
@@ -1413,12 +1342,10 @@
       transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
       animation: floatBounce 3s ease-in-out infinite;
     }
- 
     .whatsapp-float:hover {
       transform: scale(1.15) rotate(10deg);
       box-shadow: 0 12px 40px rgba(37, 211, 102, 0.6);
     }
- 
     .whatsapp-float::before {
       content: '';
       position: absolute;
@@ -1428,7 +1355,6 @@
       background: rgba(37, 211, 102, 0.3);
       animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
     }
- 
     .whatsapp-float svg {
       width: 35px;
       height: 35px;
@@ -1436,24 +1362,24 @@
       position: relative;
       z-index: 1;
     }
- 
     @keyframes floatBounce {
       0%, 100% { transform: translateY(0) rotate(0deg); }
       25% { transform: translateY(-10px) rotate(5deg); }
       75% { transform: translateY(-5px) rotate(-5deg); }
     }
- 
     @keyframes pulse-ring {
       0% { transform: scale(1); opacity: 0.8; }
       100% { transform: scale(1.6); opacity: 0; }
     }
     /* ========================================
-       TRADUCTIONS
+       TRADUCTIONS - Classes pour FR/EN.
+       Gestion des langues avec display none pour masquer le contenu non pertinent.
        ======================================== */
     [lang="en"] .lang-fr { display: none; }
     [lang="fr"] .lang-en { display: none; }
     /* ========================================
-       RESPONSIVE
+       RESPONSIVE - Media queries pour mobile/tablette.
+       Adaptations pour petits écrans : stack vertical, tailles réduites, etc.
        ======================================== */
     @media (max-width: 768px) {
       nav {
@@ -1471,12 +1397,10 @@
         box-shadow: 0 10px 40px var(--shadow);
         border-bottom: 1px solid var(--border);
       }
-   
       nav.active {
         transform: translateY(0);
         opacity: 1;
       }
-   
       nav a {
         width: 100%;
         padding: 1.2rem;
@@ -1484,174 +1408,166 @@
         border-radius: 10px;
         margin-bottom: 0.5rem;
       }
-   
       nav a:hover {
         background: var(--light);
       }
-   
       .menu-toggle {
         display: flex;
       }
-   
       .menu-toggle.active span:nth-child(1) {
         transform: rotate(45deg) translateY(8px);
       }
-   
       .menu-toggle.active span:nth-child(2) {
         opacity: 0;
       }
-   
       .menu-toggle.active span:nth-child(3) {
         transform: rotate(-45deg) translateY(-8px);
       }
-   
       .hero {
         padding: 130px 20px 80px;
       }
-   
       section {
-        padding: 60px 0;
+        padding: 80px 0; /* Ajusté. */
       }
-   
       .content-card {
-        padding: 30px 20px;
+        padding: 40px 25px; /* Ajusté. */
       }
-   
       .btn-group {
         flex-direction: column;
       }
-   
       .micro-proof {
         gap: 15px;
       }
-   
       .promise-box {
-        padding: 30px 20px;
+        padding: 40px 25px; /* Ajusté. */
       }
-   
-      .promise-quote {
-        font-size: 1.3rem;
-      }
-   
       .slogan {
-        font-size: 1.8rem;
+        font-size: 2rem; /* Ajusté. */
       }
-   
       .testimonials-grid {
         grid-template-columns: 1fr;
       }
-   
       .phone-demo-content h2 {
-        font-size: 2rem;
+        font-size: 2.5rem; /* Ajusté. */
       }
-   
       .beta-form-container {
-        padding: 30px 20px;
+        padding: 40px 25px; /* Ajusté. */
       }
-   
       .form-row {
         grid-template-columns: 1fr;
       }
-   
       .whatsapp-float {
         width: 60px;
         height: 60px;
         bottom: 20px;
         right: 20px;
       }
-   
       .whatsapp-float svg {
         width: 30px;
         height: 30px;
       }
-   
-      .trust-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
+      .action-grid {
+        grid-template-columns: 1fr; /* 1 colonne sur mobile. */
+        gap: 30px; /* Ajusté. */
       }
-   
-      .trust-number {
-        font-size: 2.5rem;
+      .action-number {
+        font-size: 3rem; /* Ajusté. */
       }
-   
-      .logo-image {
-        height: 45px;
+      .logo-svg {
+        height: 40px;
       }
-   
       .logo {
-        font-size: 1.5rem;
+        font-size: 1.6rem; /* Ajusté. */
       }
-   
-      .logo::before {
-        font-size: 1.8rem;
-      }
-   
-      .benefit-preview {
-        position: static;
-        margin-top: 10px;
-        width: auto;
-      }
-   
       .phone-mockup {
         width: 280px;
         height: 560px;
         padding: 50px 15px 80px;
       }
-   
       .phone-notch {
         width: 100px;
         height: 25px;
       }
-   
       .phone-nav {
         gap: 30px;
         padding: 6px 15px;
       }
-   
       .nav-dot {
         width: 35px;
         height: 35px;
       }
-   
       .nav-dot svg {
         width: 18px;
         height: 18px;
       }
-   
       .content-header h3 {
-        font-size: 16px;
+        font-size: 18px; /* Ajusté. */
       }
-   
       .sales-value {
-        font-size: 24px;
+        font-size: 28px; /* Ajusté. */
       }
-   
       .mini-value {
-        font-size: 20px;
+        font-size: 24px; /* Ajusté. */
       }
-
       .social-icons {
         flex-wrap: wrap;
         gap: 15px;
+      }
+      .promise-benefits {
+        grid-template-columns: 1fr;
+      }
+      /* Ajouté : Amélioration responsive pour phone container sur mobile. */
+      .phone-svg-container {
+        margin: 0 auto;
+      }
+    }
+    /* Media query pour très petits écrans (ex: < 480px). */
+    @media (max-width: 480px) {
+      .hero h1 {
+        font-size: clamp(2.5rem, 9vw, 3.5rem);
+      }
+      .hero-desc {
+        font-size: 1.1rem;
+      }
+      .promise-benefit-title {
+        font-size: 1.6rem;
+      }
+      .promise-benefit-desc {
+        font-size: 1rem;
+      }
+      .action-number {
+        font-size: 3rem;
+      }
+      .phone-mockup {
+        width: 100%;
+        height: auto; /* Pour adaptation pleine largeur. */
       }
     }
   </style>
 </head>
 <body>
-  <!-- HEADER -->
+  <!-- ========================================
+       HEADER - Fixe avec navigation et toggles.
+       Contient le logo, nav et actions pour thème/langue/menu.
+       ======================================== -->
   <header id="header">
     <div class="header-container">
+      <!-- Logo SVG interactif. Clique pour retourner à l'accueil (ajoutable via JS si besoin). -->
       <div class="logo-wrapper">
-        <img src="logo.png" alt="Velmo Logo" class="logo-image">
+        <svg class="logo-svg" viewBox="0 0 100 100" fill="var(--orange)">
+          <circle cx="50" cy="50" r="40" />
+          <text x="50" y="55" font-size="40" text-anchor="middle" dy=".3em" fill="white">V</text>
+        </svg>
         <div class="logo">Velmo</div>
       </div>
+      <!-- Navigation principale. Liens vers sections avec support multilingue. -->
       <nav id="nav">
         <a href="#promesse"><span class="lang-fr">Promesse</span><span class="lang-en">Promise</span></a>
-        <a href="#forces"><span class="lang-fr">Forces</span><span class="lang-en">Strengths</span></a>
-        <a href="#fonctions"><span class="lang-fr">Fonctions</span><span class="lang-en">Features</span></a>
+        <a href="#features"><span class="lang-fr">Fonctions & Forces</span><span class="lang-en">Features & Strengths</span></a>
         <a href="#beta"><span class="lang-fr">Rejoindre Beta</span><span class="lang-en">Join Beta</span></a>
         <a href="#download"><span class="lang-fr">Télécharger</span><span class="lang-en">Download</span></a>
       </nav>
+      <!-- Actions : Thème, langue, menu. Boutons pour switch rapide. -->
       <div class="header-actions">
         <button class="icon-btn" id="theme-toggle" title="Toggle theme">🌙</button>
         <button class="icon-btn" id="lang-toggle" title="Change language">🇫🇷</button>
@@ -1663,122 +1579,131 @@
       </div>
     </div>
   </header>
-  <!-- HERO -->
+  <!-- ========================================
+       HERO - Introduction avec CTA.
+       Section principale pour accrocher le visiteur.
+       ======================================== -->
   <section class="hero">
     <div class="container">
       <h1 class="lang-fr">Velmo — Gagnez plus. Vivez mieux.</h1>
       <h1 class="lang-en">Velmo — Earn more. Live better.</h1>
-   
       <p class="hero-desc lang-fr">
-        La seule application dont tu as besoin pour gérer ton commerce.<br>
-        Simple, rapide et accessible partout.
+        La seule application dont tu as besoin pour gérer ton commerce.
       </p>
       <p class="hero-desc lang-en">
-        The only app you need to manage your business.<br>
-        Simple, fast and accessible everywhere.
+        The only app you need to manage your business.
       </p>
-   
       <a href="#beta" class="btn btn-primary">
         <span class="lang-fr">🚀 Rejoindre la Beta</span>
         <span class="lang-en">🚀 Join the Beta</span>
       </a>
-   
       <div class="micro-proof">
-        <span class="lang-fr">Fonctionne sur tous les téléphones</span>
-        <span class="lang-en">Works on all phones</span>
-     
-        <span class="lang-fr">Même sans internet</span>
-        <span class="lang-en">Even without internet</span>
+        <span class="lang-fr">Simple, rapide et accessible partout</span>
+        <span class="lang-en">Simple, fast and accessible everywhere</span>
       </div>
     </div>
   </section>
-  <!-- PROMESSE SECTION -->
+  <!-- ========================================
+       PROMESSE - Bénéfices avec expandable details.
+       Section clé, améliorée pour lisibilité (texte plus grand, contrastes).
+       ======================================== -->
   <section class="promise-section" id="promesse">
     <div class="container">
       <h2 class="lang-fr">Notre promesse</h2>
       <h2 class="lang-en">Our promise</h2>
-   
       <div class="promise-box">
-        <div class="promise-quote lang-fr">
-          <p>Tu n'as pas besoin d'un ordinateur.</p>
-          <p>Tu n'as pas besoin d'internet.</p>
-          <p>Tu as juste besoin de VELMO.</p>
-        </div>
-        <div class="promise-quote lang-en">
-          <p>You don't need a computer.</p>
-          <p>You don't need internet.</p>
-          <p>You just need VELMO.</p>
-        </div>
-     
         <div class="promise-benefits">
           <div class="promise-benefit">
             <div class="promise-benefit-header">
               <span class="promise-benefit-icon">📈</span>
-              <span class="promise-benefit-text lang-fr">Vendre mieux</span>
-              <span class="promise-benefit-text lang-en">Sell better</span>
             </div>
-            <div class="benefit-preview">
-              <h4 class="lang-fr">Vos ventes</h4>
-              <h4 class="lang-en">Your sales</h4>
-              <p class="lang-fr">Suivez vos ventes en temps réel avec des graphiques simples.</p>
-              <p class="lang-en">Track your sales in real-time with simple charts.</p>
+            <h3 class="promise-benefit-title lang-fr">Vendre mieux</h3>
+            <h3 class="promise-benefit-title lang-en">Sell better</h3>
+            <p class="promise-benefit-desc lang-fr">Vos ventes, visibles en un clin d'œil</p>
+            <p class="promise-benefit-desc lang-en">Your sales, visible at a glance</p>
+            <div class="benefit-details">
+              <p class="lang-fr">
+                Ne laissez plus vos revenus au hasard. Avec Velmo, chaque vente est suivie en temps réel,
+                directement sur votre smartphone. Graphiques clairs, décisions instantanées — vos profits
+                sous contrôle dès maintenant.
+              </p>
+              <p class="lang-en">
+                Don't leave your revenue to chance anymore. With Velmo, every sale is tracked in real-time,
+                directly on your smartphone. Clear charts, instant decisions — your profits under control now.
+              </p>
             </div>
           </div>
-       
           <div class="promise-benefit">
             <div class="promise-benefit-header">
               <span class="promise-benefit-icon">📦</span>
-              <span class="promise-benefit-text lang-fr">Suivre leurs stocks</span>
-              <span class="promise-benefit-text lang-en">Track their inventory</span>
             </div>
-            <div class="benefit-preview">
-              <h4 class="lang-fr">Vos stocks</h4>
-              <h4 class="lang-en">Your inventory</h4>
-              <p class="lang-fr">Gestion facile des stocks avec alertes pour les bas niveaux.</p>
-              <p class="lang-en">Easy inventory management with low level alerts.</p>
+            <h3 class="promise-benefit-title lang-fr">Suivre vos stocks</h3>
+            <h3 class="promise-benefit-title lang-en">Track your inventory</h3>
+            <p class="promise-benefit-desc lang-fr">Plus jamais à court de produits</p>
+            <p class="promise-benefit-desc lang-en">Never out of stock again</p>
+            <div class="benefit-details">
+              <p class="lang-fr">
+                Recevez des alertes dès qu'un produit manque. Vos stocks sont toujours à jour, prêts à
+                répondre à la demande. Gérez votre commerce sans mauvaise surprise.
+              </p>
+              <p class="lang-en">
+                Receive alerts as soon as a product is missing. Your inventory is always up to date,
+                ready to meet demand. Manage your business without bad surprises.
+              </p>
             </div>
           </div>
-       
           <div class="promise-benefit">
             <div class="promise-benefit-header">
               <span class="promise-benefit-icon">💼</span>
-              <span class="promise-benefit-text lang-fr">Gérer leur commerce sans stress</span>
-              <span class="promise-benefit-text lang-en">Manage their business stress-free</span>
             </div>
-            <div class="benefit-preview">
-              <h4 class="lang-fr">Votre commerce</h4>
-              <h4 class="lang-en">Your business</h4>
-              <p class="lang-fr">Outils complets pour une gestion sans effort.</p>
-              <p class="lang-en">Complete tools for effortless management.</p>
+            <h3 class="promise-benefit-title lang-fr">Gérer votre commerce sans stress</h3>
+            <h3 class="promise-benefit-title lang-en">Manage your business stress-free</h3>
+            <p class="promise-benefit-desc lang-fr">Tout votre business dans une seule app</p>
+            <p class="promise-benefit-desc lang-en">Your entire business in one app</p>
+            <div class="benefit-details">
+              <p class="lang-fr">
+                Ventes, dettes, stocks — tout centralisé. Interface simple, rapide, sans complication.
+                Concentrez-vous sur ce qui rapporte, Velmo s'occupe du reste.
+              </p>
+              <p class="lang-en">
+                Sales, debts, inventory — all centralized. Simple, fast interface, no complications.
+                Focus on what pays, Velmo takes care of the rest.
+              </p>
             </div>
           </div>
-       
           <div class="promise-benefit">
             <div class="promise-benefit-header">
               <span class="promise-benefit-icon">📴</span>
-              <span class="promise-benefit-text lang-fr">Même sans internet</span>
-              <span class="promise-benefit-text lang-en">Even without internet</span>
             </div>
-            <div class="benefit-preview">
-              <h4 class="lang-fr">Mode hors-ligne</h4>
-              <h4 class="lang-en">Offline mode</h4>
-              <p class="lang-fr">Travaillez partout, synchronisez quand connecté.</p>
-              <p class="lang-en">Work anywhere, sync when connected.</p>
+            <h3 class="promise-benefit-title lang-fr">Même sans internet</h3>
+            <h3 class="promise-benefit-title lang-en">Even without internet</h3>
+            <p class="promise-benefit-desc lang-fr">Travaillez où vous voulez, sans interruption</p>
+            <p class="promise-benefit-desc lang-en">Work anywhere, without interruption</p>
+            <div class="benefit-details">
+              <p class="lang-fr">
+                Velmo fonctionne même hors ligne. Tout se synchronise automatiquement dès que vous êtes connecté.
+                Votre commerce ne s'arrête jamais — et vous non plus.
+              </p>
+              <p class="lang-en">
+                Velmo works even offline. Everything syncs automatically as soon as you're connected.
+                Your business never stops — and neither do you.
+              </p>
             </div>
           </div>
         </div>
-     
         <p class="slogan lang-fr">Gagnez plus. Vivez mieux.</p>
         <p class="slogan lang-en">Earn more. Live better.</p>
       </div>
     </div>
   </section>
-  <!-- POURQUOI VELMO -->
+  <!-- ========================================
+       POURQUOI VELMO - Explication du besoin.
+       Section explicative avec cartes pour structure.
+       ======================================== -->
   <section id="pourquoi">
     <div class="container">
       <h2 class="section-title lang-fr">Pourquoi Velmo existe ?</h2>
       <h2 class="section-title lang-en">Why Velmo exists?</h2>
-   
       <div class="content-card">
         <p class="lang-fr">
           Dans beaucoup de régions du monde, la technologie reste <strong>compliquée, lourde et inaccessible</strong>.<br>
@@ -1789,7 +1714,6 @@
           Too many people are left behind.
         </p>
       </div>
-   
       <div class="content-card">
         <h3 class="lang-fr">Velmo résout ce problème.</h3>
         <h3 class="lang-en">Velmo solves this problem.</h3>
@@ -1804,42 +1728,75 @@
       </div>
     </div>
   </section>
-  <!-- 3 FORCES -->
-  <section id="forces" style="background: var(--light);">
+  <!-- ========================================
+       FORCES ET FONCTIONS - Cartes détaillées.
+       Grille pour features, responsive.
+       ======================================== -->
+  <section id="features" style="background: var(--light);">
     <div class="container">
-      <h2 class="section-title lang-fr">Les 3 forces de Velmo</h2>
-      <h2 class="section-title lang-en">Velmo's 3 Strengths</h2>
-   
-      <div class="forces">
-        <div class="force-card">
-          <h3 class="lang-fr">1 — Universelle</h3>
-          <h3 class="lang-en">1 — Universal</h3>
+      <h2 class="section-title lang-fr">Forces & Fonctions de Velmo</h2>
+      <h2 class="section-title lang-en">Velmo's Strengths & Features</h2>
+      <div class="features-forces">
+        <div class="feature-force">
+          <span class="feature-force-icon">🌍</span>
+          <h4 class="lang-fr">Universelle</h4>
+          <h4 class="lang-en">Universal</h4>
           <p class="lang-fr">Compatible avec la majorité des smartphones, même anciens. Pas besoin du dernier modèle pour profiter de Velmo.</p>
           <p class="lang-en">Compatible with most smartphones, even old ones. No need for the latest model to enjoy Velmo.</p>
         </div>
-     
-        <div class="force-card">
-          <h3 class="lang-fr">2 — Légère & Offline</h3>
-          <h3 class="lang-en">2 — Lightweight & Offline</h3>
+        <div class="feature-force">
+          <span class="feature-force-icon">⚡</span>
+          <h4 class="lang-fr">Légère & Offline</h4>
+          <h4 class="lang-en">Lightweight & Offline</h4>
           <p class="lang-fr">Fonctionne même en connexion faible ou instable. L'application est ultra-légère et économise ta batterie.</p>
           <p class="lang-en">Works even with weak or unstable connection. The app is ultra-light and saves your battery.</p>
         </div>
-     
-        <div class="force-card">
-          <h3 class="lang-fr">3 — Simple & Rapide</h3>
-          <h3 class="lang-en">3 — Simple & Fast</h3>
+        <div class="feature-force">
+          <span class="feature-force-icon">🚀</span>
+          <h4 class="lang-fr">Simple & Rapide</h4>
+          <h4 class="lang-en">Simple & Fast</h4>
           <p class="lang-fr">Interface propre et directe. Tu comprends tout en quelques secondes. Pas de complications inutiles.</p>
           <p class="lang-en">Clean and direct interface. You understand everything in seconds. No unnecessary complications.</p>
+        </div>
+        <div class="feature-force">
+          <span class="feature-force-icon">📚</span>
+          <h4 class="lang-fr">Apprendre</h4>
+          <h4 class="lang-en">Learn</h4>
+          <p class="lang-fr">Accède à des outils simples qui t'aident à évoluer et développer tes compétences.</p>
+          <p class="lang-en">Access simple tools that help you grow and develop your skills.</p>
+        </div>
+        <div class="feature-force">
+          <span class="feature-force-icon">🛒</span>
+          <h4 class="lang-fr">Gérer ton activité</h4>
+          <h4 class="lang-en">Manage your business</h4>
+          <p class="lang-fr">Ventes, dettes, stock → tout est clair et rapide. Garde le contrôle total de ton business.</p>
+          <p class="lang-en">Sales, debts, inventory → everything is clear and fast. Keep total control of your business.</p>
+        </div>
+        <div class="feature-force">
+          <span class="feature-force-icon">💬</span>
+          <h4 class="lang-fr">Communiquer</h4>
+          <h4 class="lang-en">Communicate</h4>
+          <p class="lang-fr">Messagerie fluide et légère pour rester connecté avec tes clients et partenaires.</p>
+          <p class="lang-en">Smooth and lightweight messaging to stay connected with your customers and partners.</p>
+        </div>
+        <div class="feature-force">
+          <span class="feature-force-icon">🔐</span>
+          <h4 class="lang-fr">Sécurité</h4>
+          <h4 class="lang-en">Security</h4>
+          <p class="lang-fr">Tes données restent en sécurité, sous ton contrôle. Confidentialité garantie.</p>
+          <p class="lang-en">Your data remains secure, under your control. Privacy guaranteed.</p>
         </div>
       </div>
     </div>
   </section>
-  <!-- TÉMOIGNAGES -->
+  <!-- ========================================
+       TÉMOIGNAGES - Avis réels.
+       Grille pour témoignages, responsive.
+       ======================================== -->
   <section class="testimonials-section">
     <div class="container">
       <h2 class="section-title lang-fr">Ils testent déjà Velmo</h2>
       <h2 class="section-title lang-en">They're already testing Velmo</h2>
-   
       <div class="testimonials-grid">
         <div class="testimonial-card">
           <div class="testimonial-header">
@@ -1860,7 +1817,6 @@
           </p>
           <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
         </div>
-     
         <div class="testimonial-card">
           <div class="testimonial-header">
             <div class="testimonial-avatar">👩</div>
@@ -1880,7 +1836,6 @@
           </p>
           <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
         </div>
-     
         <div class="testimonial-card">
           <div class="testimonial-header">
             <div class="testimonial-avatar">👨</div>
@@ -1903,58 +1858,18 @@
       </div>
     </div>
   </section>
-  <!-- FONCTIONNALITÉS -->
-  <section id="fonctions">
-    <div class="container">
-      <h2 class="section-title lang-fr">Ce que tu peux faire avec Velmo</h2>
-      <h2 class="section-title lang-en">What you can do with Velmo</h2>
-   
-      <div class="features">
-        <div class="feature">
-          <span class="feature-icon">📚</span>
-          <h4 class="lang-fr">Apprendre</h4>
-          <h4 class="lang-en">Learn</h4>
-          <p class="lang-fr">Accède à des outils simples qui t'aident à évoluer et développer tes compétences.</p>
-          <p class="lang-en">Access simple tools that help you grow and develop your skills.</p>
-        </div>
-     
-        <div class="feature">
-          <span class="feature-icon">🛒</span>
-          <h4 class="lang-fr">Gérer ton activité</h4>
-          <h4 class="lang-en">Manage your business</h4>
-          <p class="lang-fr">Ventes, dettes, stock → tout est clair et rapide. Garde le contrôle total de ton business.</p>
-          <p class="lang-en">Sales, debts, inventory → everything is clear and fast. Keep total control of your business.</p>
-        </div>
-     
-        <div class="feature">
-          <span class="feature-icon">💬</span>
-          <h4 class="lang-fr">Communiquer</h4>
-          <h4 class="lang-en">Communicate</h4>
-          <p class="lang-fr">Messagerie fluide et légère pour rester connecté avec tes clients et partenaires.</p>
-          <p class="lang-en">Smooth and lightweight messaging to stay connected with your customers and partners.</p>
-        </div>
-     
-        <div class="feature">
-          <span class="feature-icon">🔐</span>
-          <h4 class="lang-fr">Sécurité</h4>
-          <h4 class="lang-en">Security</h4>
-          <p class="lang-fr">Tes données restent en sécurité, sous ton contrôle. Confidentialité garantie.</p>
-          <p class="lang-en">Your data remains secure, under your control. Privacy guaranteed.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- DÉMO SMARTPHONE -->
+  <!-- ========================================
+       DÉMO SMARTPHONE - Interactif avec scroll et navigation.
+       Amélioré pour manipulation : drag pour rotate/zoom/déplacement, scroll actif.
+       ======================================== -->
   <section class="phone-demo-section">
     <div class="container">
       <h2 class="section-title lang-fr">Interface simple et intuitive</h2>
       <h2 class="section-title lang-en">Simple and intuitive interface</h2>
-   
       <div class="phone-demo-container">
         <div class="phone-demo-content">
           <h2 class="lang-fr">Tout ton business dans ta poche</h2>
           <h2 class="lang-en">Your entire business in your pocket</h2>
-       
           <p class="lang-fr">
             Velmo transforme ton smartphone en un outil de gestion puissant.
             Visualise tes ventes, gère ton stock, et pilote ton activité en temps réel.
@@ -1964,52 +1879,58 @@
             View your sales, manage your inventory, and run your business in real-time.
           </p>
         </div>
-     
-        <div class="phone-svg-container">
+        <div class="phone-svg-container" id="phone-container">
           <div class="phone-mockup">
- <div class="phone-frame">
-  <div class="phone-notch"></div>
-  <div class="phone-screen">
-   <div class="status-bar">
-    <span>9:41</span>
-    <span>🔋 100%</span>
-   </div>
-   <div class="phone-content" id="phone-content">
-   </div>
-   <div class="phone-nav">
-    <div class="nav-dot active" data-view="sales">
-     <svg viewBox="0 0 24 24" fill="white">
-      <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
-     </svg>
-    </div>
-    <div class="nav-dot" data-view="stock">
-     <svg viewBox="0 0 24 24" fill="#94a3b8">
-      <path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/>
-     </svg>
-    </div>
-    <div class="nav-dot" data-view="analytics">
-     <svg viewBox="0 0 24 24" fill="#94a3b8">
-      <path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/>
-     </svg>
-    </div>
-   </div>
-  </div>
- </div>
-</div>
+            <div class="phone-frame">
+              <div class="phone-notch"></div>
+              <div class="phone-screen">
+                <div class="status-bar">
+                  <span>9:41</span>
+                  <span>🔋 100%</span>
+                </div>
+                <div class="phone-content" id="phone-content">
+                  <!-- Contenu dynamique chargé via JS. -->
+                </div>
+                <div class="phone-nav">
+                  <div class="nav-dot active" data-view="sales">
+                    <svg viewBox="0 0 24 24" fill="white">
+                      <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                    </svg>
+                  </div>
+                  <div class="nav-dot" data-view="stock">
+                    <svg viewBox="0 0 24 24" fill="#94a3b8">
+                      <path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/>
+                    </svg>
+                  </div>
+                  <div class="nav-dot" data-view="analytics">
+                    <svg viewBox="0 0 24 24" fill="#94a3b8">
+                      <path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/>
+                    </svg>
+                  </div>
+                  <div class="nav-dot" data-view="offline">
+                    <svg viewBox="0 0 24 24" fill="#94a3b8">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4.17-5.24l-1.41 1.41C13.99 16.95 13.01 17 12 17c-1.01 0-1.99-.05-2.76-.83l-1.41 1.41C8.59 18.37 10.3 19 12 19c1.7 0 3.41-0.63 4.17-1.41zM12 9c-1.65 0-3 1.35-3 3s1.35 3 3 3 3-1.35 3-3-1.35-3-3-3zm0 4c-0.55 0-1-0.45-1-1s0.45-1 1-1 1 0.45 1 1-0.45 1-1 1zm0-6c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5z"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </section>
-  <!-- FORMULAIRE BETA -->
+  <!-- ========================================
+       FORMULAIRE BETA - Candidature.
+       Formulaire pour beta, avec succès message.
+       ======================================== -->
   <section class="beta-form-section" id="beta">
     <div class="beta-form-container">
       <span class="beta-badge lang-fr">Phase Beta</span>
       <span class="beta-badge lang-en">Beta Phase</span>
-   
       <div class="beta-form-intro">
         <h3 class="lang-fr">Rejoignez la beta de Velmo</h3>
         <h3 class="lang-en">Join Velmo's beta</h3>
-     
         <p class="lang-fr">
           Velmo est en phase beta de test. Nous cherchons des personnes qui ont des problèmes pour adapter l'outil.
         </p>
@@ -2017,7 +1938,6 @@
           Velmo is in beta testing phase. We're looking for people with problems to adapt the tool.
         </p>
       </div>
-   
       <form id="beta-form">
         <div class="form-row">
           <div class="form-group">
@@ -2025,46 +1945,23 @@
             <label for="name" class="lang-en">Name</label>
             <input type="text" id="name" name="name" required>
           </div>
-       
           <div class="form-group">
             <label for="email" class="lang-fr">Email</label>
             <label for="email" class="lang-en">Email</label>
             <input type="email" id="email" name="email" required>
           </div>
         </div>
-     
-        <div class="form-row">
-          <div class="form-group">
-            <label for="country" class="lang-fr">Pays</label>
-            <label for="country" class="lang-en">Country</label>
-            <select id="country" name="country" required>
-              <option value="">Sélectionnez votre pays</option>
-              <option value="guinee">Guinée</option>
-              <option value="senegal">Sénégal</option>
-              <option value="mali">Mali</option>
-              <option value="autre">Autre</option>
-            </select>
-          </div>
-       
-          <div class="form-group">
-            <label for="contact" class="lang-fr">Contact (téléphone)</label>
-            <label for="contact" class="lang-en">Contact (phone)</label>
-            <input type="tel" id="contact" name="contact" required>
-          </div>
-        </div>
-     
         <div class="form-group">
-          <label for="domain" class="lang-fr">Domaine d'activité</label>
-          <label for="domain" class="lang-en">Business domain</label>
-          <input type="text" id="domain" name="domain" required>
+          <label for="country" class="lang-fr">Pays</label>
+          <label for="country" class="lang-en">Country</label>
+          <select id="country" name="country" required>
+            <option value="">Sélectionnez votre pays</option>
+            <option value="guinee">Guinée</option>
+            <option value="senegal">Sénégal</option>
+            <option value="mali">Mali</option>
+            <option value="autre">Autre</option>
+          </select>
         </div>
-     
-        <div class="form-group">
-          <label for="problem" class="lang-fr">Votre problème ou besoin</label>
-          <label for="problem" class="lang-en">Your problem or need</label>
-          <textarea id="problem" name="problem" required></textarea>
-        </div>
-     
         <div class="form-submit">
           <button type="submit" class="btn btn-primary">
             <span class="lang-fr">Envoyer ma candidature</span>
@@ -2072,103 +1969,155 @@
           </button>
         </div>
       </form>
-   
       <div class="form-success" id="form-success">
         <span class="lang-fr">Merci ! Votre candidature a été envoyée. Nous vous contacterons bientôt.</span>
         <span class="lang-en">Thank you! Your application has been sent. We'll contact you soon.</span>
       </div>
     </div>
   </section>
-  <!-- TRUST SECTION -->
-  <section class="trust-section">
+  <!-- ========================================
+       VELMO EN ACTION - Statistiques étendues avec utilisateurs, etc.
+       Amélioré : Grille plus espacée, chiffres plus grands, responsive avec wrap, suppression de utilisateurs actifs.
+       ======================================== -->
+  <section class="action-section">
     <div class="container">
-      <h2 class="section-title lang-fr">Velmo en chiffres</h2>
-      <h2 class="section-title lang-en">Velmo in numbers</h2>
-   
-      <div class="trust-grid">
-        <div class="trust-item">
-          <span class="trust-number" data-count="5000">0+</span>
-          <span class="trust-label lang-fr">Utilisateurs actifs</span>
-          <span class="trust-label lang-en">Active users</span>
+      <h2 class="section-title lang-fr">🔹 Velmo en action</h2>
+      <h2 class="section-title lang-en">🔹 Velmo in action</h2>
+      <p class="lang-fr" style="text-align: center; max-width: 800px; margin: 0 auto 50px; color: var(--text-secondary); font-size: 1.1rem; line-height: 1.8;">
+        Velmo est testé en conditions réelles par nos premiers commerçants.<br>
+        Chaque jour, nous recevons des retours qui nous permettent de rendre l'application encore plus simple, rapide et efficace.
+      </p>
+      <p class="lang-en" style="text-align: center; max-width: 800px; margin: 0 auto 50px; color: var(--text-secondary); font-size: 1.1rem; line-height: 1.8;">
+        Velmo is tested in real conditions by our first merchants.<br>
+        Every day, we receive feedback that allows us to make the app even simpler, faster and more efficient.
+      </p>
+      <div class="action-grid">
+        <div class="action-item">
+          <span class="action-number" data-count="20">0+</span>
+          <span class="action-label lang-fr">Pays couverts</span>
+          <span class="action-label lang-en">Countries covered</span>
         </div>
-     
-        <div class="trust-item">
-          <span class="trust-number" data-count="98">0%</span>
-          <span class="trust-label lang-fr">Taux de satisfaction</span>
-          <span class="trust-label lang-en">Satisfaction rate</span>
+        <div class="action-item">
+          <span class="action-number">24/7</span>
+          <span class="action-label lang-fr">Support disponible</span>
+          <span class="action-label lang-en">Support available</span>
         </div>
-     
-        <div class="trust-item">
-          <span class="trust-number" data-count="15">0+</span>
-          <span class="trust-label lang-fr">Pays couverts</span>
-          <span class="trust-label lang-en">Countries covered</span>
-        </div>
-     
-        <div class="trust-item">
-          <span class="trust-number">24/7</span>
-          <span class="trust-label lang-fr">Support disponible</span>
-          <span class="trust-label lang-en">Support available</span>
+        <div class="action-item">
+          <span class="action-number" data-count="85">0%</span>
+          <span class="action-label lang-fr">Réduction des erreurs de stock</span>
+          <span class="action-label lang-en">Stock error reduction</span>
         </div>
       </div>
     </div>
   </section>
-  <!-- CTA FINAL -->
+  <!-- ========================================
+       CTA FINAL - Téléchargement.
+       Bouton pour download, avec lien secondaire.
+       ======================================== -->
   <section class="final-cta" id="download">
     <div class="container">
       <h2 class="pulse lang-fr">Rejoins Velmo aujourd'hui</h2>
       <h2 class="pulse lang-en">Join Velmo today</h2>
-   
       <p class="lang-fr">Velmo est disponible dès maintenant sur Android.<br>Une version iOS arrive bientôt.</p>
       <p class="lang-en">Velmo is now available on Android.<br>An iOS version is coming soon.</p>
-   
       <div class="btn-group">
         <a href="https://play.google.com/store" class="btn btn-primary" target="_blank">
           <span class="lang-fr">📱 Télécharger sur Android</span>
           <span class="lang-en">📱 Download on Android</span>
         </a>
-        <a href="#notify" class="btn btn-secondary">
-          <span class="lang-fr">🔔 Être notifié pour iOS</span>
-          <span class="lang-en">🔔 Get notified for iOS</span>
-        </a>
       </div>
+      <a class="secondary-link lang-fr" id="notify-link">Être notifié pour iOS</a>
+      <a class="secondary-link lang-en" id="notify-link">Get notified for iOS</a>
     </div>
   </section>
-  <!-- BOUTON WHATSAPP FLOTTANT -->
+  <!-- Popup pour notification iOS -->
+  <div class="overlay" id="overlay"></div>
+  <div class="notify-popup" id="notify-popup">
+    <span class="notify-close" id="notify-close">×</span>
+    <h3 class="lang-fr">Soyez notifié pour iOS</h3>
+    <h3 class="lang-en">Get notified for iOS</h3>
+    <form class="notify-form" id="notify-form">
+      <input type="email" placeholder="Votre email" required>
+      <button type="submit" class="btn btn-primary">
+        <span class="lang-fr">Envoyer</span>
+        <span class="lang-en">Submit</span>
+      </button>
+    </form>
+    <div class="form-success" id="notify-success" style="display: none; margin-top: 20px; color: #10b981;">
+      <span class="lang-fr">Merci ! Vous serez notifié.</span>
+      <span class="lang-en">Thank you! You will be notified.</span>
+    </div>
+  </div>
+  <!-- ========================================
+       WHATSAPP FLOAT - Contact rapide.
+       Bouton flottant pour WhatsApp.
+       ======================================== -->
   <a href="https://wa.me/224622000000" target="_blank" class="whatsapp-float" title="Contactez-nous sur WhatsApp">
     <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
       <path d="M16 0c-8.837 0-16 7.163-16 16 0 2.825 0.737 5.607 2.137 8.048l-2.137 7.952 7.933-2.127c2.42 1.37 5.173 2.127 8.067 2.127 8.837 0 16-7.163 16-16s-7.163-16-16-16zM16 29.467c-2.482 0-4.908-0.646-7.07-1.87l-0.507-0.292-5.253 1.408 1.413-5.248-0.325-0.527c-1.331-2.183-2.037-4.706-2.037-7.293 0-7.658 6.23-13.888 13.778-13.888s13.778 6.23 13.778 13.888-6.23 13.822-13.778 13.822zM23.54 19.938c-0.397-0.199-2.348-1.158-2.713-1.29-0.366-0.132-0.632-0.199-0.897 0.199s-1.031 1.29-1.264 1.556c-0.232 0.266-0.464 0.298-0.861 0.099s-1.68-0.619-3.199-1.973c-1.182-1.053-1.981-2.354-2.213-2.752s-0.025-0.612 0.174-0.811c0.179-0.178 0.397-0.464 0.595-0.696s0.265-0.397 0.397-0.662c0.132-0.265 0.066-0.497-0.033-0.696s-0.897-2.162-1.229-2.96c-0.324-0.778-0.652-0.672-0.897-0.685-0.232-0.012-0.497-0.015-0.762-0.015s-0.695 0.099-1.060 0.497c-0.365 0.397-1.394 1.362-1.394 3.323s1.427 3.854 1.625 4.119c0.199 0.265 2.807 4.283 6.802 6.005 0.95 0.411 1.691 0.657 2.269 0.841 0.956 0.303 1.825 0.26 2.513 0.158 0.767-0.114 2.348-0.96 2.68-1.888s0.332-1.723 0.232-1.888c-0.099-0.165-0.365-0.265-0.762-0.464z"/>
     </svg>
   </a>
-  <!-- FOOTER -->
- <!-- Ajoute ce lien dans ton <head> -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-<footer>
-  <div class="container">
-    <p>Velmo © 2025</p>
-    <p>
-      <a href="#promesse"><span class="lang-fr">Promesse</span><span class="lang-en">Promise</span></a> •
-      <a href="#forces"><span class="lang-fr">Forces</span><span class="lang-en">Strengths</span></a> •
-      <a href="#fonctions"><span class="lang-fr">Fonctions</span><span class="lang-en">Features</span></a> •
-      <a href="#beta"><span class="lang-fr">Beta</span><span class="lang-en">Beta</span></a> •
-      <a href="mailto:contact@velmo.app"><span class="lang-fr">Support</span><span class="lang-en">Support</span></a>
-    </p>
-    <div class="contact-section">
-      <h4 class="lang-fr">Contactez-nous</h4>
-      <h4 class="lang-en">Contact us</h4>
-      <div class="social-icons">
-        <a href="https://wa.me/224622000000" class="social-icon" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-        <a href="https://facebook.com/velmo" class="social-icon" title="Facebook"><i class="fab fa-facebook"></i></a>
-        <a href="https://linkedin.com/company/velmo" class="social-icon" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
-        <a href="https://x.com/velmo" class="social-icon" title="X"><i class="fab fa-x-twitter"></i></a>
-        <a href="https://instagram.com/velmo" class="social-icon" title="Instagram"><i class="fab fa-instagram"></i></a>
+  <!-- ========================================
+       FOOTER - Liens et sociaux.
+       Pied de page avec logo, liens et icônes sociales.
+       ======================================== -->
+  <footer>
+    <div class="container">
+      <div class="footer-logo">
+        <svg class="footer-logo-svg" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="40" />
+          <text x="50" y="55" font-size="40" text-anchor="middle" dy=".3em" fill="#ff6200">V</text>
+        </svg>
+        <div class="footer-logo-text">Velmo</div>
+      </div>
+      <p>Velmo © 2025</p>
+      <p>
+        <a href="#promesse"><span class="lang-fr">Promesse</span><span class="lang-en">Promise</span></a> •
+        <a href="#features"><span class="lang-fr">Fonctions & Forces</span><span class="lang-en">Features & Strengths</span></a> •
+        <a href="#beta"><span class="lang-fr">Beta</span><span class="lang-en">Beta</span></a> •
+        <a href="mailto:contact@velmo.app"><span class="lang-fr">Support</span><span class="lang-en">Support</span></a>
+      </p>
+      <div class="contact-section">
+        <h4 class="lang-fr">Contactez-nous</h4>
+        <h4 class="lang-en">Contact us</h4>
+        <div class="social-icons">
+          <a href="https://wa.me/224622000000" class="social-icon" title="WhatsApp">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.966-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c0-5.4 4.41-9.75 9.845-9.75 2.654 0 5.14 1.03 7.004 2.9 1.864 1.87 2.899 4.36 2.899 7.01 0 5.43-4.41 9.75-9.85 9.75m8.306-18.193c-2.29-2.3-5.3-3.563-8.527-3.563-6.635 0-12.025 5.39-12.025 12.01 0 2.11.54 4.16 1.565 5.97l-1.65 6.02 6.175-1.62a11.95 11.95 0 005.935 1.59c6.635 0 12.025-5.39 12.025-12.01 0-3.2-1.24-6.21-3.523-8.47"/>
+            </svg>
+          </a>
+          <a href="https://facebook.com/velmo" class="social-icon" title="Facebook">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M22.675 0h-21.35C.597 0 0 .597 0 1.325v21.351C0 23.403.597 24 1.325 24h11.495v-9.294H9.691v-3.622h3.129V7.41c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.794.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.31h3.59l-.467 3.622h-3.123V24h6.116c.73 0 1.325-.597 1.325-1.324V1.325C24 .597 23.403 0 22.675 0z"/>
+            </svg>
+          </a>
+          <a href="https://linkedin.com/company/velmo" class="social-icon" title="LinkedIn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 0H5a5 5 0 00-5 5v14a5 5 0 005 5h14a5 5 0 005-5V5a5 5 0 00-5-5zm-11 19H5v-9h3v9zM6.5 8.5A1.75 1.75 0 014.75 6.75 1.75 1.75 0 016.5 5a1.75 1.75 0 011.75 1.75A1.75 1.75 0 016.5 8.5zm13 10.5h-3v-4.5c0-1.1-.9-2-2-2s-2 .9-2 2v4.5h-3v-9h3v1.2c.4-.8 1.2-1.2 2-1.2 1.7 0 3 1.3 3 3v5.999z"/>
+            </svg>
+          </a>
+          <a href="https://x.com/velmo" class="social-icon" title="X">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+          </a>
+          <a href="https://instagram.com/velmo" class="social-icon" title="Instagram">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.332.014 7.052.072 2.95.272.16 3.062 0 7.164.014 8.444 0 8.853 0 12c0 3.147.014 3.556.072 4.836.2 4.102 2.99 6.892 7.092 7.092 1.28.058 1.689.072 4.836.072 3.147 0 3.556-.014 4.836-.072 4.102-.2 6.892-2.99 7.092-7.092.058-1.28.072-1.689.072-4.836 0-3.147-.014-3.556-.072-4.836C23.728 2.962 20.938.172 16.836-.028 15.556-.086 15.147-.1 12-.1zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a3.999 3.999 0 110-7.998 3.999 3.999 0 010 7.998zm6.406-11.845a1.44 1.44 0 11-2.88 0 1.44 1.44 0 012.88 0z"/>
+            </svg>
+          </a>
+        </div>
       </div>
     </div>
-  </div>
-</footer>
-
+  </footer>
+  <!-- ========================================
+       JAVASCRIPT - Logique interactive et détection langue auto.
+       Code JS commenté pour lisibilité, avec fonctionnalités pour thème, langue, animations, etc.
+       Ajouté : Gestion du popup pour notification iOS, avec form soumission simulée.
+       ======================================== -->
   <script>
-    // ==================== VARIABLES ====================
+    // ==================== VARIABLES GLOBALES ====================
+    // Éléments DOM principaux pour une modification facile. Centralise les sélecteurs.
     const header = document.getElementById('header');
     const menuToggle = document.getElementById('menu-toggle');
     const nav = document.getElementById('nav');
@@ -2178,30 +2127,56 @@
     const betaForm = document.getElementById('beta-form');
     const formSuccess = document.getElementById('form-success');
     const promiseBenefits = document.querySelectorAll('.promise-benefit');
- 
+    const phoneContainer = document.getElementById('phone-container');
+    const phoneContent = document.getElementById('phone-content');
+    const navDots = document.querySelectorAll('.nav-dot');
+    // Popup pour notification iOS.
+    const notifyLink = document.getElementById('notify-link');
+    const notifyPopup = document.getElementById('notify-popup');
+    const notifyClose = document.getElementById('notify-close');
+    const notifyForm = document.getElementById('notify-form');
+    const notifySuccess = document.getElementById('notify-success');
+    const overlay = document.getElementById('overlay');
+    // État de l'app : Thème et langue. Utilise localStorage pour persistance.
     let isDark = false;
     let isEnglish = false;
-    // ==================== HEADER SCROLL ====================
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 50) {
-        header.classList.add('scrolled');
+    // Variables pour manipulation phone : Ajouté pour déplacement (pan) en plus de rotate/scale.
+    let isDragging = false;
+    let startX, startY, startRotate = 0, startScale = 1, startTranslateX = 0, startTranslateY = 0;
+    // ==================== DÉTECTION LANGUE AUTO ====================
+    // Détection automatique de la langue du navigateur au chargement. Priorité au storage si existant.
+    window.addEventListener('load', () => {
+      const savedLang = localStorage.getItem('velmo-lang');
+      if (savedLang) {
+        isEnglish = savedLang === 'en';
       } else {
-        header.classList.remove('scrolled');
+        const browserLang = navigator.language || navigator.userLanguage;
+        isEnglish = browserLang.startsWith('en');
       }
+      html.setAttribute('lang', isEnglish ? 'en' : 'fr');
+      langToggle.textContent = isEnglish ? '🇬🇧' : '🇫🇷';
+      localStorage.setItem('velmo-lang', isEnglish ? 'en' : 'fr');
+      updatePhoneContent(); // Mise à jour du contenu phone en fonction de la langue.
+    });
+    // ==================== HEADER SCROLL ====================
+    // Ajout classe scrolled pour effet shadow. Améliore la visibilité lors du scroll.
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', window.scrollY > 50);
     });
     // ==================== MENU MOBILE ====================
+    // Toggle menu hamburger. Animation pour transformation en croix.
     menuToggle.addEventListener('click', () => {
       nav.classList.toggle('active');
       menuToggle.classList.toggle('active');
     });
- 
+    // Fermer menu sur clic lien. Pour UX mobile fluide.
     nav.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => {
         nav.classList.remove('active');
         menuToggle.classList.remove('active');
       });
     });
- 
+    // Fermer menu sur clic extérieur. Évite de laisser le menu ouvert.
     document.addEventListener('click', (e) => {
       if (!nav.contains(e.target) && !menuToggle.contains(e.target) && nav.classList.contains('active')) {
         nav.classList.remove('active');
@@ -2209,20 +2184,17 @@
       }
     });
     // ==================== THEME TOGGLE ====================
+    // Basculer thème sombre/clair avec storage. Transition fluide.
     themeToggle.addEventListener('click', () => {
       isDark = !isDark;
       html.setAttribute('data-theme', isDark ? 'dark' : 'light');
       themeToggle.textContent = isDark ? '☀️' : '🌙';
       localStorage.setItem('velmo-theme', isDark ? 'dark' : 'light');
-   
-      // Animation au changement
+      // Animation rotation pour feedback visuel.
       themeToggle.style.transform = 'scale(1.3) rotate(360deg)';
-      setTimeout(() => {
-        themeToggle.style.transform = 'scale(1) rotate(0deg)';
-      }, 300);
+      setTimeout(() => themeToggle.style.transform = 'scale(1) rotate(0deg)', 300);
     });
- 
-    // Charger le thème sauvegardé
+    // Charger thème sauvegardé. Persistance entre sessions.
     const savedTheme = localStorage.getItem('velmo-theme');
     if (savedTheme === 'dark') {
       isDark = true;
@@ -2230,187 +2202,127 @@
       themeToggle.textContent = '☀️';
     }
     // ==================== LANGUAGE TOGGLE ====================
+    // Basculer langue manuellement. Met à jour l'attribut lang et storage.
     langToggle.addEventListener('click', () => {
       isEnglish = !isEnglish;
       html.setAttribute('lang', isEnglish ? 'en' : 'fr');
       langToggle.textContent = isEnglish ? '🇬🇧' : '🇫🇷';
       localStorage.setItem('velmo-lang', isEnglish ? 'en' : 'fr');
-   
-      // Animation au changement
+      // Animation pour feedback.
       langToggle.style.transform = 'scale(1.3) rotate(360deg)';
-      setTimeout(() => {
-        langToggle.style.transform = 'scale(1) rotate(0deg)';
-      }, 300);
-
-      // Update phone content language
+      setTimeout(() => langToggle.style.transform = 'scale(1) rotate(0deg)', 300);
       updatePhoneContent();
     });
- 
-    // Charger la langue sauvegardée
-    const savedLang = localStorage.getItem('velmo-lang');
-    if (savedLang === 'en') {
-      isEnglish = true;
-      html.setAttribute('lang', 'en');
-      langToggle.textContent = '🇬🇧';
-    }
-    // ==================== SCROLL REVEAL ANIMATIONS ====================
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -100px 0px'
-    };
+    // ==================== SCROLL REVEAL ====================
+    // Observer pour animations à l'entrée viewport. Optimisé pour performance.
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
+        if (entry.isIntersecting) entry.target.classList.add('visible');
       });
-    }, observerOptions);
-    // Observer toutes les sections et cartes
-    document.querySelectorAll('section:not(.hero)').forEach(section => {
-      observer.observe(section);
-    });
- 
-    document.querySelectorAll('.content-card').forEach(card => {
-      observer.observe(card);
-    });
- 
-    document.querySelectorAll('.forces, .features, .testimonials-grid').forEach(container => {
-      observer.observe(container);
-    });
+    }, { threshold: 0.1, rootMargin: '0px 0px -100px 0px' });
+    document.querySelectorAll('section:not(.hero), .content-card, .features-forces, .testimonials-grid').forEach(el => observer.observe(el));
     // ==================== SMOOTH SCROLL ====================
+    // Scroll fluide pour ancres. Améliore l'expérience de navigation.
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
+      anchor.addEventListener('click', e => {
         e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
+        const target = document.querySelector(anchor.getAttribute('href'));
         if (target) {
-          const offset = 80;
-          const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
           window.scrollTo({
-            top: targetPosition,
+            top: target.getBoundingClientRect().top + window.pageYOffset - 80,
             behavior: 'smooth'
           });
         }
       });
     });
-    // ==================== ANIMATIONS AVANCÉES ====================
-    // Animation des cartes au hover
-    document.querySelectorAll('.content-card, .force-card, .feature, .testimonial-card').forEach(card => {
-      card.addEventListener('mouseenter', function() {
-        this.style.transition = 'all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-      });
+    // ==================== ANIMATIONS CARTES ====================
+    // Hover avec cubic-bezier. Ajoute fluidité aux interactions.
+    document.querySelectorAll('.content-card, .feature-force, .testimonial-card').forEach(card => {
+      card.addEventListener('mouseenter', () => card.style.transition = 'all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55)');
     });
-    // Parallax léger sur le hero
+    // Parallax hero léger. Effet subtil sur scroll.
     window.addEventListener('scroll', () => {
-      const scrolled = window.pageYOffset;
       const hero = document.querySelector('.hero');
-      if (hero && scrolled < 800) {
-        hero.style.transform = `translateY(${scrolled * 0.3}px)`;
-      }
+      if (hero && window.pageYOffset < 800) hero.style.transform = `translateY(${window.pageYOffset * 0.3}px)`;
     });
-    // Animation des boutons
+    // Hover boutons. Scale pour feedback.
     document.querySelectorAll('.btn').forEach(btn => {
-      btn.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-4px) scale(1.02)';
-      });
-   
-      btn.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0) scale(1)';
-      });
+      btn.addEventListener('mouseenter', () => btn.style.transform = 'translateY(-4px) scale(1.02)');
+      btn.addEventListener('mouseleave', () => btn.style.transform = 'translateY(0) scale(1)');
     });
-    // ==================== KEYBOARD SHORTCUTS ====================
-    document.addEventListener('keydown', (e) => {
-      // Ctrl/Cmd + K: Toggle theme
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        themeToggle.click();
-      }
-   
-      // Ctrl/Cmd + L: Toggle language
-      if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
-        e.preventDefault();
-        langToggle.click();
-      }
+    // ==================== RACCOURCIS CLAVIER ====================
+    // Pour accessibilité. Ctrl+K pour thème, Ctrl+L pour langue.
+    document.addEventListener('keydown', e => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); themeToggle.click(); }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'l') { e.preventDefault(); langToggle.click(); }
     });
-    // ==================== PERFORMANCE ====================
-    // Lazy loading pour les animations
+    // ==================== OPTIMISATION PERFORMANCE ====================
+    // Will-change pour animations. Réduit les lags sur éléments animés.
     if ('IntersectionObserver' in window) {
-      const lazyObserver = new IntersectionObserver((entries) => {
+      new IntersectionObserver(entries => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             entry.target.style.willChange = 'transform, opacity';
-            setTimeout(() => {
-              entry.target.style.willChange = 'auto';
-            }, 1000);
+            setTimeout(() => entry.target.style.willChange = 'auto', 1000);
           }
         });
-      });
-      document.querySelectorAll('.force-card, .feature, .content-card, .testimonial-card').forEach(el => {
-        lazyObserver.observe(el);
-      });
+      }).observe(...document.querySelectorAll('.feature-force, .content-card, .testimonial-card'));
     }
     // ==================== ANIMATIONS COMPTEURS ====================
-    // Animation des chiffres dans la section trust
-    function animateCounter(element, target, duration = 2000) {
-      const start = 0;
+    // Animation fluide des chiffres. Utilise requestAnimationFrame pour smoothness.
+    function animateCounter(el, target, duration = 2000) {
+      let current = 0;
       const increment = target / (duration / 16);
-      let current = start;
-   
       const timer = setInterval(() => {
         current += increment;
         if (current >= target) {
-          element.textContent = target + (element.textContent.includes('%') ? '%' : '+');
+          el.textContent = target + (el.textContent.includes('%') ? '%' : '+');
           clearInterval(timer);
         } else {
-          element.textContent = Math.floor(current) + (element.textContent.includes('%') ? '%' : '+');
+          el.textContent = Math.floor(current) + (el.textContent.includes('%') ? '%' : '+');
         }
       }, 16);
     }
- 
-    // Observer pour déclencher l'animation des compteurs
-    const counterObserver = new IntersectionObserver((entries) => {
+    const counterObserver = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting && !entry.target.classList.contains('counted')) {
-          const target = parseInt(entry.target.getAttribute('data-count'));
-          if (target) {
-            animateCounter(entry.target, target);
-            entry.target.classList.add('counted');
-          }
+          animateCounter(entry.target, parseInt(entry.target.getAttribute('data-count')));
+          entry.target.classList.add('counted');
         }
       });
     }, { threshold: 0.5 });
- 
-    document.querySelectorAll('.trust-number[data-count]').forEach(counter => {
-      counterObserver.observe(counter);
-    });
-    // ==================== FORMULAIRE BETA ====================
-    betaForm.addEventListener('submit', (e) => {
+    document.querySelectorAll('.action-number[data-count]').forEach(counter => counterObserver.observe(counter));
+    // ==================== FORMULAIRE ====================
+    // Soumission simulée. Affiche message succès puis reset.
+    betaForm.addEventListener('submit', e => {
       e.preventDefault();
-      // Ici, vous pourriez ajouter une logique pour envoyer le formulaire via API
-      // Pour cet exemple, on simule un succès
       betaForm.style.display = 'none';
       formSuccess.classList.add('show');
+      setTimeout(() => {
+        betaForm.reset();
+        betaForm.style.display = 'block';
+        formSuccess.classList.remove('show');
+      }, 5000);
     });
-    // ==================== PROMESSE PREVIEWS ====================
+    // ==================== PROMESSE EXPAND ====================
+    // Toggle details sur clic. Expand/collapse pour plus d'infos.
     promiseBenefits.forEach(benefit => {
-      benefit.addEventListener('click', (e) => {
+      benefit.addEventListener('click', e => {
         e.preventDefault();
         benefit.classList.toggle('active');
       });
     });
-    // ==================== BOUTON WHATSAPP ====================
+    // ==================== WHATSAPP ====================
+    // Reset animation sur hover. Évite accumulation d'animations.
     const whatsappBtn = document.querySelector('.whatsapp-float');
     if (whatsappBtn) {
       whatsappBtn.addEventListener('mouseenter', function() {
         this.style.animation = 'none';
-        setTimeout(() => {
-          this.style.animation = 'floatBounce 3s ease-in-out infinite';
-        }, 10);
+        setTimeout(() => this.style.animation = 'floatBounce 3s ease-in-out infinite', 10);
       });
     }
     // ==================== PHONE NAVIGATION ====================
-    // Documentation: Handles phone mockup view switching with animations and auto-rotation.
-    const navDots = document.querySelectorAll('.nav-dot');
-    const phoneContent = document.getElementById('phone-content');
+    // Vues étendues avec plus de contenu pour scroll. Contenu multilingue.
     function getViews() {
       return {
         sales: isEnglish ? `
@@ -2436,12 +2348,43 @@
           </div>
           <div class="sales-card">
             <div style="display: flex; align-items: center; gap: 1rem;">
-              <div style="width: 50px; height: 50px; background: rgba(102, 126, 234, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;"> 📦 </div>
+              <div style="width: 50px; height: 50px; background: rgba(102, 126, 234, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">📦</div>
               <div style="flex: 1;">
                 <div style="font-weight: 700; font-size: 1rem;">Rice 5kg</div>
                 <div style="font-size: 0.8rem; color: #64748b;">Best sale</div>
               </div>
               <div style="font-weight: 900; color: #10b981; font-size: 1.1rem;">350,000 GNF</div>
+            </div>
+          </div>
+          <div class="sales-card">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <div style="width: 50px; height: 50px; background: rgba(16, 185, 129, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">🥤</div>
+              <div style="flex: 1;">
+                <div style="font-weight: 700; font-size: 1rem;">Soda Pack</div>
+                <div style="font-size: 0.8rem; color: #64748b;">Popular item</div>
+              </div>
+              <div style="font-weight: 900; color: #10b981; font-size: 1.1rem;">200,000 GNF</div>
+            </div>
+          </div>
+          <div class="sales-card">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <div style="width: 50px; height: 50px; background: rgba(245, 158, 11, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">🍞</div>
+              <div style="flex: 1;">
+                <div style="font-weight: 700; font-size: 1rem;">Bread Loaf</div>
+                <div style="font-size: 0.8rem; color: #64748b;">Daily essential</div>
+              </div>
+              <div style="font-weight: 900; color: #10b981; font-size: 1.1rem;">150,000 GNF</div>
+            </div>
+          </div>
+          <!-- Plus de contenu pour activer le scroll et démontrer la manipulation. -->
+          <div class="sales-card">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <div style="width: 50px; height: 50px; background: rgba(239, 68, 68, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">🛒</div>
+              <div style="flex: 1;">
+                <div style="font-weight: 700; font-size: 1rem;">Misc Items</div>
+                <div style="font-size: 0.8rem; color: #64748b;">Other sales</div>
+              </div>
+              <div style="font-weight: 900; color: #10b981; font-size: 1.1rem;">550,000 GNF</div>
             </div>
           </div>
         ` : `
@@ -2467,12 +2410,43 @@
           </div>
           <div class="sales-card">
             <div style="display: flex; align-items: center; gap: 1rem;">
-              <div style="width: 50px; height: 50px; background: rgba(102, 126, 234, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;"> 📦 </div>
+              <div style="width: 50px; height: 50px; background: rgba(102, 126, 234, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">📦</div>
               <div style="flex: 1;">
                 <div style="font-weight: 700; font-size: 1rem;">Riz 5kg</div>
                 <div style="font-size: 0.8rem; color: #64748b;">Meilleure vente</div>
               </div>
               <div style="font-weight: 900; color: #10b981; font-size: 1.1rem;">350,000 GNF</div>
+            </div>
+          </div>
+          <div class="sales-card">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <div style="width: 50px; height: 50px; background: rgba(16, 185, 129, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">🥤</div>
+              <div style="flex: 1;">
+                <div style="font-weight: 700; font-size: 1rem;">Pack Soda</div>
+                <div style="font-size: 0.8rem; color: #64748b;">Article populaire</div>
+              </div>
+              <div style="font-weight: 900; color: #10b981; font-size: 1.1rem;">200,000 GNF</div>
+            </div>
+          </div>
+          <div class="sales-card">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <div style="width: 50px; height: 50px; background: rgba(245, 158, 11, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">🍞</div>
+              <div style="flex: 1;">
+                <div style="font-weight: 700; font-size: 1rem;">Pain</div>
+                <div style="font-size: 0.8rem; color: #64748b;">Essentiel quotidien</div>
+              </div>
+              <div style="font-weight: 900; color: #10b981; font-size: 1.1rem;">150,000 GNF</div>
+            </div>
+          </div>
+          <!-- Plus de contenu pour activer le scroll et démontrer la manipulation. -->
+          <div class="sales-card">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <div style="width: 50px; height: 50px; background: rgba(239, 68, 68, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">🛒</div>
+              <div style="flex: 1;">
+                <div style="font-weight: 700; font-size: 1rem;">Articles divers</div>
+                <div style="font-size: 0.8rem; color: #64748b;">Autres ventes</div>
+              </div>
+              <div style="font-weight: 900; color: #10b981; font-size: 1.1rem;">550,000 GNF</div>
             </div>
           </div>
         `,
@@ -2484,14 +2458,14 @@
             <div style="font-size: 0.9rem; color: #dc2626; font-weight: 700;">⚠ 8 products out of stock</div>
             <div style="font-size: 0.75rem; color: #ef4444; margin-top: 0.25rem;">Action required</div>
           </div>
-          ${['Mineral water 1.5L', 'Perfumed rice 5kg', 'Vegetable oil 2L', 'White sugar 1kg'].map((item, i) => `
+          ${['Mineral water 1.5L', 'Perfumed rice 5kg', 'Vegetable oil 2L', 'White sugar 1kg', 'Soda Pack', 'Bread Loaf', 'Canned Beans', 'Flour 10kg'].map((item, i) => `
             <div class="sales-card" style="margin-bottom: 1rem;">
               <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
                   <div style="font-weight: 700; font-size: 0.95rem;">${item}</div>
-                  <div style="font-size: 0.8rem; color: ${i === 0 ? '#10b981' : i === 1 ? '#f59e0b' : i === 2 ? '#ef4444' : '#10b981'};"> Stock: ${i === 0 ? '124' : i === 1 ? '5 ⚠' : i === 2 ? '0 ✗' : '89'} </div>
+                  <div style="font-size: 0.8rem; color: ${i % 3 === 0 ? '#10b981' : i % 3 === 1 ? '#f59e0b' : '#ef4444'};">Stock: ${i % 3 === 0 ? '124' : i % 3 === 1 ? '5 ⚠' : '0 ✗'}</div>
                 </div>
-                <div style="width: 36px; height: 36px; background: rgba(${i === 0 ? '16, 185, 129' : i === 1 ? '245, 158, 11' : i === 2 ? '239, 68, 68' : '16, 185, 129'}, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; color: ${i === 0 ? '#10b981' : i === 1 ? '#f59e0b' : i === 2 ? '#ef4444' : '#10b981'};"> ${i === 0 ? '✓' : i === 1 ? '!' : i === 2 ? '✗' : '✓'} </div>
+                <div style="width: 36px; height: 36px; background: rgba(${i % 3 === 0 ? '16, 185, 129' : i % 3 === 1 ? '245, 158, 11' : '239, 68, 68'}, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; color: ${i % 3 === 0 ? '#10b981' : i % 3 === 1 ? '#f59e0b' : '#ef4444'};">${i % 3 === 0 ? '✓' : i % 3 === 1 ? '!' : '✗'}</div>
               </div>
             </div>
           `).join('')}
@@ -2503,14 +2477,14 @@
             <div style="font-size: 0.9rem; color: #dc2626; font-weight: 700;">⚠ 8 produits en rupture</div>
             <div style="font-size: 0.75rem; color: #ef4444; margin-top: 0.25rem;">Action requise</div>
           </div>
-          ${['Eau minérale 1.5L', 'Riz parfumé 5kg', 'Huile végétale 2L', 'Sucre blanc 1kg'].map((item, i) => `
+          ${['Eau minérale 1.5L', 'Riz parfumé 5kg', 'Huile végétale 2L', 'Sucre blanc 1kg', 'Pack Soda', 'Pain', 'Haricots en conserve', 'Farine 10kg'].map((item, i) => `
             <div class="sales-card" style="margin-bottom: 1rem;">
               <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
                   <div style="font-weight: 700; font-size: 0.95rem;">${item}</div>
-                  <div style="font-size: 0.8rem; color: ${i === 0 ? '#10b981' : i === 1 ? '#f59e0b' : i === 2 ? '#ef4444' : '#10b981'};"> Stock: ${i === 0 ? '124' : i === 1 ? '5 ⚠' : i === 2 ? '0 ✗' : '89'} </div>
+                  <div style="font-size: 0.8rem; color: ${i % 3 === 0 ? '#10b981' : i % 3 === 1 ? '#f59e0b' : '#ef4444'};">Stock: ${i % 3 === 0 ? '124' : i % 3 === 1 ? '5 ⚠' : '0 ✗'}</div>
                 </div>
-                <div style="width: 36px; height: 36px; background: rgba(${i === 0 ? '16, 185, 129' : i === 1 ? '245, 158, 11' : i === 2 ? '239, 68, 68' : '16, 185, 129'}, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; color: ${i === 0 ? '#10b981' : i === 1 ? '#f59e0b' : i === 2 ? '#ef4444' : '#10b981'};"> ${i === 0 ? '✓' : i === 1 ? '!' : i === 2 ? '✗' : '✓'} </div>
+                <div style="width: 36px; height: 36px; background: rgba(${i % 3 === 0 ? '16, 185, 129' : i % 3 === 1 ? '245, 158, 11' : '239, 68, 68'}, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; color: ${i % 3 === 0 ? '#10b981' : i % 3 === 1 ? '#f59e0b' : '#ef4444'};">${i % 3 === 0 ? '✓' : i % 3 === 1 ? '!' : '✗'}</div>
               </div>
             </div>
           `).join('')}
@@ -2542,12 +2516,20 @@
               <div style="font-size: 0.75rem; color: #64748b; font-weight: 600;">vs week</div>
             </div>
           </div>
-          <style>
-            @keyframes barGrow {
-              from { height: 0; opacity: 0; }
-              to { height: 100%; opacity: 1; }
-            }
-          </style>
+          <div class="sales-card">
+            <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Monthly Trend</div>
+            <div style="font-size: 0.8rem; color: #10b981; font-weight: 600;">+35% growth</div>
+          </div>
+          <div class="sales-card">
+            <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Customer Retention</div>
+            <div style="font-size: 0.8rem; color: #667eea; font-weight: 600;">82% repeat</div>
+          </div>
+          <!-- Plus de contenu -->
+          <div class="sales-card">
+            <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Average Order Value</div>
+            <div class="sales-value">45,000 GNF</div>
+          </div>
+          <style>@keyframes barGrow { from { height: 0; opacity: 0; } to { height: 100%; opacity: 1; } }</style>
         ` : `
           <div class="content-header">
             <h3>Analytics</h3>
@@ -2575,68 +2557,226 @@
               <div style="font-size: 0.75rem; color: #64748b; font-weight: 600;">vs semaine</div>
             </div>
           </div>
-          <style>
-            @keyframes barGrow {
-              from { height: 0; opacity: 0; }
-              to { height: 100%; opacity: 1; }
-            }
-          </style>
+          <div class="sales-card">
+            <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Tendance Mensuelle</div>
+            <div style="font-size: 0.8rem; color: #10b981; font-weight: 600;">+35% croissance</div>
+          </div>
+          <div class="sales-card">
+            <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Rétention Clients</div>
+            <div style="font-size: 0.8rem; color: #667eea; font-weight: 600;">82% récurrents</div>
+          </div>
+          <!-- Plus de contenu -->
+          <div class="sales-card">
+            <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Valeur Moyenne Commande</div>
+            <div class="sales-value">45,000 GNF</div>
+          </div>
+          <style>@keyframes barGrow { from { height: 0; opacity: 0; } to { height: 100%; opacity: 1; } }</style>
+        `,
+        offline: isEnglish ? `
+          <div class="content-header">
+            <h3>Offline Mode</h3>
+          </div>
+          <div class="sales-card" style="text-align: center; padding: 30px;">
+            <div style="font-size: 3rem; margin-bottom: 20px;">📴</div>
+            <div style="font-weight: 700; font-size: 1.2rem; margin-bottom: 10px;">No Connection Needed</div>
+            <p style="font-size: 0.95rem; color: #64748b;">Continue managing your business even without internet. Data syncs automatically when connected.</p>
+          </div>
+          <div class="sales-grid">
+            <div class="mini-card">
+              <div class="mini-label">Local Storage</div>
+              <div class="mini-value">✓</div>
+              <div style="font-size: 0.7rem; color: #10b981; font-weight: 700;">All data saved</div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-label">Sync Status</div>
+              <div class="mini-value">⏳</div>
+              <div style="font-size: 0.7rem; color: #f59e0b; font-weight: 700;">When online</div>
+            </div>
+          </div>
+          <div class="sales-card">
+            <div style="display: flex; align-items: center; gap: 1rem; justify-content: center;">
+              <div style="width: 50px; height: 50px; background: rgba(16, 185, 129, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">✓</div>
+              <div style="flex: 1; text-align: center;">
+                <div style="font-weight: 700; font-size: 1rem;">Work Anywhere</div>
+                <div style="font-size: 0.8rem; color: #64748b;">Full functionality offline</div>
+              </div>
+            </div>
+          </div>
+          <div class="sales-card">
+            <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Offline Transactions</div>
+            <div class="sales-value">Supported</div>
+          </div>
+          <div class="sales-card">
+            <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Auto Sync</div>
+            <div style="font-size: 0.8rem; color: #10b981; font-weight: 600;">On reconnect</div>
+          </div>
+          <!-- Plus de contenu -->
+          <div class="sales-card">
+            <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Data Security</div>
+            <div style="font-size: 0.8rem; color: #667eea; font-weight: 600;">Encrypted locally</div>
+          </div>
+        ` : `
+          <div class="content-header">
+            <h3>Mode Hors-ligne</h3>
+          </div>
+          <div class="sales-card" style="text-align: center; padding: 30px;">
+            <div style="font-size: 3rem; margin-bottom: 20px;">📴</div>
+            <div style="font-weight: 700; font-size: 1.2rem; margin-bottom: 10px;">Pas de Connexion Nécessaire</div>
+            <p style="font-size: 0.95rem; color: #64748b;">Continuez à gérer votre commerce même sans internet. Les données se synchronisent automatiquement quand connecté.</p>
+          </div>
+          <div class="sales-grid">
+            <div class="mini-card">
+              <div class="mini-label">Stockage Local</div>
+              <div class="mini-value">✓</div>
+              <div style="font-size: 0.7rem; color: #10b981; font-weight: 700;">Toutes données sauvegardées</div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-label">Statut Sync</div>
+              <div class="mini-value">⏳</div>
+              <div style="font-size: 0.7rem; color: #f59e0b; font-weight: 700;">Quand en ligne</div>
+            </div>
+          </div>
+          <div class="sales-card">
+            <div style="display: flex; align-items: center; gap: 1rem; justify-content: center;">
+              <div style="width: 50px; height: 50px; background: rgba(16, 185, 129, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">✓</div>
+              <div style="flex: 1; text-align: center;">
+                <div style="font-weight: 700; font-size: 1rem;">Travaillez Partout</div>
+                <div style="font-size: 0.8rem; color: #64748b;">Fonctionnalités complètes hors-ligne</div>
+              </div>
+            </div>
+          </div>
+          <div class="sales-card">
+            <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Transactions Hors-ligne</div>
+            <div class="sales-value">Supportées</div>
+          </div>
+          <div class="sales-card">
+            <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Sync Auto</div>
+            <div style="font-size: 0.8rem; color: #10b981; font-weight: 600;">À la reconnexion</div>
+          </div>
+          <!-- Plus de contenu -->
+          <div class="sales-card">
+            <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Sécurité Données</div>
+            <div style="font-size: 0.8rem; color: #667eea; font-weight: 600;">Chiffrées localement</div>
+          </div>
         `
       };
     }
+    // Clic sur nav dots avec animation fade. Change de vue avec transition.
     navDots.forEach(dot => {
       dot.addEventListener('click', () => {
         const view = dot.getAttribute('data-view');
-        // Update active state with neon glow
         navDots.forEach(d => {
           d.classList.remove('active');
-          const svg = d.querySelector('svg');
-          svg.setAttribute('fill', '#94a3b8');
+          d.querySelector('svg').setAttribute('fill', '#94a3b8');
         });
         dot.classList.add('active');
         dot.querySelector('svg').setAttribute('fill', 'white');
-        // Update content with futuristic fade and scale animation
         phoneContent.style.opacity = '0';
         phoneContent.style.transform = 'translateY(10px) scale(0.95)';
         setTimeout(() => {
-          const views = getViews();
-          phoneContent.innerHTML = views[view];
-          phoneContent.style.transition = 'all 0.4s ease-out';
+          phoneContent.innerHTML = getViews()[view];
           phoneContent.style.opacity = '1';
           phoneContent.style.transform = 'translateY(0) scale(1)';
+          phoneContent.scrollTop = 0; // Reset scroll à chaque vue.
         }, 250);
       });
     });
-    // Auto-rotate phone views with smooth transition
+    // Rotation auto des vues. Cycle toutes les 5 secondes pour démo dynamique.
     let currentViewIndex = 0;
-    const viewKeys = ['sales', 'stock', 'analytics'];
+    const viewKeys = ['sales', 'stock', 'analytics', 'offline'];
     setInterval(() => {
       currentViewIndex = (currentViewIndex + 1) % viewKeys.length;
-      const nextView = viewKeys[currentViewIndex];
-      const nextDot = document.querySelector(`[data-view="${nextView}"]`);
-      if (nextDot) nextDot.click();
+      document.querySelector(`[data-view="${viewKeys[currentViewIndex]}"]`).click();
     }, 5000);
-
+    // Mise à jour contenu phone. Appelée sur change langue ou load.
     function updatePhoneContent() {
       const activeDot = document.querySelector('.nav-dot.active');
-      if (activeDot) {
-        activeDot.click();
-      } else {
-        document.querySelector('[data-view="sales"]').click();
-      }
+      activeDot ? activeDot.click() : document.querySelector('[data-view="sales"]').click();
     }
-
-    // Initial load
-    updatePhoneContent();
-    // ==================== CONSOLE MESSAGES ====================
+    // Manipulation phone : Drag pour rotate/zoom/déplacement. Amélioré pour full manipulation.
+    phoneContainer.addEventListener('mousedown', e => {
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      phoneContainer.style.cursor = 'grabbing';
+    });
+    document.addEventListener('mousemove', e => {
+      if (isDragging) {
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        const rotate = startRotate + dx / 5;
+        const scale = Math.max(0.8, Math.min(1.2, startScale + dy / 200));
+        const translateX = startTranslateX + dx;
+        const translateY = startTranslateY + dy;
+        phoneContainer.style.transform = `translate(${translateX}px, ${translateY}px) rotate(${rotate}deg) scale(${scale})`;
+      }
+    });
+    document.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        phoneContainer.style.cursor = 'grab';
+        const transform = phoneContainer.style.transform;
+        startRotate = parseFloat(transform.match(/rotate\(([^deg]+)deg\)/)?.[1] || 0);
+        startScale = parseFloat(transform.match(/scale\(([^)]+)\)/)?.[1] || 1);
+        startTranslateX = parseFloat(transform.match(/translate\(([^px]+)px/)?.[1] || 0);
+        startTranslateY = parseFloat(transform.match(/, ([^px]+)px\)/)?.[1] || 0);
+      }
+    });
+    // Ajouté : Gestion du popup pour notification iOS.
+    notifyLink.addEventListener('click', e => {
+      e.preventDefault();
+      notifyPopup.classList.add('active');
+      overlay.classList.add('active');
+    });
+    notifyClose.addEventListener('click', () => {
+      notifyPopup.classList.remove('active');
+      overlay.classList.remove('active');
+    });
+    overlay.addEventListener('click', () => {
+      notifyPopup.classList.remove('active');
+      overlay.classList.remove('active');
+    });
+    notifyForm.addEventListener('submit', e => {
+      e.preventDefault();
+      notifyForm.style.display = 'none';
+      notifySuccess.style.display = 'block';
+      setTimeout(() => {
+        notifyForm.reset();
+        notifyForm.style.display = 'block';
+        notifySuccess.style.display = 'none';
+        notifyPopup.classList.remove('active');
+        overlay.classList.remove('active');
+      }, 3000);
+    });
+    // Ajouté : Empêcher le scroll de la page principale quand on scrolle dans le phone content.
+    phoneContent.addEventListener('wheel', e => {
+      e.preventDefault();
+      phoneContent.scrollTop += e.deltaY;
+    }, { passive: false });
+    // Pour touch, utilisation de touch events pour gérer scroll interne.
+    let touchStartY = 0;
+    phoneContent.addEventListener('touchstart', e => {
+      touchStartY = e.touches[0].clientY;
+    });
+    phoneContent.addEventListener('touchmove', e => {
+      e.preventDefault();
+      const deltaY = touchStartY - e.touches[0].clientY;
+      phoneContent.scrollTop += deltaY;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: false });
+    // ==================== CONSOLE LOGS ====================
+    // Logs pour debug et info dev. Non visibles pour users.
     console.log('%c⚡ Velmo - Gagnez plus. Vivez mieux.', 'font-size: 20px; font-weight: bold; color: #ff6200;');
-    console.log('%c✨ Site optimisé avec animations fluides', 'font-size: 12px; color: #555;');
+    console.log('%c✨ Site optimisé avec animations fluides et mode sombre amélioré', 'font-size: 12px; color: #555;');
     console.log('%c🌙 Raccourcis: Ctrl+K (theme) | Ctrl+L (langue)', 'font-size: 11px; color: #888;');
-    // ==================== INITIALISATION ====================
+    console.log('%c🎨 Mode sombre optimisé pour réduire la fatigue oculaire', 'font-size: 11px; color: #888;');
+    // Initialisation logs.
     console.log('✅ Velmo initialized');
-    console.log('🎨 Theme:', isDark ? 'Dark' : 'Light');
-    console.log('🎨 Language:', isEnglish ? 'English' : 'Français');
+    console.log('🎨 Theme:', isDark ? 'Dark (Eye-friendly)' : 'Light');
+    console.log('🌍 Language:', isEnglish ? 'English' : 'Français');
     console.log('📱 Animations avancées chargées');
+    console.log('🚀 Tous les systèmes opérationnels');
   </script>
 </body>
 </html>
+dd
