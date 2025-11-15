@@ -1239,7 +1239,7 @@
     }
 
     /* ========================================
-       RESPONSIVE - MOBILE FIRST PARFAIT
+       RESPONSIVE - MOBILE ULTRA OPTIMISÉ
        ======================================== */
     @media (max-width: 1024px) {
       .hero-container {
@@ -1258,44 +1258,104 @@
 
       .hero-image {
         order: -1;
-        max-width: 350px;
+        max-width: 100%;
         margin: 0 auto;
       }
 
       .hero-phone {
-        max-width: 280px;
+        max-width: 100%;
+      }
+
+      /* Grilles 2 colonnes sur tablette */
+      .promise-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+      }
+
+      .features-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+
+      .testimonials-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
       }
     }
 
     @media (max-width: 768px) {
       html {
-        font-size: 14px;
+        font-size: 16px;
       }
 
-      /* Sections */
+      body {
+        overflow-x: hidden;
+      }
+
+      /* Sections avec plus d'espace */
       section {
-        padding: var(--spacing-xl) 0;
+        padding: 60px 0;
       }
 
       .container {
-        padding: 0 20px;
+        padding: 0 24px;
+        max-width: 100%;
       }
 
-      /* Header mobile */
+      /* Header mobile FIXE */
+      header {
+        padding: 0;
+      }
+
       .header-container {
-        padding: 12px 20px;
+        padding: 16px 24px;
+        position: relative;
       }
 
       .logo-svg {
-        width: 36px;
-        height: 36px;
+        width: 44px;
+        height: 44px;
       }
 
       .logo-text {
-        font-size: 20px;
+        font-size: 24px;
       }
 
-      /* Navigation mobile */
+      /* HAMBURGER MENU VISIBLE ET FONCTIONNEL */
+      .menu-toggle {
+        display: flex !important;
+        z-index: 1001;
+        position: relative;
+        width: 32px;
+        height: 32px;
+        padding: 4px;
+        background: var(--bg-alt);
+        border-radius: 8px;
+      }
+
+      .menu-toggle span {
+        width: 24px;
+        height: 3px;
+        background: var(--primary);
+        border-radius: 2px;
+        transition: all 0.3s ease;
+      }
+
+      .menu-toggle.active span:nth-child(1) {
+        transform: rotate(45deg) translate(6px, 6px);
+        background: var(--primary);
+      }
+
+      .menu-toggle.active span:nth-child(2) {
+        opacity: 0;
+      }
+
+      .menu-toggle.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -6px);
+        background: var(--primary);
+      }
+
+      /* Navigation mobile FULLSCREEN */
       nav {
         position: fixed;
         top: 0;
@@ -1304,15 +1364,16 @@
         bottom: 0;
         flex-direction: column;
         background: var(--bg-main);
-        padding: 80px 24px 24px;
-        gap: 0;
+        padding: 100px 32px 32px;
+        gap: 24px;
         transform: translateX(100%);
         opacity: 0;
-        transition: all 0.3s ease;
-        z-index: 999;
-        box-shadow: var(--shadow-xl);
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        z-index: 1000;
+        box-shadow: none;
         align-items: stretch;
         justify-content: flex-start;
+        overflow-y: auto;
       }
 
       nav.active {
@@ -1322,202 +1383,254 @@
 
       nav a {
         width: 100%;
-        padding: 16px 20px;
+        padding: 20px 24px;
         text-align: left;
-        border-radius: var(--radius-md);
-        font-size: 18px;
+        border-radius: var(--radius-lg);
+        font-size: 20px;
         margin-bottom: 8px;
-        border-bottom: 1px solid var(--border);
+        border: 2px solid var(--border);
+        background: var(--bg-alt);
+        color: var(--text-primary);
+        font-weight: 600;
+        transition: all 0.3s ease;
       }
 
-      nav a:hover {
-        background: var(--bg-alt);
+      nav a:hover,
+      nav a:active {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+        transform: translateX(8px);
+      }
+
+      nav a::after {
+        display: none;
       }
 
       .nav-cta {
         margin-top: 16px;
         text-align: center;
-        padding: 16px 24px;
-        font-size: 18px;
+        padding: 20px 24px;
+        font-size: 20px;
+        background: var(--primary) !important;
+        color: white !important;
+        border: none !important;
       }
 
-      /* Menu hamburger VISIBLE */
-      .menu-toggle {
-        display: flex;
-        z-index: 1000;
-        position: relative;
+      .nav-cta:hover {
+        transform: scale(1.02) !important;
+        box-shadow: 0 8px 20px rgba(255, 98, 0, 0.3);
       }
 
-      .menu-toggle.active span:nth-child(1) {
-        transform: rotate(45deg) translate(7px, 7px);
-      }
-
-      .menu-toggle.active span:nth-child(2) {
-        opacity: 0;
-      }
-
-      .menu-toggle.active span:nth-child(3) {
-        transform: rotate(-45deg) translate(7px, -7px);
-      }
-
-      /* Hero mobile */
+      /* Hero mobile avec GRAND ÉCRAN */
       .hero {
-        min-height: auto;
-        padding: 100px 20px 60px;
+        min-height: 100vh;
+        padding: 120px 24px 80px;
+        display: flex;
+        align-items: center;
       }
 
       .hero-container {
-        gap: 32px;
+        gap: 48px;
+        width: 100%;
       }
 
       .hero-badge {
-        font-size: 13px;
-        padding: 6px 12px;
+        font-size: 14px;
+        padding: 8px 16px;
       }
 
       h1 {
-        font-size: clamp(2rem, 8vw, 3rem) !important;
+        font-size: 2.5rem !important;
         line-height: 1.1;
-        margin-bottom: 16px !important;
+        margin-bottom: 24px !important;
       }
 
       .hero-desc {
-        font-size: 16px;
-        margin-bottom: 24px;
+        font-size: 18px;
+        margin-bottom: 32px;
+        line-height: 1.7;
       }
 
       .hero-cta {
         flex-direction: column;
-        gap: 12px;
+        gap: 16px;
         width: 100%;
       }
 
       .btn {
         width: 100%;
-        padding: 14px 24px;
-        font-size: 15px;
+        padding: 18px 32px;
+        font-size: 17px;
+        font-weight: 700;
       }
 
-      /* Phone mockup mobile */
+      /* Phone mockup PLUS GRAND sur mobile */
+      .hero-image {
+        max-width: 100%;
+      }
+
       .hero-phone {
-        max-width: 260px;
+        max-width: 340px;
+        margin: 0 auto;
       }
 
       .phone-mockup {
-        padding: 10px;
-        border-radius: 32px;
+        padding: 12px;
+        border-radius: 40px;
+        border-width: 4px;
       }
 
       .phone-screen {
-        border-radius: 24px;
+        border-radius: 32px;
       }
 
       .phone-notch {
-        width: 100px;
-        height: 24px;
+        width: 110px;
+        height: 26px;
       }
 
       .phone-content {
-        padding: 16px;
+        padding: 20px;
+        font-size: 15px;
       }
 
       .content-card-phone {
-        padding: 16px;
-        margin-bottom: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+        border-radius: 16px;
+      }
+
+      .card-title {
+        font-size: 15px;
       }
 
       .card-value {
-        font-size: 24px;
+        font-size: 28px;
+      }
+
+      .card-subtitle {
+        font-size: 13px;
       }
 
       .stats-grid {
-        gap: 8px;
+        gap: 12px;
       }
 
       .stat-item {
-        padding: 12px;
+        padding: 16px;
+      }
+
+      .stat-label {
+        font-size: 12px;
       }
 
       .stat-value {
-        font-size: 18px;
+        font-size: 22px;
       }
 
       .phone-nav {
-        gap: 16px;
-        padding: 6px 16px;
-        bottom: 8px;
+        gap: 20px;
+        padding: 8px 20px;
+        bottom: 10px;
       }
 
       .nav-dot {
-        width: 32px;
-        height: 32px;
+        width: 36px;
+        height: 36px;
       }
 
       .nav-dot svg {
-        width: 16px;
-        height: 16px;
+        width: 18px;
+        height: 18px;
       }
 
       /* Section headers mobile */
       .section-header {
-        margin-bottom: var(--spacing-xl);
+        margin-bottom: 48px;
+        padding: 0 8px;
       }
 
       .section-badge {
-        font-size: 12px;
-        padding: 5px 12px;
+        font-size: 13px;
+        padding: 6px 14px;
       }
 
       .section-title {
-        font-size: clamp(1.75rem, 6vw, 2.5rem) !important;
-        margin-bottom: 16px;
+        font-size: 2rem !important;
+        margin-bottom: 20px;
+        line-height: 1.2;
       }
 
       .section-desc {
-        font-size: 16px;
+        font-size: 17px;
+        line-height: 1.7;
       }
 
-      /* Grilles mobile */
-      .promise-grid,
-      .features-grid,
+      /* GRILLES MOBILE : MAX 2 COLONNES */
+      .promise-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+      }
+
       .testimonials-grid {
         grid-template-columns: 1fr;
-        gap: 20px;
+        gap: 24px;
       }
 
       /* Cards mobile */
-      .promise-card,
-      .feature-card,
-      .testimonial-card {
+      .promise-card {
+        padding: 32px;
+      }
+
+      .feature-card {
         padding: 24px;
       }
 
+      .testimonial-card {
+        padding: 28px;
+      }
+
       .promise-icon {
-        width: 56px;
-        height: 56px;
-        font-size: 28px;
-        margin-bottom: 20px;
+        width: 64px;
+        height: 64px;
+        font-size: 32px;
+        margin-bottom: 24px;
       }
 
-      .promise-card h3,
-      .feature-card h4,
-      .testimonial-card h4 {
-        font-size: 20px;
+      .promise-card h3 {
+        font-size: 22px;
+        margin-bottom: 12px;
       }
 
-      .promise-card p,
-      .feature-card p {
-        font-size: 15px;
+      .promise-card p {
+        font-size: 16px;
+        line-height: 1.7;
       }
 
       .feature-icon {
-        font-size: 40px;
+        font-size: 44px;
         margin-bottom: 16px;
+      }
+
+      .feature-card h4 {
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+
+      .feature-card p {
+        font-size: 15px;
+        line-height: 1.6;
       }
 
       /* Form mobile */
       .beta-container {
-        padding: 24px;
+        padding: 32px;
       }
 
       .form-row {
@@ -1526,119 +1639,198 @@
       }
 
       .form-group {
-        margin-bottom: 20px;
+        margin-bottom: 24px;
+      }
+
+      .form-group label {
+        font-size: 15px;
+        margin-bottom: 10px;
       }
 
       .form-group input,
       .form-group textarea,
       .form-group select {
-        padding: 12px 16px;
+        padding: 16px 20px;
         font-size: 16px;
+        border-width: 2px;
+      }
+
+      .form-group textarea {
+        min-height: 140px;
       }
 
       /* Footer mobile */
+      footer {
+        padding: 48px 24px;
+      }
+
+      .footer-logo {
+        margin-bottom: 32px;
+      }
+
       .social-icons {
         flex-wrap: wrap;
-        gap: 12px;
+        gap: 16px;
+        margin-top: 24px;
       }
 
       .social-icon {
-        width: 40px;
-        height: 40px;
+        width: 48px;
+        height: 48px;
       }
 
       /* WhatsApp float mobile */
       .whatsapp-float {
-        width: 56px;
-        height: 56px;
-        bottom: 20px;
-        right: 20px;
+        width: 64px;
+        height: 64px;
+        bottom: 24px;
+        right: 24px;
       }
 
       .whatsapp-float svg {
-        width: 28px;
-        height: 28px;
+        width: 32px;
+        height: 32px;
       }
 
       /* Product items mobile */
       .product-item {
-        padding: 10px;
+        padding: 12px;
+        margin-bottom: 12px;
       }
 
       .product-icon {
-        width: 36px;
-        height: 36px;
-        font-size: 18px;
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
       }
 
       .product-name {
-        font-size: 12px;
+        font-size: 13px;
       }
 
       .product-stock {
-        font-size: 10px;
+        font-size: 11px;
       }
 
       .stock-badge {
-        font-size: 9px;
-        padding: 3px 6px;
+        font-size: 10px;
+        padding: 4px 8px;
       }
 
       /* Chart mobile */
       .chart-bars {
-        height: 100px;
-        gap: 6px;
+        height: 110px;
+        gap: 8px;
       }
 
       .chart-container {
-        padding: 12px;
+        padding: 16px;
+        margin-bottom: 16px;
       }
 
       /* Testimonials mobile */
       .testimonial-avatar {
-        width: 48px;
-        height: 48px;
-        font-size: 20px;
+        width: 52px;
+        height: 52px;
+        font-size: 22px;
+      }
+
+      .testimonial-info h4 {
+        font-size: 17px;
+      }
+
+      .testimonial-info p {
+        font-size: 14px;
       }
 
       .testimonial-text {
-        font-size: 14px;
+        font-size: 15px;
+        line-height: 1.7;
       }
 
       .testimonial-rating {
-        font-size: 16px;
+        font-size: 18px;
+      }
+
+      /* Placeholder mobile */
+      .placeholder-line {
+        height: 8px;
+        margin-bottom: 6px;
+      }
+
+      /* Alert badges mobile */
+      .alert-badge,
+      .success-badge {
+        padding: 14px;
+        margin-bottom: 16px;
+      }
+
+      .alert-text,
+      .success-text {
+        font-size: 13px;
       }
     }
 
+    /* PETIT MOBILE (< 480px) : 1 SEULE COLONNE PARTOUT */
     @media (max-width: 480px) {
-      h1 {
-        font-size: 1.875rem !important;
+      html {
+        font-size: 15px;
       }
 
-      .hero {
-        padding: 90px 16px 48px;
+      h1 {
+        font-size: 2rem !important;
       }
 
       .section-title {
-        font-size: 1.5rem !important;
+        font-size: 1.75rem !important;
+      }
+
+      .hero {
+        padding: 110px 20px 60px;
       }
 
       .hero-phone {
-        max-width: 240px;
+        max-width: 300px;
       }
 
-      .promise-card,
-      .feature-card {
-        padding: 20px;
-      }
-
-      .btn {
-        padding: 12px 20px;
-        font-size: 14px;
+      /* TOUTES LES GRILLES EN 1 COLONNE */
+      .features-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
       }
 
       .stats-grid {
         grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .promise-card,
+      .feature-card,
+      .testimonial-card {
+        padding: 24px;
+      }
+
+      .beta-container {
+        padding: 24px;
+      }
+
+      .btn {
+        padding: 16px 24px;
+        font-size: 16px;
+      }
+
+      nav {
+        padding: 90px 24px 24px;
+      }
+
+      nav a {
+        font-size: 18px;
+        padding: 18px 20px;
+      }
+
+      .nav-cta {
+        font-size: 18px;
+        padding: 18px 20px;
       }
     }
 
@@ -1655,8 +1847,8 @@
     <div class="header-container">
       <div class="logo-wrapper">
         <svg class="logo-svg" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="45" fill="#667eea"/>
-          <path d="M35 65 L50 35 L65 65 Z" fill="white" stroke="white" stroke-width="3"/>
+          <circle cx="50" cy="50" r="45" fill="#ff6200"/>
+          <text x="50" y="65" text-anchor="middle" fill="white" font-size="50" font-weight="900">V</text>
         </svg>
         <div class="logo-text">Velmo</div>
       </div>
@@ -2132,8 +2324,8 @@
     <div class="container">
       <div class="footer-logo">
         <svg class="logo-svg" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="45" fill="#667eea"/>
-          <path d="M35 65 L50 35 L65 65 Z" fill="white" stroke="white" stroke-width="3"/>
+          <circle cx="50" cy="50" r="45" fill="#ff6200"/>
+          <text x="50" y="65" text-anchor="middle" fill="white" font-size="50" font-weight="900">V</text>
         </svg>
         <div class="logo-text">Velmo</div>
       </div>
