@@ -1175,12 +1175,12 @@
       left: 50%;
       transform: translate(-50%, -50%);
       background: var(--white);
-      padding: 30px; /* Réduit pour plus petit. */
+      padding: 40px;
       border-radius: 20px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.3);
       z-index: 1001;
       display: none;
-      width: 320px; /* Réduit pour plus petit. */
+      width: 400px;
       max-width: 90%;
     }
     .notify-popup.active {
@@ -1188,16 +1188,16 @@
     }
     .notify-close {
       position: absolute;
-      top: 10px; /* Réduit. */
-      right: 10px; /* Réduit. */
+      top: 15px;
+      right: 15px;
       cursor: pointer;
-      font-size: 1.3rem; /* Réduit. */
+      font-size: 1.5rem;
       color: var(--text-secondary);
     }
     .notify-form input {
       width: 100%;
-      padding: 12px; /* Réduit. */
-      margin-bottom: 15px; /* Réduit. */
+      padding: 15px;
+      margin-bottom: 20px;
       border: 2px solid var(--border);
       border-radius: 12px;
       font-size: 1rem;
@@ -2748,22 +2748,6 @@
         overlay.classList.remove('active');
       }, 3000);
     });
-    // Ajouté : Empêcher le scroll de la page principale quand on scrolle dans le phone content.
-    phoneContent.addEventListener('wheel', e => {
-      e.preventDefault();
-      phoneContent.scrollTop += e.deltaY;
-    }, { passive: false });
-    // Pour touch, utilisation de touch events pour gérer scroll interne.
-    let touchStartY = 0;
-    phoneContent.addEventListener('touchstart', e => {
-      touchStartY = e.touches[0].clientY;
-    });
-    phoneContent.addEventListener('touchmove', e => {
-      e.preventDefault();
-      const deltaY = touchStartY - e.touches[0].clientY;
-      phoneContent.scrollTop += deltaY;
-      touchStartY = e.touches[0].clientY;
-    }, { passive: false });
     // ==================== CONSOLE LOGS ====================
     // Logs pour debug et info dev. Non visibles pour users.
     console.log('%c⚡ Velmo - Gagnez plus. Vivez mieux.', 'font-size: 20px; font-weight: bold; color: #ff6200;');
@@ -2779,4 +2763,3 @@
   </script>
 </body>
 </html>
-dd
