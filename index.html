@@ -72,7 +72,7 @@
     /* ========================================
        BASE - Reset et typographie.
        Reset des marges et paddings pour une base propre. Utilisation de clamp() pour une typographie responsive qui s'adapte à la taille d'écran.
-       Amélioré : Font-size de base augmentée à 18px pour moins fatiguer les yeux.
+       Amélioré : Font-size de base ajustée pour meilleure adaptation sur petits écrans.
        ======================================== */
     * {
       margin: 0;
@@ -87,8 +87,8 @@
       font-family: 'Inter', sans-serif;
       background: var(--white);
       color: var(--text-primary);
-      line-height: 1.7; /* Augmenté pour meilleure lecture. */
-      font-size: 18px; /* Augmenté pour lisibilité. */
+      line-height: 1.6; /* Ajusté pour meilleure lecture sur mobile. */
+      font-size: clamp(12px, 2.5vw, 16px); /* Réduit pour éviter zoom excessif sur mobile. */
       overflow-x: hidden;
       transition: background 0.4s ease, color 0.4s ease;
     }
@@ -96,16 +96,15 @@
     .container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 clamp(1.5rem, 6vw, 3rem); /* Padding augmenté pour espace. */
+      padding: 0 clamp(0.5rem, 4vw, 2rem); /* Padding réduit pour mobile. */
     }
     /* Animation d'apparition des sections avec Intersection Observer pour performance. Cela charge les animations seulement quand visible. */
     section {
-      padding: 120px 0; /* Augmenté pour plus d'espace. */
+      padding: clamp(40px, 8vw, 80px) 0; /* Réduit pour mobile. */
       position: relative;
       opacity: 0;
-      transform: translateY(50px);
-      transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-                  transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
     }
     section.visible {
       opacity: 1;
@@ -116,7 +115,7 @@
       color: var(--text-primary);
       font-weight: 900;
       transition: color 0.4s ease;
-      font-size: clamp(2rem, 6vw, 4rem); /* Augmenté. */
+      font-size: clamp(1.2rem, 4vw, 3rem); /* Réduit pour mobile. */
     }
     a {
       text-decoration: none;
@@ -124,17 +123,17 @@
     /* ========================================
        BOUTONS - Avec effet ripple et hover amélioré pour une meilleure UX.
        Les boutons ont un feedback visuel au hover et clic pour améliorer l'interaction.
-       Amélioré : Padding augmenté, font-size plus grand.
+       Amélioré : Padding réduit pour mobile.
        ======================================== */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 20px 50px; /* Augmenté pour plus grand boutons. */
+      padding: clamp(8px, 2.5vw, 16px) clamp(20px, 5vw, 40px); /* Adapté pour mobile. */
       font-weight: 700;
-      border-radius: 16px; /* Plus arrondi pour design moderne. */
-      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      font-size: 1.1rem; /* Augmenté. */
+      border-radius: 12px; /* Arrondi ajusté. */
+      transition: all 0.3s ease;
+      font-size: clamp(0.8rem, 2.5vw, 1rem); /* Adapté. */
       position: relative;
       overflow: hidden;
       border: none;
@@ -154,44 +153,44 @@
       transition: width 0.6s, height 0.6s;
     }
     .btn:hover::before {
-      width: 400px;
-      height: 400px;
+      width: 300px;
+      height: 300px;
     }
     .btn-primary {
       background: var(--orange);
       color: white;
-      box-shadow: 0 10px 30px rgba(255, 98, 0, 0.3);
+      box-shadow: 0 6px 20px rgba(255, 98, 0, 0.2);
     }
     .btn-primary:hover {
       background: var(--orange-dark);
-      transform: translateY(-4px);
-      box-shadow: 0 15px 40px rgba(255, 98, 0, 0.5);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(255, 98, 0, 0.4);
     }
     .btn-secondary {
       background: transparent;
       color: var(--orange);
-      border: 3px solid var(--orange);
-      padding: 18px 48px; /* Augmenté. */
-      font-size: 1rem; /* Augmenté. */
+      border: 2px solid var(--orange);
+      padding: clamp(7px, 2.5vw, 15px) clamp(18px, 5vw, 38px); /* Adapté. */
+      font-size: clamp(0.75rem, 2.5vw, 0.95rem); /* Adapté. */
     }
     .btn-secondary:hover {
       background: var(--orange);
       color: white;
-      transform: translateY(-4px);
-      box-shadow: 0 10px 30px rgba(255, 98, 0, 0.3);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(255, 98, 0, 0.2);
     }
     /* ========================================
        HEADER - Sticky avec backdrop blur pour un look moderne.
        Le header reste fixe en haut pour une navigation facile.
-       ======================================== -->
+       ======================================== */
     header {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(20px); /* Effet flou pour modernité. */
-      box-shadow: 0 2px 20px var(--shadow);
+      backdrop-filter: blur(15px); /* Effet flou réduit pour performance. */
+      box-shadow: 0 2px 15px var(--shadow);
       z-index: 1000;
       transition: all 0.3s ease;
     }
@@ -200,12 +199,12 @@
     }
     /* Ombre renforcée au scroll pour profondeur. Cela donne un effet de profondeur quand on scroll. */
     header.scrolled {
-      box-shadow: 0 4px 30px var(--shadow);
+      box-shadow: 0 3px 20px var(--shadow);
     }
     .header-container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 1.2rem 2.5rem; /* Augmenté pour espace. */
+      padding: clamp(0.6rem, 1.5vw, 1rem) clamp(1rem, 3vw, 2rem); /* Adapté pour mobile. */
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -214,32 +213,32 @@
     .logo-wrapper {
       display: flex;
       align-items: center;
-      gap: 15px;
+      gap: 10px;
     }
     .logo-svg {
-      height: 50px;
+      height: clamp(35px, 5vw, 45px); /* Augmenté min pour visibilité sur mobile. */
       width: auto;
       transition: transform 0.3s ease, fill 0.3s ease;
       cursor: pointer;
     }
     .logo-svg:hover {
-      transform: scale(1.1) rotate(5deg);
+      transform: scale(1.05) rotate(3deg);
       fill: var(--orange-dark);
     }
     .logo {
-      font-size: 2rem; /* Augmenté. */
+      font-size: clamp(1rem, 3vw, 1.8rem); /* Adapté. */
       font-weight: 900;
       color: var(--orange);
       transition: all 0.3s ease;
     }
     .logo:hover {
-      transform: scale(1.05);
-      text-shadow: 0 0 20px rgba(255, 98, 0, 0.5);
+      transform: scale(1.03);
+      text-shadow: 0 0 15px rgba(255, 98, 0, 0.4);
     }
     /* Navigation responsive avec flex et gap. S'adapte aux petits écrans. */
     nav {
       display: flex;
-      gap: 2.5rem; /* Augmenté pour espace. */
+      gap: clamp(0.8rem, 3vw, 2rem); /* Adapté pour espace sur mobile. */
       align-items: center;
     }
     nav a {
@@ -247,16 +246,16 @@
       font-weight: 600;
       transition: all 0.3s ease;
       position: relative;
-      font-size: 1.05rem; /* Augmenté. */
+      font-size: clamp(0.75rem, 2.5vw, 0.95rem); /* Adapté. */
     }
     /* Soulignement animé pour les liens nav. Ajoute un feedback visuel au hover. */
     nav a::after {
       content: '';
       position: absolute;
-      bottom: -5px;
+      bottom: -4px;
       left: 0;
       width: 0;
-      height: 3px;
+      height: 2px;
       background: var(--orange);
       transition: width 0.3s ease;
       border-radius: 2px;
@@ -270,39 +269,39 @@
     /* Actions header : Thème, langue, menu avec icônes. Groupées pour clarté. */
     .header-actions {
       display: flex;
-      gap: 1.2rem; /* Augmenté. */
+      gap: clamp(0.6rem, 2.5vw, 1rem); /* Adapté. */
       align-items: center;
     }
     .icon-btn {
-      width: 45px; /* Augmenté. */
-      height: 45px;
-      border-radius: 12px;
+      width: clamp(30px, 5vw, 40px); /* Adapté. */
+      height: clamp(30px, 5vw, 40px);
+      border-radius: 10px;
       background: var(--card-bg);
-      border: 2px solid var(--border);
+      border: 1.5px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       transition: all 0.3s ease;
-      font-size: 1.4rem; /* Augmenté. */
+      font-size: clamp(0.9rem, 3vw, 1.2rem); /* Adapté. */
     }
     .icon-btn:hover {
-      transform: scale(1.1) rotate(10deg);
+      transform: scale(1.05) rotate(5deg);
       border-color: var(--orange);
-      box-shadow: 0 4px 15px rgba(255, 98, 0, 0.3);
+      box-shadow: 0 3px 10px rgba(255, 98, 0, 0.2);
     }
     /* Menu hamburger pour mobile. Visible seulement sur petits écrans. */
     .menu-toggle {
       display: none;
       flex-direction: column;
-      gap: 5px;
+      gap: 4px;
       cursor: pointer;
     }
     .menu-toggle span {
-      width: 28px;
-      height: 3px;
+      width: 24px;
+      height: 2.5px;
       background: var(--text-primary);
-      border-radius: 3px;
+      border-radius: 2px;
       transition: all 0.3s ease;
     }
     /* ========================================
@@ -311,7 +310,7 @@
        ======================================== */
     .hero {
       text-align: center;
-      padding: 160px 20px 100px;
+      padding: clamp(60px, 12vw, 120px) 15px clamp(40px, 8vw, 80px); /* Adapté pour mobile. */
       background: linear-gradient(135deg, var(--white) 0%, var(--light) 100%);
       position: relative;
       overflow: hidden;
@@ -322,55 +321,55 @@
     .hero::before {
       content: '';
       position: absolute;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(255, 98, 0, 0.15), transparent);
-      top: -300px;
-      right: -300px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(255, 98, 0, 0.12), transparent);
+      top: -250px;
+      right: -250px;
       border-radius: 50%;
-      animation: heroOrb 20s ease-in-out infinite;
+      animation: heroOrb 18s ease-in-out infinite;
     }
     @keyframes heroOrb {
       0%, 100% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(-80px, 80px) scale(1.3); }
+      50% { transform: translate(-60px, 60px) scale(1.2); }
     }
     .hero::after {
       content: '';
       position: absolute;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(255, 98, 0, 0.1), transparent);
-      bottom: -250px;
-      left: -250px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(255, 98, 0, 0.08), transparent);
+      bottom: -200px;
+      left: -200px;
       border-radius: 50%;
-      animation: heroOrb 15s ease-in-out infinite reverse;
+      animation: heroOrb 14s ease-in-out infinite reverse;
     }
     /* Titre hero avec animation fade-in-up. Attire l'attention immédiate. */
     .hero h1 {
-      font-size: clamp(3rem, 7vw, 5rem); /* Augmenté pour visibilité. */
-      margin-bottom: 25px; /* Augmenté. */
-      animation: fadeInUp 1s ease-out;
+      font-size: clamp(1.8rem, 6vw, 4rem); /* Ajusté pour mobile. */
+      margin-bottom: 20px; /* Réduit. */
+      animation: fadeInUp 0.8s ease-out;
       position: relative;
       z-index: 1;
-      letter-spacing: -1px;
+      letter-spacing: -0.5px;
     }
     @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(30px); }
+      from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
     /* Description hero avec delay. Permet une apparition séquentielle. */
     .hero-desc {
-      font-size: clamp(1.3rem, 4vw, 1.5rem); /* Augmenté pour moins fatiguer les yeux. */
-      max-width: 800px;
-      margin: 0 auto 40px; /* Augmenté. */
+      font-size: clamp(0.9rem, 3vw, 1.3rem); /* Ajusté pour mobile. */
+      max-width: 700px;
+      margin: 0 auto 30px; /* Réduit. */
       color: var(--text-secondary);
-      animation: fadeInUp 1s ease-out 0.2s both;
+      animation: fadeInUp 0.8s ease-out 0.15s both;
       position: relative;
       z-index: 1;
-      line-height: 1.9; /* Augmenté. */
+      line-height: 1.7; /* Ajusté. */
     }
     .hero .btn {
-      animation: fadeInUp 1s ease-out 0.4s both;
+      animation: fadeInUp 0.8s ease-out 0.3s both;
       position: relative;
       z-index: 1;
     }
@@ -378,200 +377,213 @@
     .micro-proof {
       display: flex;
       justify-content: center;
-      gap: 30px;
-      margin-top: 40px;
-      font-size: 1.05rem; /* Augmenté. */
+      gap: clamp(10px, 3vw, 25px); /* Adapté. */
+      margin-top: 30px;
+      font-size: clamp(0.75rem, 2.5vw, 0.95rem); /* Adapté. */
       flex-wrap: wrap;
-      animation: fadeInUp 1s ease-out 0.6s both;
+      animation: fadeInUp 0.8s ease-out 0.5s both;
     }
     .micro-proof span {
       background: var(--card-bg);
       color: var(--text-secondary);
-      padding: 12px 24px;
-      border-radius: 30px;
-      box-shadow: 0 4px 15px var(--shadow);
+      padding: 8px 20px;
+      border-radius: 25px;
+      box-shadow: 0 3px 10px var(--shadow);
       transition: all 0.3s ease;
       border: 1px solid var(--border);
     }
     .micro-proof span:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px var(--shadow);
+      transform: translateY(-4px);
+      box-shadow: 0 6px 20px var(--shadow);
     }
     .micro-proof span::before {
       content: "✓ ";
       color: var(--orange);
       font-weight: bold;
-      font-size: 1.3rem;
+      font-size: 1.2rem;
     }
     /* ========================================
        PROMESSE - Section avec glassmorphism et expandable benefits.
-       Amélioré pour lisibilité : tailles de texte augmentées, contrastes vérifiés, couleurs harmonisées.
+       Amélioré pour simplicité : Layout en grid, paddings réduits, UI/UX simplifié (moins d'animations complexes, tailles plus petites).
        ======================================== */
     .promise-section {
       background: linear-gradient(135deg, var(--promise-bg-start) 0%, var(--promise-bg-end) 100%);
-      padding: 100px 20px; /* Augmenté. */
+      padding: clamp(40px, 8vw, 80px) 15px; /* Réduit. */
       text-align: center;
       position: relative;
       overflow: hidden;
     }
-    /* Orbe animé pour effet immersif. Ajoute de la profondeur visuelle. */
+    /* Orbe animé réduit pour performance. */
     .promise-section::before {
       content: '';
       position: absolute;
-      width: 400px;
-      height: 400px;
+      width: 300px;
+      height: 300px;
       background: radial-gradient(circle, var(--promise-orb), transparent);
-      top: -200px;
-      left: -200px;
+      top: -150px;
+      left: -150px;
       border-radius: 50%;
-      animation: promiseOrb 15s ease-in-out infinite;
+      animation: promiseOrb 12s ease-in-out infinite;
     }
     @keyframes promiseOrb {
       0%, 100% { transform: translate(0, 0) scale(1); opacity: 1; }
-      50% { transform: translate(100px, 100px) scale(1.2); opacity: 0.8; }
+      50% { transform: translate(80px, 80px) scale(1.1); opacity: 0.7; }
     }
     .promise-section h2 {
       color: var(--promise-text);
-      font-size: clamp(3rem, 6vw, 5rem); /* Augmenté. */
-      margin-bottom: 60px; /* Augmenté. */
+      font-size: clamp(1.5rem, 5vw, 3.5rem); /* Réduit. */
+      margin-bottom: 40px; /* Réduit. */
       position: relative;
       z-index: 1;
-      animation: fadeInUp 1s ease-out;
+      animation: fadeInUp 0.8s ease-out;
     }
-    /* Box promesse avec glassmorphism et hover scale. Effet verre pour modernité. */
+    /* Box promesse simplifiée : Paddings réduits, border plus fine. */
     .promise-box {
-      max-width: 1100px; /* Augmenté pour espace. */
+      max-width: 1000px; /* Réduit pour espace. */
       margin: 0 auto;
       background: var(--promise-box-bg);
-      backdrop-filter: blur(15px);
-      padding: 70px; /* Augmenté. */
-      border-radius: 30px;
-      border: 2px solid var(--promise-border);
+      backdrop-filter: blur(10px);
+      padding: clamp(30px, 6vw, 50px); /* Réduit. */
+      border-radius: 20px;
+      border: 1px solid var(--promise-border);
       position: relative;
       z-index: 1;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-      transition: all 0.5s ease;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+      transition: all 0.4s ease;
     }
     .promise-box:hover {
-      transform: scale(1.02);
+      transform: scale(1.01);
     }
-    /* Grille responsive pour bénéfices. S'adapte à 1 colonne sur mobile. */
+    /* Grille pour bénéfices : 1 colonne sur mobile, 2 sur tablette, pour simplicité. */
     .promise-benefits {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Augmenté pour espace. */
-      gap: 30px; /* Augmenté. */
-      margin-top: 60px; /* Augmenté. */
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Simplifié pour responsive. */
+      gap: clamp(8px, 2vw, 15px); /* Réduit. */
+      margin-top: 30px; /* Réduit. */
     }
-    /* Carte bénéfice avec expandable details et icon rotation. Clique pour détails. */
+    /* Carte bénéfice simplifiée : Moins d'effets, paddings réduits. */
     .promise-benefit {
       background: var(--promise-benefit-bg);
-      border-radius: 24px; /* Plus arrondi. */
-      padding: 35px; /* Augmenté. */
-      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      border-radius: 16px; /* Arrondi réduit. */
+      padding: clamp(15px, 3vw, 25px); /* Réduit. */
+      transition: all 0.3s ease;
       cursor: pointer;
       position: relative;
       overflow: hidden;
-      border: 2px solid transparent;
+      border: 1px solid transparent;
     }
     .promise-benefit:hover {
       background: var(--promise-benefit-hover-bg);
-      transform: translateY(-8px);
-      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
       border-color: var(--promise-border);
     }
     .promise-benefit-header {
       display: flex;
       align-items: center;
-      gap: 25px; /* Augmenté. */
-      margin-bottom: 20px; /* Augmenté. */
+      gap: clamp(10px, 3vw, 20px); /* Adapté. */
+      margin-bottom: 8px; /* Réduit. */
+      position: relative;
+    }
+    .promise-benefit-header::after {
+      content: '+';
+      font-size: clamp(1rem, 3vw, 1.3rem);
+      font-weight: bold;
+      position: absolute;
+      right: clamp(10px, 3vw, 20px);
+      transition: transform 0.3s ease;
+    }
+    .promise-benefit.active .promise-benefit-header::after {
+      content: '-';
+      transform: rotate(180deg);
     }
     .promise-benefit-icon {
-      font-size: 4rem; /* Augmenté pour visibilité. */
+      font-size: clamp(2rem, 5vw, 3rem); /* Réduit pour mobile. */
       flex-shrink: 0;
       transition: transform 0.3s ease;
     }
     .promise-benefit:hover .promise-benefit-icon {
-      transform: rotate(360deg) scale(1.2);
+      transform: scale(1.1);
     }
     .promise-benefit-title {
       color: var(--promise-text);
-      font-size: clamp(1.8rem, 4vw, 2rem); /* Augmenté pour moins fatiguer les yeux. */
+      font-size: clamp(1rem, 3vw, 1.5rem); /* Réduit. */
       font-weight: 700;
-      margin-bottom: 15px; /* Augmenté. */
+      margin-bottom: 8px; /* Réduit. */
     }
     .promise-benefit-desc {
       color: var(--promise-text);
-      font-size: clamp(1.1rem, 2.5vw, 1.2rem); /* Augmenté pour meilleure lisibilité. */
-      line-height: 1.7; /* Augmenté. */
+      font-size: clamp(0.8rem, 2vw, 1rem); /* Réduit. */
+      line-height: 1.6; /* Ajusté. */
       opacity: 0.9;
     }
     /* Détails expandable avec transition fluide. Permet d'étendre le contenu sur clic. */
     .benefit-details {
       max-height: 0;
       overflow: hidden;
-      transition: max-height 0.5s ease, opacity 0.3s ease, margin-top 0.3s ease;
+      transition: max-height 0.4s ease, opacity 0.3s ease, margin-top 0.3s ease;
       opacity: 0;
     }
     .promise-benefit.active .benefit-details {
-      max-height: 500px;
+      max-height: 400px;
       opacity: 1;
-      margin-top: 20px;
+      margin-top: 10px;
     }
     .benefit-details h4 {
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       color: var(--orange-light);
-      font-size: 1.1rem;
+      font-size: 1rem;
     }
     .benefit-details p {
-      font-size: 1rem; /* Augmenté. */
-      line-height: 1.7; /* Augmenté. */
+      font-size: clamp(0.75rem, 2vw, 0.9rem); /* Réduit. */
+      line-height: 1.6; /* Ajusté. */
       color: var(--promise-text);
       opacity: 0.85;
     }
-    /* Slogan avec pulse animation. Attire l'attention sur le message clé. */
+    /* Slogan avec pulse animation réduit. */
     .slogan {
-      font-size: clamp(2.5rem, 6vw, 3.5rem); /* Augmenté pour visibilité. */
+      font-size: clamp(1.2rem, 5vw, 2.5rem); /* Réduit. */
       font-weight: 900;
       color: var(--promise-text);
-      margin-top: 70px; /* Augmenté. */
+      margin-top: 40px; /* Réduit. */
       text-transform: uppercase;
-      letter-spacing: 3px;
-      animation: pulse 2s ease-in-out infinite;
+      letter-spacing: 2px;
+      animation: pulse 1.8s ease-in-out infinite;
     }
     /* ========================================
        CARTES DE CONTENU - Avec hover lift et shadow dynamique.
        Cartes pour contenu structuré, avec effets pour engagement.
-       Amélioré : Padding augmenté, font-size plus grand.
+       Amélioré : Padding réduit, font-size ajusté.
        ======================================== */
     .content-card {
       background: var(--card-bg);
-      padding: 50px; /* Augmenté. */
-      border-radius: 24px; /* Plus arrondi. */
-      box-shadow: 0 8px 30px var(--shadow);
-      margin: 40px 0; /* Augmenté. */
+      padding: clamp(20px, 5vw, 40px); /* Réduit. */
+      border-radius: 20px; /* Arrondi ajusté. */
+      box-shadow: 0 6px 20px var(--shadow);
+      margin: 30px 0; /* Réduit. */
       border: 1px solid var(--border);
-      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      transition: all 0.3s ease;
       opacity: 0;
-      transform: translateY(30px);
+      transform: translateY(20px);
     }
     .content-card.visible {
       opacity: 1;
       transform: translateY(0);
     }
     .content-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 15px 50px var(--shadow);
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px var(--shadow);
     }
     .content-card h3 {
-      font-size: 2rem; /* Augmenté. */
-      margin-bottom: 25px; /* Augmenté. */
+      font-size: clamp(1.2rem, 3vw, 1.8rem); /* Réduit. */
+      margin-bottom: 20px; /* Réduit. */
       color: var(--orange);
     }
     .content-card p {
-      font-size: 1.25rem; /* Augmenté. */
-      line-height: 1.9;
+      font-size: clamp(0.9rem, 2.5vw, 1.1rem); /* Réduit. */
+      line-height: 1.7;
       color: var(--text-secondary);
-      margin-bottom: 20px; /* Augmenté. */
+      margin-bottom: 15px; /* Réduit. */
     }
     .content-card strong {
       color: var(--text-primary);
@@ -583,42 +595,42 @@
        ======================================== */
     .section-title {
       text-align: center;
-      font-size: clamp(2.5rem, 6vw, 4rem); /* Augmenté. */
-      margin-bottom: 70px; /* Augmenté. */
+      font-size: clamp(1.5rem, 5vw, 3rem); /* Réduit. */
+      margin-bottom: clamp(30px, 6vw, 50px); /* Adapté. */
       position: relative;
-      letter-spacing: -1px;
+      letter-spacing: -0.5px;
     }
     .section-title::after {
       content: '';
       position: absolute;
-      bottom: -15px;
+      bottom: -10px;
       left: 50%;
       transform: translateX(-50%);
-      width: 100px; /* Augmenté. */
-      height: 5px;
+      width: 80px; /* Réduit. */
+      height: 4px;
       background: linear-gradient(90deg, var(--orange), transparent);
-      border-radius: 3px;
+      border-radius: 2px;
     }
     /* ========================================
        FORCES ET FONCTIONS - Grille avec stagger animation.
        Grille responsive pour features, avec animations décalées.
-       Amélioré : Gap augmenté, padding plus grand, text plus large.
+       Amélioré : Gap réduit, padding ajusté.
        ======================================== */
     .features-forces {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Augmenté. */
-      gap: 40px; /* Augmenté. */
-      margin-top: 60px; /* Augmenté. */
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Ajusté pour mobile. */
+      gap: clamp(20px, 5vw, 30px); /* Réduit. */
+      margin-top: clamp(30px, 6vw, 50px); /* Adapté. */
     }
     .feature-force {
       text-align: center;
-      padding: 50px 35px; /* Augmenté. */
+      padding: clamp(20px, 5vw, 40px) clamp(15px, 4vw, 30px); /* Réduit. */
       background: var(--card-bg);
-      border-radius: 24px; /* Plus arrondi. */
-      box-shadow: 0 8px 30px var(--shadow);
-      transition: all 0.4s ease;
+      border-radius: 20px; /* Arrondi ajusté. */
+      box-shadow: 0 6px 20px var(--shadow);
+      transition: all 0.3s ease;
       opacity: 0;
-      transform: scale(0.9);
+      transform: scale(0.95);
       border: 1px solid var(--border);
       position: relative;
       overflow: hidden;
@@ -641,7 +653,7 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 4px;
+      height: 3px;
       background: linear-gradient(90deg, var(--orange-light), var(--orange-dark));
       transform: scaleX(0);
       transition: transform 0.3s ease;
@@ -650,55 +662,55 @@
       transform: scaleX(1);
     }
     .feature-force:hover {
-      transform: translateY(-10px) scale(1.02);
-      box-shadow: 0 15px 45px var(--shadow);
+      transform: translateY(-8px) scale(1.01);
+      box-shadow: 0 10px 30px var(--shadow);
     }
     .feature-force-icon {
-      font-size: 4rem; /* Augmenté. */
-      margin-bottom: 25px; /* Augmenté. */
+      font-size: clamp(2rem, 7vw, 3.5rem); /* Adapté. */
+      margin-bottom: clamp(10px, 3vw, 20px); /* Adapté. */
       display: block;
-      animation: iconFloat 3s ease-in-out infinite;
+      animation: iconFloat 2.5s ease-in-out infinite;
     }
     @keyframes iconFloat {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
+      50% { transform: translateY(-8px); }
     }
     .feature-force h4 {
-      margin: 15px 0 15px;
-      font-size: 1.6rem; /* Augmenté. */
+      margin: 10px 0 10px;
+      font-size: clamp(1rem, 3vw, 1.4rem); /* Adapté. */
       color: var(--orange);
       font-weight: 800;
     }
     .feature-force p {
       color: var(--text-secondary);
-      line-height: 1.8; /* Augmenté. */
-      font-size: 1.15rem; /* Augmenté. */
+      line-height: 1.7; /* Ajusté. */
+      font-size: clamp(0.8rem, 2.5vw, 1rem); /* Adapté. */
     }
     /* ========================================
        TÉMOIGNAGES - Cartes avec quote et rating.
        Grille responsive pour avis, avec effets hover.
-       Amélioré : Padding augmenté, text plus grand.
+       Amélioré : Padding réduit, text ajusté.
        ======================================== */
     .testimonials-section {
       background: var(--light);
-      padding: 120px 20px; /* Augmenté. */
+      padding: clamp(40px, 8vw, 80px) 15px; /* Adapté. */
     }
     .testimonials-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 40px; /* Augmenté. */
-      margin-top: 60px; /* Augmenté. */
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Ajusté. */
+      gap: clamp(20px, 5vw, 30px); /* Adapté. */
+      margin-top: clamp(30px, 6vw, 50px); /* Adapté. */
     }
     .testimonial-card {
       background: var(--card-bg);
-      padding: 50px; /* Augmenté. */
-      border-radius: 24px; /* Plus arrondi. */
-      box-shadow: 0 8px 30px var(--shadow);
+      padding: clamp(20px, 5vw, 40px); /* Adapté. */
+      border-radius: 20px; /* Arrondi ajusté. */
+      box-shadow: 0 6px 20px var(--shadow);
       border: 1px solid var(--border);
       position: relative;
-      transition: all 0.4s ease;
+      transition: all 0.3s ease;
       opacity: 0;
-      transform: translateY(30px);
+      transform: translateY(20px);
     }
     .testimonials-grid.visible .testimonial-card {
       opacity: 1;
@@ -710,65 +722,65 @@
     .testimonial-card::before {
       content: '"';
       position: absolute;
-      top: -10px;
-      left: 20px;
-      font-size: 6rem;
+      top: -8px;
+      left: 15px;
+      font-size: 5rem;
       color: var(--orange);
-      opacity: 0.2;
+      opacity: 0.15;
       font-family: Georgia, serif;
     }
     .testimonial-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 15px 50px var(--shadow);
+      transform: translateY(-8px);
+      box-shadow: 0 10px 30px var(--shadow);
     }
     .testimonial-header {
       display: flex;
       align-items: center;
-      gap: 20px; /* Augmenté. */
-      margin-bottom: 25px; /* Augmenté. */
+      gap: clamp(10px, 3vw, 15px); /* Adapté. */
+      margin-bottom: clamp(10px, 3vw, 20px); /* Adapté. */
       position: relative;
       z-index: 1;
     }
     .testimonial-avatar {
-      width: 70px; /* Augmenté. */
-      height: 70px;
+      width: clamp(40px, 8vw, 60px); /* Adapté. */
+      height: clamp(40px, 8vw, 60px);
       border-radius: 50%;
       background: linear-gradient(135deg, var(--orange-light), var(--orange-dark));
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.5rem; /* Augmenté. */
+      font-size: clamp(1.2rem, 3vw, 2rem); /* Adapté. */
       flex-shrink: 0;
     }
     .testimonial-info h4 {
       color: var(--text-primary);
-      font-size: 1.5rem; /* Augmenté. */
-      margin-bottom: 8px; /* Augmenté. */
+      font-size: clamp(0.9rem, 2.5vw, 1.3rem); /* Adapté. */
+      margin-bottom: 6px; /* Ajusté. */
     }
     .testimonial-info p {
       color: var(--text-secondary);
-      font-size: 1.05rem; /* Augmenté. */
+      font-size: clamp(0.75rem, 2.5vw, 0.95rem); /* Adapté. */
     }
     .testimonial-text {
       color: var(--text-secondary);
-      font-size: 1.2rem; /* Augmenté. */
-      line-height: 1.9; /* Augmenté. */
+      font-size: clamp(0.8rem, 2.5vw, 1rem); /* Adapté. */
+      line-height: 1.7; /* Ajusté. */
       font-style: italic;
       position: relative;
       z-index: 1;
     }
     .testimonial-rating {
-      margin-top: 25px; /* Augmenté. */
+      margin-top: clamp(10px, 3vw, 20px); /* Adapté. */
       color: #fbbf24;
-      font-size: 1.5rem; /* Augmenté. */
+      font-size: clamp(0.9rem, 3vw, 1.3rem); /* Adapté. */
     }
     /* ========================================
        SMARTPHONE DÉMO - Interactif avec scroll, navigation et contenu étendu pour preview complet.
-       Amélioré pour manipulation : drag pour rotation/zoom/déplacement, scroll interne actif et indépendant de la page.
+       Amélioré pour visibilité sur mobile : Taille augmentée, height proportionnelle.
        ======================================== */
     .phone-demo-section {
       background: linear-gradient(135deg, var(--white) 0%, var(--light) 100%);
-      padding: 120px 0; /* Augmenté. */
+      padding: clamp(40px, 8vw, 80px) 0; /* Adapté. */
       position: relative;
       overflow: hidden;
     }
@@ -776,30 +788,30 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 100px; /* Augmenté. */
+      gap: clamp(30px, 8vw, 80px); /* Adapté. */
       flex-wrap: wrap;
     }
     .phone-demo-content {
       flex: 1;
-      min-width: 300px;
-      max-width: 500px;
+      min-width: 250px;
+      max-width: 450px;
     }
     .phone-demo-content h2 {
-      font-size: 3.5rem; /* Augmenté. */
-      margin-bottom: 30px; /* Augmenté. */
+      font-size: clamp(1.5rem, 5vw, 3rem); /* Adapté. */
+      margin-bottom: clamp(15px, 3vw, 25px); /* Adapté. */
       color: var(--text-primary);
     }
     .phone-demo-content p {
-      font-size: 1.3rem; /* Augmenté. */
+      font-size: clamp(0.9rem, 2.5vw, 1.2rem); /* Adapté. */
       color: var(--text-secondary);
-      margin-bottom: 25px; /* Augmenté. */
-      line-height: 1.9; /* Augmenté. */
+      margin-bottom: 20px; /* Ajusté. */
+      line-height: 1.7; /* Ajusté. */
     }
     /* Container phone avec manipulation (zoom/rotate/déplacement via JS). Cursor grab pour indiquer interactivité. */
     .phone-svg-container {
       flex: 1;
-      min-width: 300px;
-      max-width: 750px;
+      min-width: 250px;
+      max-width: 700px;
       display: flex;
       justify-content: center;
       cursor: grab;
@@ -809,24 +821,24 @@
     }
     .phone-mockup {
       position: relative;
-      width: 320px;
-      height: 640px;
+      width: clamp(220px, 80vw, 300px); /* Augmenté pour visibilité sur mobile. */
+      aspect-ratio: 1 / 2; /* Maintient proportion pour éviter déformation. */
       background: #1a1a1a;
-      border-radius: 60px;
-      box-shadow: 0 30px 60px rgba(0,0,0,0.4);
-      padding: 60px 20px 100px;
-      animation: phoneFloat 4s ease-in-out infinite;
-      border: 3px solid var(--orange);
-      transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      border-radius: 50px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      padding: clamp(30px, 6vw, 50px) clamp(10px, 3vw, 15px) clamp(50px, 10vw, 80px);
+      animation: phoneFloat 3.5s ease-in-out infinite;
+      border: 2px solid var(--orange);
+      transition: all 0.4s ease;
     }
     .phone-mockup:hover {
-      transform: translateY(-20px) rotate(5deg) scale(1.05);
-      box-shadow: 0 40px 80px rgba(255, 98, 0, 0.5);
+      transform: translateY(-15px) rotate(4deg) scale(1.03);
+      box-shadow: 0 30px 60px rgba(255, 98, 0, 0.4);
       animation: none;
     }
     @keyframes phoneFloat {
       0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-20px) rotate(3deg); }
+      50% { transform: translateY(-15px) rotate(2deg); }
     }
     .phone-frame {
       position: absolute;
@@ -834,8 +846,8 @@
       left: 0;
       width: 100%;
       height: 100%;
-      border: 12px solid #1a1a1a;
-      border-radius: 60px;
+      border: 10px solid #1a1a1a;
+      border-radius: 50px;
       pointer-events: none;
     }
     .phone-notch {
@@ -843,18 +855,18 @@
       top: 0;
       left: 50%;
       transform: translateX(-50%);
-      width: 120px;
-      height: 30px;
+      width: clamp(60px, 15vw, 100px); /* Adapté. */
+      height: 25px;
       background: #1a1a1a;
-      border-bottom-left-radius: 20px;
-      border-bottom-right-radius: 20px;
+      border-bottom-left-radius: 15px;
+      border-bottom-right-radius: 15px;
       z-index: 10;
     }
     .phone-screen {
       width: 100%;
       height: 100%;
       background: #fff;
-      border-radius: 40px;
+      border-radius: 30px;
       overflow: hidden;
       position: relative;
       transition: all 0.3s ease;
@@ -862,97 +874,97 @@
     .status-bar {
       display: flex;
       justify-content: space-between;
-      padding: 10px 20px;
-      font-size: 12px;
+      padding: 8px 15px;
+      font-size: 11px;
       color: #000;
       background: #f8f9fa;
       font-weight: bold;
     }
     /* Contenu scrollable avec plus de données pour démonstration complète. Overflow-y pour scroll, avec scrollbar stylée. */
     .phone-content {
-      padding: 20px;
+      padding: clamp(10px, 3vw, 15px); /* Adapté. */
       overflow-y: auto;
-      height: calc(100% - 40px);
+      height: calc(100% - 30px);
       scrollbar-width: thin;
       scrollbar-color: var(--orange) #f1f1f1;
       touch-action: pan-y; /* Permet scroll interne sur tactile sans affecter page. */
     }
     .phone-content::-webkit-scrollbar {
-      width: 6px;
+      width: 5px;
     }
     .phone-content::-webkit-scrollbar-thumb {
       background: var(--orange);
-      border-radius: 10px;
+      border-radius: 8px;
     }
     .content-header h3 {
-      font-size: 20px; /* Augmenté. */
-      margin-bottom: 25px; /* Augmenté. */
+      font-size: clamp(14px, 3vw, 18px); /* Adapté. */
+      margin-bottom: clamp(10px, 3vw, 20px); /* Adapté. */
       color: var(--orange);
       font-weight: 900;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      text-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
     .sales-card {
       background: #f8f9fa;
-      padding: 20px; /* Augmenté. */
-      border-radius: 15px;
-      margin-bottom: 25px; /* Augmenté. */
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-      border: 1px solid rgba(255, 98, 0, 0.2);
+      padding: clamp(10px, 3vw, 15px); /* Adapté. */
+      border-radius: 12px;
+      margin-bottom: clamp(10px, 3vw, 20px); /* Adapté. */
+      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+      border: 1px solid rgba(255, 98, 0, 0.15);
       transition: transform 0.3s ease;
     }
     .sales-card:hover {
-      transform: scale(1.05);
+      transform: scale(1.03);
     }
     .sales-value {
-      font-size: 32px; /* Augmenté. */
+      font-size: clamp(20px, 5vw, 28px); /* Adapté. */
       font-weight: 700;
-      margin: 12px 0; /* Augmenté. */
+      margin: 10px 0; /* Ajusté. */
       color: var(--success);
       text-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
     .sales-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px; /* Augmenté. */
+      gap: clamp(10px, 3vw, 15px); /* Adapté. */
     }
     .mini-card {
       background: #f8f9fa;
-      padding: 20px; /* Augmenté. */
-      border-radius: 15px;
+      padding: clamp(10px, 3vw, 15px); /* Adapté. */
+      border-radius: 12px;
       text-align: center;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
       border: 1px solid rgba(255, 98, 0, 0.1);
       transition: transform 0.3s ease;
     }
     .mini-card:hover {
-      transform: scale(1.1);
+      transform: scale(1.05);
     }
     .mini-label {
-      font-size: 14px; /* Augmenté. */
+      font-size: clamp(11px, 2.5vw, 13px); /* Adapté. */
       color: #64748b;
-      margin-bottom: 8px; /* Augmenté. */
+      margin-bottom: 6px; /* Ajusté. */
       font-weight: bold;
     }
     .mini-value {
-      font-size: 28px; /* Augmenté. */
+      font-size: clamp(18px, 4vw, 24px); /* Adapté. */
       font-weight: 700;
       color: var(--orange);
     }
     .phone-nav {
       position: absolute;
-      bottom: 20px;
+      bottom: 15px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
-      gap: 40px;
+      gap: 30px;
       background: #1a1a1a;
-      padding: 8px 20px;
-      border-radius: 30px;
+      padding: 6px 15px;
+      border-radius: 25px;
       z-index: 5;
     }
     .nav-dot {
-      width: 40px;
-      height: 40px;
+      width: 35px;
+      height: 35px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -965,8 +977,8 @@
       background: var(--orange);
     }
     .nav-dot svg {
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       fill: #94a3b8;
     }
     .nav-dot.active svg {
@@ -978,66 +990,66 @@
        ======================================== */
     .beta-form-section {
       background: var(--white);
-      padding: 120px 20px; /* Augmenté. */
+      padding: clamp(40px, 8vw, 80px) 15px; /* Adapté. */
     }
     .beta-form-container {
-      max-width: 800px;
+      max-width: 700px;
       margin: 0 auto;
       background: var(--card-bg);
-      padding: 60px; /* Augmenté. */
-      border-radius: 30px; /* Plus arrondi. */
-      box-shadow: 0 15px 50px var(--shadow);
+      padding: clamp(30px, 6vw, 50px); /* Adapté. */
+      border-radius: 25px; /* Arrondi ajusté. */
+      box-shadow: 0 10px 40px var(--shadow);
       border: 1px solid var(--border);
-      transition: all 0.5s ease;
+      transition: all 0.4s ease;
     }
     .beta-form-container:hover {
-      box-shadow: 0 20px 60px rgba(255, 98, 0, 0.3);
+      box-shadow: 0 15px 50px rgba(255, 98, 0, 0.2);
     }
     .beta-badge {
       display: inline-block;
       background: linear-gradient(135deg, var(--orange), var(--orange-light));
       color: white;
-      padding: 10px 25px; /* Augmenté. */
-      border-radius: 25px; /* Plus arrondi. */
-      font-size: 1rem; /* Augmenté. */
+      padding: 8px 20px; /* Ajusté. */
+      border-radius: 20px; /* Arrondi ajusté. */
+      font-size: 0.9rem; /* Ajusté. */
       font-weight: 700;
-      margin-bottom: 25px; /* Augmenté. */
-      animation: pulse 2s ease-in-out infinite;
+      margin-bottom: 20px; /* Ajusté. */
+      animation: pulse 1.8s ease-in-out infinite;
     }
     .beta-form-intro {
       text-align: center;
-      margin-bottom: 50px; /* Augmenté. */
+      margin-bottom: 40px; /* Ajusté. */
     }
     .beta-form-intro h3 {
-      font-size: 2.5rem; /* Augmenté. */
-      margin-bottom: 20px; /* Augmenté. */
+      font-size: clamp(1.5rem, 4vw, 2rem); /* Adapté. */
+      margin-bottom: 15px; /* Ajusté. */
       color: var(--text-primary);
     }
     .beta-form-intro p {
-      font-size: 1.2rem; /* Augmenté. */
+      font-size: clamp(0.8rem, 2.5vw, 1rem); /* Adapté. */
       color: var(--text-secondary);
-      line-height: 1.8; /* Augmenté. */
+      line-height: 1.7; /* Ajusté. */
     }
     .form-group {
-      margin-bottom: 30px; /* Augmenté. */
+      margin-bottom: clamp(15px, 4vw, 25px); /* Adapté. */
       position: relative;
     }
     .form-group label {
       display: block;
       font-weight: 600;
       color: var(--text-primary);
-      margin-bottom: 10px; /* Augmenté. */
-      font-size: 1.1rem; /* Augmenté. */
+      margin-bottom: 8px; /* Ajusté. */
+      font-size: clamp(0.8rem, 2.5vw, 1rem); /* Adapté. */
       transition: all 0.3s ease;
     }
     .form-group input,
     .form-group textarea,
     .form-group select {
       width: 100%;
-      padding: 18px 25px; /* Augmenté. */
-      border: 2px solid var(--border);
-      border-radius: 14px; /* Plus arrondi. */
-      font-size: 1.1rem; /* Augmenté. */
+      padding: clamp(10px, 2.5vw, 15px) clamp(12px, 3vw, 20px); /* Adapté. */
+      border: 1.5px solid var(--border);
+      border-radius: 12px; /* Arrondi ajusté. */
+      font-size: clamp(0.8rem, 2.5vw, 1rem); /* Adapté. */
       font-family: 'Inter', sans-serif;
       background: var(--white);
       color: var(--text-primary);
@@ -1048,122 +1060,122 @@
     .form-group select:focus {
       outline: none;
       border-color: var(--orange);
-      box-shadow: 0 0 0 3px rgba(255, 98, 0, 0.1);
+      box-shadow: 0 0 0 2px rgba(255, 98, 0, 0.08);
     }
     .form-group:focus-within label {
       color: var(--orange);
-      transform: translateY(-5px);
-      font-size: 1rem; /* Ajusté. */
+      transform: translateY(-3px);
+      font-size: 0.9rem; /* Ajusté. */
     }
     .form-group textarea {
       resize: vertical;
-      min-height: 140px; /* Augmenté. */
+      min-height: 120px; /* Ajusté. */
     }
     .form-row {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 25px; /* Augmenté. */
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Adapté pour mobile. */
+      gap: clamp(10px, 3vw, 20px); /* Adapté. */
     }
     .form-submit {
       text-align: center;
-      margin-top: 40px; /* Augmenté. */
+      margin-top: clamp(20px, 4vw, 30px); /* Adapté. */
     }
     .form-submit button {
-      padding: 20px 60px; /* Augmenté. */
-      font-size: 1.2rem; /* Augmenté. */
+      padding: clamp(12px, 3vw, 18px) clamp(30px, 6vw, 50px); /* Adapté. */
+      font-size: clamp(0.9rem, 2.5vw, 1.1rem); /* Adapté. */
       transition: all 0.3s ease;
     }
     .form-submit button:hover {
-      transform: scale(1.05);
+      transform: scale(1.03);
     }
     .form-success {
       display: none;
       text-align: center;
-      padding: 35px; /* Augmenté. */
+      padding: 25px; /* Ajusté. */
       background: #d1fae5;
-      border-radius: 15px;
+      border-radius: 12px;
       color: #065f46;
-      font-size: 1.2rem; /* Augmenté. */
+      font-size: 1.1rem; /* Ajusté. */
       font-weight: 600;
-      animation: fadeInUp 0.5s ease-out;
+      animation: fadeInUp 0.4s ease-out;
     }
     .form-success.show {
       display: block;
     }
     /* ========================================
        VELMO EN ACTION - Compteurs animés étendus pour plus de détails.
-       Amélioré : Grille plus espacée, chiffres plus grands, responsive avec wrap, suppression de utilisateurs actifs.
+       Amélioré : Grille plus espacée, chiffres ajustés, responsive avec wrap.
        ======================================== */
     .action-section {
       background: var(--light);
-      padding: 100px 0; /* Augmenté. */
+      padding: clamp(40px, 8vw, 80px) 0; /* Adapté. */
     }
     .action-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Augmenté. */
-      gap: 50px; /* Augmenté. */
-      margin-top: 60px; /* Augmenté. */
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Adapté. */
+      gap: clamp(20px, 5vw, 40px); /* Adapté. */
+      margin-top: clamp(30px, 6vw, 50px); /* Adapté. */
     }
     .action-item {
       text-align: center;
-      padding: 40px; /* Augmenté. */
+      padding: clamp(20px, 4vw, 30px); /* Adapté. */
       transition: transform 0.3s ease;
       background: var(--card-bg);
-      border-radius: 24px; /* Plus arrondi. */
-      box-shadow: 0 8px 30px var(--shadow); /* Ajouté pour profondeur. */
+      border-radius: 20px; /* Arrondi ajusté. */
+      box-shadow: 0 6px 20px var(--shadow); /* Ajusté. */
     }
     .action-item:hover {
-      transform: translateY(-10px);
+      transform: translateY(-8px);
     }
     .action-number {
-      font-size: clamp(3.5rem, 6vw, 4rem); /* Augmenté pour visibilité. */
+      font-size: clamp(2rem, 5vw, 3.5rem); /* Adapté. */
       font-weight: 900;
       background: linear-gradient(135deg, var(--orange-light), var(--orange-dark));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin-bottom: 15px; /* Augmenté. */
+      margin-bottom: 12px; /* Ajusté. */
       display: block;
     }
     .action-label {
-      font-size: clamp(1.2rem, 3vw, 1.3rem); /* Augmenté pour lisibilité. */
+      font-size: clamp(0.9rem, 2.5vw, 1.2rem); /* Adapté. */
       color: var(--text-secondary);
       font-weight: 600;
     }
     /* ========================================
        CTA FINAL - Avec boutons et liens secondaires.
-       Amélioré : Style plus moderne, boutons plus grands, popup pour notification iOS.
+       Amélioré : Style plus moderne, boutons ajustés.
        ======================================== */
     .final-cta {
       text-align: center;
-      padding: 140px 20px; /* Augmenté. */
+      padding: clamp(60px, 12vw, 100px) 15px; /* Adapté. */
       background: var(--white);
       position: relative;
     }
     .final-cta h2 {
-      font-size: clamp(2.5rem, 6vw, 4rem); /* Augmenté. */
-      margin-bottom: 30px; /* Augmenté. */
+      font-size: clamp(1.5rem, 5vw, 3rem); /* Adapté. */
+      margin-bottom: clamp(15px, 3vw, 25px); /* Adapté. */
     }
     .final-cta p {
-      font-size: 1.4rem; /* Augmenté. */
+      font-size: clamp(0.9rem, 2.5vw, 1.3rem); /* Adapté. */
       color: var(--text-secondary);
-      margin-bottom: 50px; /* Augmenté. */
-      line-height: 1.9; /* Augmenté. */
+      margin-bottom: clamp(20px, 5vw, 40px); /* Adapté. */
+      line-height: 1.7; /* Ajusté. */
     }
     .btn-group {
       display: flex;
       justify-content: center;
-      gap: 25px; /* Augmenté. */
+      gap: clamp(10px, 3vw, 20px); /* Adapté. */
       flex-wrap: wrap;
-      margin-top: 40px; /* Augmenté. */
+      margin-top: clamp(20px, 4vw, 30px); /* Adapté. */
     }
     .secondary-link {
       color: var(--orange);
-      font-size: 1rem; /* Augmenté. */
-      margin-top: 15px; /* Augmenté. */
+      font-size: clamp(0.75rem, 2.5vw, 0.95rem); /* Adapté. */
+      margin-top: 12px; /* Ajusté. */
       display: inline-block;
       transition: color 0.3s ease;
-      cursor: pointer; /* Pour indiquer clic. */
+      cursor: pointer;
     }
     .secondary-link:hover {
       color: var(--orange-dark);
@@ -1175,32 +1187,32 @@
       left: 50%;
       transform: translate(-50%, -50%);
       background: var(--white);
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      padding: clamp(15px, 4vw, 25px); /* Adapté. */
+      border-radius: 15px;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.25);
       z-index: 1001;
       display: none;
-      width: 400px;
-      max-width: 90%;
+      width: clamp(220px, 50vw, 280px); /* Adapté. */
+      max-width: 85%;
     }
     .notify-popup.active {
       display: block;
     }
     .notify-close {
       position: absolute;
-      top: 15px;
-      right: 15px;
+      top: 8px; /* Réduit. */
+      right: 8px; /* Réduit. */
       cursor: pointer;
-      font-size: 1.5rem;
+      font-size: 1.2rem; /* Réduit. */
       color: var(--text-secondary);
     }
     .notify-form input {
       width: 100%;
-      padding: 15px;
-      margin-bottom: 20px;
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      font-size: 1rem;
+      padding: 10px; /* Réduit. */
+      margin-bottom: 12px; /* Réduit. */
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.95rem;
     }
     .notify-form button {
       width: 100%;
@@ -1211,7 +1223,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.5);
+      background: rgba(0,0,0,0.4);
       z-index: 1000;
       display: none;
     }
@@ -1221,27 +1233,27 @@
     /* ========================================
        FOOTER - Avec logo interactif et réseaux.
        Footer avec éléments interactifs pour contact.
-       Amélioré : Espaces augmentés, text plus grand.
+       Amélioré : Espaces ajustés, text réduit.
        ======================================== */
     footer {
       background: linear-gradient(135deg, var(--promise-bg-start) 0%, var(--promise-bg-end) 100%);
       color: var(--promise-text);
       text-align: center;
-      padding: 80px 20px; /* Augmenté. */
-      font-size: 1.05rem; /* Augmenté. */
+      padding: clamp(40px, 8vw, 60px) 15px; /* Adapté. */
+      font-size: clamp(0.75rem, 2.5vw, 0.95rem); /* Adapté. */
       position: relative;
       overflow: hidden;
     }
     footer::before {
       content: '';
       position: absolute;
-      width: 400px;
-      height: 400px;
+      width: 300px;
+      height: 300px;
       background: radial-gradient(circle, var(--promise-orb), transparent);
-      bottom: -200px;
-      right: -200px;
+      bottom: -150px;
+      right: -150px;
       border-radius: 50%;
-      animation: promiseOrb 15s ease-in-out infinite;
+      animation: promiseOrb 12s ease-in-out infinite;
     }
     [data-theme="dark"] footer {
       background: linear-gradient(135deg, #2a1a10 0%, #3a2515 100%);
@@ -1250,65 +1262,65 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 20px; /* Augmenté. */
-      margin-bottom: 40px; /* Augmenté. */
+      gap: clamp(10px, 3vw, 15px); /* Adapté. */
+      margin-bottom: clamp(20px, 5vw, 30px); /* Adapté. */
     }
     .footer-logo-svg {
-      height: 70px; /* Augmenté. */
+      height: clamp(40px, 8vw, 60px); /* Adapté. */
       width: auto;
       fill: #ffffff;
       transition: transform 0.3s ease;
       cursor: pointer;
     }
     .footer-logo-svg:hover {
-      transform: scale(1.1) rotate(5deg);
+      transform: scale(1.05) rotate(3deg);
     }
     .footer-logo-text {
-      font-size: 2.5rem; /* Augmenté. */
+      font-size: clamp(1.5rem, 4vw, 2rem); /* Adapté. */
       font-weight: 900;
       color: var(--white);
     }
     footer p:first-of-type {
-      font-size: 1.5rem; /* Augmenté. */
+      font-size: clamp(1rem, 3vw, 1.3rem); /* Adapté. */
       font-weight: 700;
-      margin-bottom: 30px; /* Augmenté. */
+      margin-bottom: clamp(15px, 4vw, 25px); /* Adapté. */
       color: var(--white);
     }
     footer a {
       color: var(--white);
-      margin: 0 20px; /* Augmenté. */
+      margin: 0 clamp(10px, 3vw, 15px); /* Adapté. */
       transition: all 0.3s ease;
       display: inline-block;
-      font-size: 1.1rem; /* Augmenté. */
+      font-size: clamp(0.8rem, 2.5vw, 1rem); /* Adapté. */
     }
     footer a:hover {
       color: var(--white);
-      transform: translateY(-3px);
+      transform: translateY(-2px);
     }
     .contact-section {
-      margin-top: 40px; /* Augmenté. */
+      margin-top: clamp(20px, 5vw, 30px); /* Adapté. */
     }
     .social-icons {
       display: flex;
       justify-content: center;
-      gap: 25px; /* Augmenté. */
-      margin-top: 20px; /* Augmenté. */
+      gap: clamp(12px, 4vw, 20px); /* Adapté. */
+      margin-top: clamp(10px, 3vw, 15px); /* Adapté. */
     }
     .social-icon {
-      font-size: 2.5rem; /* Augmenté. */
+      font-size: clamp(1.5rem, 4vw, 2rem); /* Adapté. */
       color: var(--white);
       transition: all 0.3s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 60px; /* Augmenté. */
-      height: 60px;
+      width: clamp(35px, 7vw, 50px); /* Adapté. */
+      height: clamp(35px, 7vw, 50px);
       border-radius: 50%;
-      background: rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.15);
     }
     .social-icon:hover {
-      transform: scale(1.2) rotate(15deg);
-      background: rgba(255,255,255,0.4);
+      transform: scale(1.1) rotate(10deg);
+      background: rgba(255,255,255,0.3);
     }
     /* ========================================
        ANIMATIONS - Globales et keyframes.
@@ -1316,10 +1328,10 @@
        ======================================== */
     @keyframes pulse {
       0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
+      50% { transform: scale(1.03); }
     }
     .pulse {
-      animation: pulse 2s ease-in-out infinite;
+      animation: pulse 1.8s ease-in-out infinite;
     }
     /* ========================================
        WHATSAPP FLOAT - Avec pulse ring et bounce.
@@ -1327,24 +1339,24 @@
        ======================================== */
     .whatsapp-float {
       position: fixed;
-      bottom: 30px;
-      right: 30px;
-      width: 70px;
-      height: 70px;
+      bottom: 25px;
+      right: 25px;
+      width: clamp(45px, 8vw, 60px); /* Adapté. */
+      height: clamp(45px, 8vw, 60px);
       background: linear-gradient(135deg, #25D366, #128C7E);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 8px 30px rgba(37, 211, 102, 0.4);
+      box-shadow: 0 6px 20px rgba(37, 211, 102, 0.3);
       cursor: pointer;
       z-index: 999;
-      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      animation: floatBounce 3s ease-in-out infinite;
+      transition: all 0.3s ease;
+      animation: floatBounce 2.5s ease-in-out infinite;
     }
     .whatsapp-float:hover {
-      transform: scale(1.15) rotate(10deg);
-      box-shadow: 0 12px 40px rgba(37, 211, 102, 0.6);
+      transform: scale(1.1) rotate(8deg);
+      box-shadow: 0 10px 30px rgba(37, 211, 102, 0.5);
     }
     .whatsapp-float::before {
       content: '';
@@ -1352,24 +1364,24 @@
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      background: rgba(37, 211, 102, 0.3);
-      animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+      background: rgba(37, 211, 102, 0.25);
+      animation: pulse-ring 1.8s ease-out infinite;
     }
     .whatsapp-float svg {
-      width: 35px;
-      height: 35px;
+      width: clamp(20px, 4vw, 30px); /* Adapté. */
+      height: clamp(20px, 4vw, 30px);
       fill: white;
       position: relative;
       z-index: 1;
     }
     @keyframes floatBounce {
       0%, 100% { transform: translateY(0) rotate(0deg); }
-      25% { transform: translateY(-10px) rotate(5deg); }
-      75% { transform: translateY(-5px) rotate(-5deg); }
+      25% { transform: translateY(-8px) rotate(4deg); }
+      75% { transform: translateY(-4px) rotate(-4deg); }
     }
     @keyframes pulse-ring {
-      0% { transform: scale(1); opacity: 0.8; }
-      100% { transform: scale(1.6); opacity: 0; }
+      0% { transform: scale(1); opacity: 0.7; }
+      100% { transform: scale(1.4); opacity: 0; }
     }
     /* ========================================
        TRADUCTIONS - Classes pour FR/EN.
@@ -1380,167 +1392,190 @@
     /* ========================================
        RESPONSIVE - Media queries pour mobile/tablette.
        Adaptations pour petits écrans : stack vertical, tailles réduites, etc.
+       Amélioré : Plus de breakpoints pour meilleure adaptation, focus sur visibilité.
        ======================================== */
-    @media (max-width: 768px) {
-      nav {
-        position: fixed;
-        top: 85px;
-        left: 0;
-        right: 0;
-        flex-direction: column;
-        background: var(--card-bg);
-        padding: 2rem;
-        gap: 0;
-        transform: translateY(-150%);
-        opacity: 0;
-        transition: all 0.4s ease;
-        box-shadow: 0 10px 40px var(--shadow);
-        border-bottom: 1px solid var(--border);
-      }
-      nav.active {
-        transform: translateY(0);
-        opacity: 1;
-      }
-      nav a {
-        width: 100%;
-        padding: 1.2rem;
-        text-align: center;
-        border-radius: 10px;
-        margin-bottom: 0.5rem;
-      }
-      nav a:hover {
-        background: var(--light);
-      }
-      .menu-toggle {
-        display: flex;
-      }
-      .menu-toggle.active span:nth-child(1) {
-        transform: rotate(45deg) translateY(8px);
-      }
-      .menu-toggle.active span:nth-child(2) {
-        opacity: 0;
-      }
-      .menu-toggle.active span:nth-child(3) {
-        transform: rotate(-45deg) translateY(-8px);
+    @media (max-width: 1024px) {
+      .container {
+        padding: 0 1.5rem; /* Ajusté pour tablette. */
       }
       .hero {
-        padding: 130px 20px 80px;
+        padding: 100px 1rem 60px; /* Ajusté. */
       }
       section {
-        padding: 80px 0; /* Ajusté. */
+        padding: 60px 0; /* Ajusté. */
+      }
+      .promise-benefits {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+      .features-forces {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+      .testimonials-grid {
+        grid-template-columns: 1fr;
+      }
+      .action-grid {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+    }
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: none; /* Remove hamburger */
+      }
+      nav {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.8rem;
+        position: static;
+        opacity: 1;
+        transform: none;
+        padding: 0;
+        box-shadow: none;
+        background: transparent;
+      }
+      nav a {
+        padding: 0.4rem;
+        font-size: 0.85rem;
+        width: auto;
+        text-align: center;
+        margin-bottom: 0;
+      }
+      .header-container {
+        flex-direction: column;
+        gap: 0.8rem;
+        align-items: center;
+        padding: 0.8rem;
+      }
+      .header-actions {
+        gap: 0.8rem;
+      }
+      .hero {
+        padding: 80px 0.8rem 50px;
+      }
+      section {
+        padding: 50px 0; /* Réduit pour mobile. */
       }
       .content-card {
-        padding: 40px 25px; /* Ajusté. */
+        padding: 25px 15px; /* Ajusté. */
       }
       .btn-group {
         flex-direction: column;
       }
       .micro-proof {
-        gap: 15px;
+        gap: 8px;
       }
       .promise-box {
-        padding: 40px 25px; /* Ajusté. */
+        padding: 25px 15px; /* Ajusté. */
       }
       .slogan {
-        font-size: 2rem; /* Ajusté. */
+        font-size: 1.5rem; /* Ajusté. */
       }
       .testimonials-grid {
         grid-template-columns: 1fr;
       }
+      .phone-demo-container {
+        flex-direction: column;
+      }
+      .phone-svg-container {
+        width: 100%;
+        max-width: none;
+        margin-top: 1.5rem;
+      }
       .phone-demo-content h2 {
-        font-size: 2.5rem; /* Ajusté. */
+        font-size: 1.8rem; /* Ajusté. */
       }
       .beta-form-container {
-        padding: 40px 25px; /* Ajusté. */
+        padding: 25px 15px; /* Ajusté. */
       }
       .form-row {
         grid-template-columns: 1fr;
       }
       .whatsapp-float {
-        width: 60px;
-        height: 60px;
-        bottom: 20px;
-        right: 20px;
+        width: 45px;
+        height: 45px;
+        bottom: 12px;
+        right: 12px;
       }
       .whatsapp-float svg {
-        width: 30px;
-        height: 30px;
+        width: 22px;
+        height: 22px;
       }
       .action-grid {
         grid-template-columns: 1fr; /* 1 colonne sur mobile. */
-        gap: 30px; /* Ajusté. */
+        gap: 15px; /* Ajusté. */
       }
       .action-number {
-        font-size: 3rem; /* Ajusté. */
+        font-size: 2rem; /* Ajusté. */
       }
       .logo-svg {
-        height: 40px;
+        height: 32px;
       }
       .logo {
-        font-size: 1.6rem; /* Ajusté. */
+        font-size: 1.2rem; /* Ajusté. */
       }
       .phone-mockup {
-        width: 280px;
-        height: 560px;
-        padding: 50px 15px 80px;
+        width: 100%;
+        padding: 30px 8px 50px;
       }
       .phone-notch {
-        width: 100px;
-        height: 25px;
-      }
-      .phone-nav {
-        gap: 30px;
-        padding: 6px 15px;
-      }
-      .nav-dot {
-        width: 35px;
-        height: 35px;
-      }
-      .nav-dot svg {
-        width: 18px;
+        width: 70px;
         height: 18px;
       }
+      .phone-nav {
+        gap: 15px;
+        padding: 5px 12px;
+      }
+      .nav-dot {
+        width: 28px;
+        height: 28px;
+      }
+      .nav-dot svg {
+        width: 14px;
+        height: 14px;
+      }
       .content-header h3 {
-        font-size: 18px; /* Ajusté. */
+        font-size: 14px; /* Ajusté. */
       }
       .sales-value {
-        font-size: 28px; /* Ajusté. */
+        font-size: 20px; /* Ajusté. */
       }
       .mini-value {
-        font-size: 24px; /* Ajusté. */
+        font-size: 18px; /* Ajusté. */
       }
       .social-icons {
         flex-wrap: wrap;
-        gap: 15px;
+        gap: 8px;
       }
       .promise-benefits {
         grid-template-columns: 1fr;
-      }
-      /* Ajouté : Amélioration responsive pour phone container sur mobile. */
-      .phone-svg-container {
-        margin: 0 auto;
       }
     }
     /* Media query pour très petits écrans (ex: < 480px). */
     @media (max-width: 480px) {
       .hero h1 {
-        font-size: clamp(2.5rem, 9vw, 3.5rem);
+        font-size: clamp(1.5rem, 8vw, 2.5rem);
       }
       .hero-desc {
-        font-size: 1.1rem;
+        font-size: 0.85rem;
       }
       .promise-benefit-title {
-        font-size: 1.6rem;
+        font-size: 1.2rem;
       }
       .promise-benefit-desc {
-        font-size: 1rem;
+        font-size: 0.8rem;
       }
       .action-number {
-        font-size: 3rem;
+        font-size: 2rem;
       }
       .phone-mockup {
         width: 100%;
-        height: auto; /* Pour adaptation pleine largeur. */
+      }
+      .container {
+        padding: 0 0.8rem; /* Réduit pour très petit écran. */
+      }
+      .btn {
+        width: 100%; /* Boutons pleine largeur sur mobile. */
       }
     }
   </style>
@@ -1605,7 +1640,7 @@
   </section>
   <!-- ========================================
        PROMESSE - Bénéfices avec expandable details.
-       Section clé, améliorée pour lisibilité (texte plus grand, contrastes).
+       Section clé, améliorée pour simplicité (layout grid, tailles réduites).
        ======================================== -->
   <section class="promise-section" id="promesse">
     <div class="container">
@@ -1977,17 +2012,17 @@
   </section>
   <!-- ========================================
        VELMO EN ACTION - Statistiques étendues avec utilisateurs, etc.
-       Amélioré : Grille plus espacée, chiffres plus grands, responsive avec wrap, suppression de utilisateurs actifs.
+       Amélioré : Grille ajustée, responsive.
        ======================================== -->
   <section class="action-section">
     <div class="container">
       <h2 class="section-title lang-fr">🔹 Velmo en action</h2>
       <h2 class="section-title lang-en">🔹 Velmo in action</h2>
-      <p class="lang-fr" style="text-align: center; max-width: 800px; margin: 0 auto 50px; color: var(--text-secondary); font-size: 1.1rem; line-height: 1.8;">
+      <p class="lang-fr" style="text-align: center; max-width: 700px; margin: 0 auto 40px; color: var(--text-secondary); font-size: 1rem; line-height: 1.7;">
         Velmo est testé en conditions réelles par nos premiers commerçants.<br>
         Chaque jour, nous recevons des retours qui nous permettent de rendre l'application encore plus simple, rapide et efficace.
       </p>
-      <p class="lang-en" style="text-align: center; max-width: 800px; margin: 0 auto 50px; color: var(--text-secondary); font-size: 1.1rem; line-height: 1.8;">
+      <p class="lang-en" style="text-align: center; max-width: 700px; margin: 0 auto 40px; color: var(--text-secondary); font-size: 1rem; line-height: 1.7;">
         Velmo is tested in real conditions by our first merchants.<br>
         Every day, we receive feedback that allows us to make the app even simpler, faster and more efficient.
       </p>
@@ -2043,7 +2078,7 @@
         <span class="lang-en">Submit</span>
       </button>
     </form>
-    <div class="form-success" id="notify-success" style="display: none; margin-top: 20px; color: #10b981;">
+    <div class="form-success" id="notify-success" style="display: none; margin-top: 15px; color: #10b981;">
       <span class="lang-fr">Merci ! Vous serez notifié.</span>
       <span class="lang-en">Thank you! You will be notified.</span>
     </div>
@@ -2114,6 +2149,7 @@
        JAVASCRIPT - Logique interactive et détection langue auto.
        Code JS commenté pour lisibilité, avec fonctionnalités pour thème, langue, animations, etc.
        Ajouté : Gestion du popup pour notification iOS, avec form soumission simulée.
+       Amélioré : Animations plus rapides pour performance, code plus lisible avec commentaires supplémentaires.
        ======================================== -->
   <script>
     // ==================== VARIABLES GLOBALES ====================
@@ -2155,7 +2191,7 @@
       }
       html.setAttribute('lang', isEnglish ? 'en' : 'fr');
       langToggle.textContent = isEnglish ? '🇬🇧' : '🇫🇷';
-      localStorage.setItem('velmo-lang', isEnglish ? 'en' : 'fr');
+      localStorage.setAttribute('velmo-lang', isEnglish ? 'en' : 'fr');
       updatePhoneContent(); // Mise à jour du contenu phone en fonction de la langue.
     });
     // ==================== HEADER SCROLL ====================
@@ -2236,18 +2272,18 @@
       });
     });
     // ==================== ANIMATIONS CARTES ====================
-    // Hover avec cubic-bezier. Ajoute fluidité aux interactions.
+    // Hover avec ease. Ajoute fluidité aux interactions.
     document.querySelectorAll('.content-card, .feature-force, .testimonial-card').forEach(card => {
-      card.addEventListener('mouseenter', () => card.style.transition = 'all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55)');
+      card.addEventListener('mouseenter', () => card.style.transition = 'all 0.3s ease');
     });
     // Parallax hero léger. Effet subtil sur scroll.
     window.addEventListener('scroll', () => {
       const hero = document.querySelector('.hero');
-      if (hero && window.pageYOffset < 800) hero.style.transform = `translateY(${window.pageYOffset * 0.3}px)`;
+      if (hero && window.pageYOffset < 600) hero.style.transform = `translateY(${window.pageYOffset * 0.2}px)`;
     });
     // Hover boutons. Scale pour feedback.
     document.querySelectorAll('.btn').forEach(btn => {
-      btn.addEventListener('mouseenter', () => btn.style.transform = 'translateY(-4px) scale(1.02)');
+      btn.addEventListener('mouseenter', () => btn.style.transform = 'translateY(-3px) scale(1.01)');
       btn.addEventListener('mouseleave', () => btn.style.transform = 'translateY(0) scale(1)');
     });
     // ==================== RACCOURCIS CLAVIER ====================
@@ -2263,14 +2299,14 @@
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             entry.target.style.willChange = 'transform, opacity';
-            setTimeout(() => entry.target.style.willChange = 'auto', 1000);
+            setTimeout(() => entry.target.style.willChange = 'auto', 800);
           }
         });
       }).observe(...document.querySelectorAll('.feature-force, .content-card, .testimonial-card'));
     }
     // ==================== ANIMATIONS COMPTEURS ====================
     // Animation fluide des chiffres. Utilise requestAnimationFrame pour smoothness.
-    function animateCounter(el, target, duration = 2000) {
+    function animateCounter(el, target, duration = 1500) { // Durée réduite pour rapidité.
       let current = 0;
       const increment = target / (duration / 16);
       const timer = setInterval(() => {
@@ -2302,7 +2338,7 @@
         betaForm.reset();
         betaForm.style.display = 'block';
         formSuccess.classList.remove('show');
-      }, 5000);
+      }, 4000);
     });
     // ==================== PROMESSE EXPAND ====================
     // Toggle details sur clic. Expand/collapse pour plus d'infos.
@@ -2318,7 +2354,7 @@
     if (whatsappBtn) {
       whatsappBtn.addEventListener('mouseenter', function() {
         this.style.animation = 'none';
-        setTimeout(() => this.style.animation = 'floatBounce 3s ease-in-out infinite', 10);
+        setTimeout(() => this.style.animation = 'floatBounce 2.5s ease-in-out infinite', 10);
       });
     }
     // ==================== PHONE NAVIGATION ====================
@@ -2672,22 +2708,22 @@
         dot.classList.add('active');
         dot.querySelector('svg').setAttribute('fill', 'white');
         phoneContent.style.opacity = '0';
-        phoneContent.style.transform = 'translateY(10px) scale(0.95)';
+        phoneContent.style.transform = 'translateY(8px) scale(0.98)';
         setTimeout(() => {
           phoneContent.innerHTML = getViews()[view];
           phoneContent.style.opacity = '1';
           phoneContent.style.transform = 'translateY(0) scale(1)';
           phoneContent.scrollTop = 0; // Reset scroll à chaque vue.
-        }, 250);
+        }, 200);
       });
     });
-    // Rotation auto des vues. Cycle toutes les 5 secondes pour démo dynamique.
+    // Rotation auto des vues. Cycle toutes les 4 secondes pour démo dynamique (réduit pour rapidité).
     let currentViewIndex = 0;
     const viewKeys = ['sales', 'stock', 'analytics', 'offline'];
     setInterval(() => {
       currentViewIndex = (currentViewIndex + 1) % viewKeys.length;
       document.querySelector(`[data-view="${viewKeys[currentViewIndex]}"]`).click();
-    }, 5000);
+    }, 4000);
     // Mise à jour contenu phone. Appelée sur change langue ou load.
     function updatePhoneContent() {
       const activeDot = document.querySelector('.nav-dot.active');
@@ -2722,6 +2758,36 @@
         startTranslateY = parseFloat(transform.match(/, ([^px]+)px\)/)?.[1] || 0);
       }
     });
+    // Touch events for mobile manipulation
+    phoneContainer.addEventListener('touchstart', e => {
+      if (e.touches.length === 1) {
+        isDragging = true;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+      }
+    }, { passive: false });
+    document.addEventListener('touchmove', e => {
+      if (isDragging && e.touches.length === 1) {
+        e.preventDefault();
+        const dx = e.touches[0].clientX - startX;
+        const dy = e.touches[0].clientY - startY;
+        const rotate = startRotate + dx / 5;
+        const scale = Math.max(0.8, Math.min(1.2, startScale + dy / 200));
+        const translateX = startTranslateX + dx;
+        const translateY = startTranslateY + dy;
+        phoneContainer.style.transform = `translate(${translateX}px, ${translateY}px) rotate(${rotate}deg) scale(${scale})`;
+      }
+    }, { passive: false });
+    document.addEventListener('touchend', () => {
+      if (isDragging) {
+        isDragging = false;
+        const transform = phoneContainer.style.transform;
+        startRotate = parseFloat(transform.match(/rotate\(([^deg]+)deg\)/)?.[1] || 0);
+        startScale = parseFloat(transform.match(/scale\(([^)]+)\)/)?.[1] || 1);
+        startTranslateX = parseFloat(transform.match(/translate\(([^px]+)px/)?.[1] || 0);
+        startTranslateY = parseFloat(transform.match(/, ([^px]+)px\)/)?.[1] || 0);
+      }
+    });
     // Ajouté : Gestion du popup pour notification iOS.
     notifyLink.addEventListener('click', e => {
       e.preventDefault();
@@ -2748,6 +2814,22 @@
         overlay.classList.remove('active');
       }, 3000);
     });
+    // Ajouté : Empêcher le scroll de la page principale quand on scrolle dans le phone content.
+    phoneContent.addEventListener('wheel', e => {
+      e.preventDefault();
+      phoneContent.scrollTop += e.deltaY;
+    }, { passive: false });
+    // Pour touch, utilisation de touch events pour gérer scroll interne.
+    let touchStartY = 0;
+    phoneContent.addEventListener('touchstart', e => {
+      touchStartY = e.touches[0].clientY;
+    });
+    phoneContent.addEventListener('touchmove', e => {
+      e.preventDefault();
+      const deltaY = touchStartY - e.touches[0].clientY;
+      phoneContent.scrollTop += deltaY;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: false });
     // ==================== CONSOLE LOGS ====================
     // Logs pour debug et info dev. Non visibles pour users.
     console.log('%c⚡ Velmo - Gagnez plus. Vivez mieux.', 'font-size: 20px; font-weight: bold; color: #ff6200;');
