@@ -1,0 +1,9 @@
+<svg width="300" height="600" viewBox="0 0 300 600" xmlns="http://www.w3.org/2000/svg">
+  <rect x="30" y="50" width="240" height="500" rx="35" fill="#111" stroke="#333" stroke-width="6"/>
+  <rect x="45" y="70" width="210" height="460" rx="20" fill="#1a1a1a"/>
+  <rect x="70" y="120" width="160" height="300" rx="10" fill="#0A2540"/>
+  <text x="150" y="280" fill="#fff" font-family="Inter" font-size="28" text-anchor="middle">VELMO</text>
+  <circle cx="100" cy="150" r="10" fill="#ff6200">
+    <animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite"/>
+  </circle>
+</svg>
