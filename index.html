@@ -18,7 +18,7 @@
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
-        
+      
             --bg-main: #ffffff;
             --bg-alt: #fff8f5;
             --bg-subtle: #fff0e6;
@@ -31,12 +31,12 @@
             --shadow-lg: 0 10px 15px -3px rgba(255, 98, 0, 0.1);
             --shadow-xl: 0 20px 25px -5px rgba(255, 98, 0, 0.1);
             --shadow-2xl: 0 25px 50px -12px rgba(255, 98, 0, 0.25);
-        
+      
             --radius-sm: 8px;
             --radius-md: 12px;
             --radius-lg: 16px;
             --radius-xl: 24px;
-        
+      
             --spacing-xs: 8px;
             --spacing-sm: 16px;
             --spacing-md: 24px;
@@ -116,7 +116,7 @@
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px) saturate(180%);
             border-bottom: 1px solid var(--border);
-            z-index: 999;
+            z-index: 1001;
             transition: all 0.3s ease;
         }
         [data-theme="dark"] header {
@@ -254,7 +254,7 @@
             gap: 5px;
             cursor: pointer;
             padding: 8px;
-            z-index: 1003;
+            z-index: 1002;
             background: var(--primary);
             border-radius: 8px;
             border: 2px solid var(--primary-dark);
@@ -282,15 +282,15 @@
             .menu-toggle {
                 display: flex !important;
             }
-        
+      
             .header-actions .icon-btn {
                 display: none !important;
             }
-        
+      
             nav {
                 display: none;
             }
-        
+      
             nav.active {
                 display: flex !important;
             }
@@ -977,8 +977,8 @@
             color: var(--text-primary);
             margin-bottom: 8px;
         }
-        .form-group input, 
-        .form-group textarea, 
+        .form-group input,
+        .form-group textarea,
         .form-group select {
             width: 100%;
             padding: 12px 16px;
@@ -990,8 +990,8 @@
             color: var(--text-primary);
             transition: all 0.3s ease;
         }
-        .form-group input:focus, 
-        .form-group textarea:focus, 
+        .form-group input:focus,
+        .form-group textarea:focus,
         .form-group select:focus {
             outline: none;
             border-color: var(--primary);
@@ -1159,7 +1159,7 @@
                 transform: translateX(100%);
                 opacity: 0;
                 transition: all 0.4s ease;
-                z-index: 1001;
+                z-index: 1000;
                 overflow-y: auto;
             }
             nav.active {
@@ -1258,8 +1258,8 @@
                 grid-template-columns: 1fr !important;
                 gap: 0;
             }
-            .form-group input, 
-            .form-group textarea, 
+            .form-group input,
+            .form-group textarea,
             .form-group select {
                 padding: 14px 16px;
                 font-size: 16px;
@@ -1342,8 +1342,8 @@
             .container {
                 padding: 0 16px;
             }
-            .promise-card, 
-            .feature-card, 
+            .promise-card,
+            .feature-card,
             .testimonial-card {
                 padding: 24px 20px;
             }
@@ -1733,7 +1733,7 @@
                         <select id="country" name="country" required>
                             <option value="" class="lang-fr">Sélectionnez votre pays</option>
                             <option value="" class="lang-en">Select your country</option>
-                            
+                          
                             <optgroup label="🌍 Afrique / Africa">
                                 <option value="algerie">Algérie / Algeria</option>
                                 <option value="benin">Bénin / Benin</option>
@@ -1847,12 +1847,12 @@
             const userAgent = navigator.userAgent || navigator.vendor || window.opera;
             const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile|samsung|galaxy/i.test(userAgent.toLowerCase());
             const isSmallScreen = window.innerWidth <= 768;
-        
+      
             if (isMobile || isSmallScreen) {
                 document.body.classList.add('mobile-detected');
                 console.log('📱 MOBILE DETECTE !');
             }
-        
+      
             return isMobile || isSmallScreen;
         }
         // EXECUTER DETECTION AU DEBUT
@@ -1879,7 +1879,7 @@
             langToggle.textContent = isEnglish ? '🇬🇧' : '🇫🇷';
             localStorage.setItem('velmo-lang', isEnglish ? 'en' : 'fr');
             updatePhoneContent();
-        
+      
             // RE-DETECTER AU CHARGEMENT
             if (detectMobile()) {
                 menuToggle.style.display = 'flex';
@@ -1913,8 +1913,8 @@
             });
         });
         document.addEventListener('click', (e) => {
-            if (nav.classList.contains('active') && 
-                !nav.contains(e.target) && 
+            if (nav.classList.contains('active') &&
+                !nav.contains(e.target) &&
                 !menuToggle.contains(e.target)) {
                 nav.classList.remove('active');
                 menuToggle.classList.remove('active');
@@ -2167,8 +2167,8 @@
                             ${isEnglish ? "Offline Mode" : "Mode Hors-ligne"}
                         </div>
                         <div style="font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 24px;">
-                            ${isEnglish 
-                                ? "Keep working without internet. Everything syncs automatically when you're back online." 
+                            ${isEnglish
+                                ? "Keep working without internet. Everything syncs automatically when you're back online."
                                 : "Continuez à travailler sans internet. Tout se synchronise automatiquement quand vous êtes en ligne."}
                         </div>
                     </div>
@@ -2215,17 +2215,17 @@
                 const view = dot.getAttribute('data-view');
                 const phoneContent = document.getElementById('hero-phone-content');
                 const views = getPhoneViews();
-        
+      
                 navDots.forEach(d => {
                     d.classList.remove('active');
                 });
-        
+      
                 dot.classList.add('active');
-        
+      
                 phoneContent.style.transition = 'all 0.3s ease';
                 phoneContent.style.opacity = '0';
                 phoneContent.style.transform = 'translateY(10px)';
-        
+      
                 setTimeout(() => {
                     phoneContent.innerHTML = views[view];
                     phoneContent.style.opacity = '1';
