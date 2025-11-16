@@ -9,6 +9,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
+        /* 
+         * VARIABLES RACINE : Définit les couleurs, arrière-plans, ombres et espacements pour une personnalisation facile.
+         * Ces variables sont utilisées partout dans le CSS pour maintenir la cohérence.
+         */
         :root {
             --primary: #ff6200;
             --primary-dark: #e55a00;
@@ -18,7 +22,7 @@
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
-       
+     
             --bg-main: #ffffff;
             --bg-alt: #fff8f5;
             --bg-subtle: #fff0e6;
@@ -31,12 +35,12 @@
             --shadow-lg: 0 10px 15px -3px rgba(255, 98, 0, 0.1);
             --shadow-xl: 0 20px 25px -5px rgba(255, 98, 0, 0.1);
             --shadow-2xl: 0 25px 50px -12px rgba(255, 98, 0, 0.25);
-       
+     
             --radius-sm: 8px;
             --radius-md: 12px;
             --radius-lg: 16px;
             --radius-xl: 24px;
-       
+     
             --spacing-xs: 8px;
             --spacing-sm: 16px;
             --spacing-md: 24px;
@@ -45,6 +49,11 @@
             --spacing-2xl: 64px;
             --spacing-3xl: 96px;
         }
+        
+        /* 
+         * MODE SOMBRE : Redéfinit les variables pour le thème sombre.
+         * Utilisé lorsque data-theme="dark" est appliqué à l'élément HTML.
+         */
         [data-theme="dark"] {
             --bg-main: #0f172a;
             --bg-alt: #1e293b;
@@ -57,11 +66,21 @@
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
         }
+        
+        /* 
+         * RÉINITIALISATION GLOBALE : Supprime les marges et paddings par défaut pour un contrôle total.
+         * Assure que tous les éléments utilisent border-box pour des calculs de taille précis.
+         */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+        
+        /* 
+         * HTML ET BODY : Définit le comportement de défilement doux et les styles de base du corps.
+         * Utilise des variables pour une transition fluide entre thèmes.
+         */
         html {
             scroll-behavior: smooth;
             font-size: 16px;
@@ -76,11 +95,28 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
+        
+        /* 
+         * CLASSE NO-SCROLL : Bloque le défilement sur html et body quand le menu mobile est ouvert.
+         * Utilise !important pour surcharger tout autre overflow.
+         */
+        .no-scroll {
+            overflow: hidden !important;
+        }
+        
+        /* 
+         * CONTAINER : Limite la largeur maximale et ajoute un padding responsive.
+         */
         .container {
             max-width: 1280px;
             margin: 0 auto;
             padding: 0 clamp(20px, 5vw, 40px);
         }
+        
+        /* 
+         * SECTIONS : Styles de base pour les sections avec animation d'apparition.
+         * La classe .visible déclenche l'animation lorsque la section est visible.
+         */
         section {
             padding: var(--spacing-3xl) 0;
             opacity: 0;
@@ -91,6 +127,11 @@
             opacity: 1;
             transform: translateY(0);
         }
+        
+        /* 
+         * TITRES ET PARAGRAPHES : Styles pour les headings et paragraphes.
+         * Utilise clamp pour des tailles responsives.
+         */
         h1, h2, h3, h4, h5, h6 {
             font-weight: 800;
             line-height: 1.2;
@@ -108,6 +149,11 @@
             text-decoration: none;
             color: inherit;
         }
+        
+        /* 
+         * HEADER : Barre de navigation fixe avec effet de flou et bordure.
+         * z-index: 1001 pour être au-dessus du contenu et du menu.
+         */
         header {
             position: fixed;
             top: 0;
@@ -125,6 +171,11 @@
         header.scrolled {
             box-shadow: var(--shadow-md);
         }
+        
+        /* 
+         * HEADER-CONTAINER : Conteneur flex pour logo, nav et actions.
+         * z-index supprimé comme indiqué pour éviter les problèmes de superposition.
+         */
         .header-container {
             display: flex;
             align-items: center;
@@ -133,15 +184,18 @@
             max-width: 1440px;
             margin: 0 auto;
             position: relative;
-            z-index: 1002;
         }
+        
+        /* 
+         * LOGO-WRAPPER : Conteneur pour le logo SVG et texte.
+         * z-index supprimé pour simplifier les couches.
+         */
         .logo-wrapper {
             display: flex;
             align-items: center;
             gap: 12px;
             cursor: pointer;
             transition: transform 0.3s ease;
-            z-index: 1003;
             position: relative;
         }
         .logo-wrapper:hover {
@@ -177,6 +231,10 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
+        
+        /* 
+         * NAV : Navigation principale, flex pour desktop.
+         */
         nav {
             display: flex;
             align-items: center;
@@ -221,12 +279,16 @@
         .nav-cta::after {
             display: none;
         }
+        
+        /* 
+         * HEADER-ACTIONS : Boutons d'actions (thème, langue, menu).
+         * z-index supprimé pour éviter conflits.
+         */
         .header-actions {
             display: flex;
             gap: 12px;
             align-items: center;
             position: relative;
-            z-index: 1003;
         }
         .icon-btn {
             width: 40px;
@@ -241,13 +303,18 @@
             transition: all 0.3s ease;
             font-size: 18px;
             position: relative;
-            z-index: 1003;
         }
         .icon-btn:hover {
             transform: scale(1.1);
             border-color: var(--primary);
             background: var(--primary);
         }
+        
+        /* 
+         * MENU-TOGGLE : Bouton hamburger pour mobile.
+         * z-index: 1002 pour être au-dessus de tout, y compris le header et le menu.
+         * Affiché seulement sur mobile/tablette.
+         */
         .menu-toggle {
             display: none;
             flex-direction: column;
@@ -277,20 +344,56 @@
         .menu-toggle.active span:nth-child(3) {
             transform: rotate(-45deg) translate(7px, -7px);
         }
-        @media (max-width: 1024px) {
+        
+        /* 
+         * MEDIA QUERIES POUR RESPONSIVE :
+         * - Mobile (max 768px) : Affiche menu-toggle, cache nav par défaut, montre nav.active.
+         * - Tablette (max 1024px min 769px) : Affiche menu-toggle.
+         * z-index sur nav.active pour le menu mobile (en dessous du header et bouton).
+         */
+        /* DETECTION MOBILE AGGRESSIVE */
+        @media (max-width: 768px) {
             .menu-toggle {
                 display: flex !important;
             }
+    
             .header-actions .icon-btn {
                 display: none !important;
             }
+    
             nav {
                 display: none;
             }
+    
             nav.active {
+                display: flex !important;
+                z-index: 1000; /* z-index essentiel pour nav.active, en dessous du bouton et header */
+            }
+        }
+        /* DETECTION TABLETTE */
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .menu-toggle {
                 display: flex !important;
             }
         }
+        /* FORCE MOBILE */
+        .mobile-detected .menu-toggle {
+            display: flex !important;
+        }
+        .mobile-detected nav:not(.active) {
+            display: none !important;
+        }
+        .mobile-detected nav.active {
+            display: flex !important;
+            z-index: 1000; /* z-index essentiel pour nav.active */
+        }
+        .mobile-detected .header-actions .icon-btn {
+            display: none !important;
+        }
+        
+        /* 
+         * HERO SECTION : Section d'accueil avec grille responsive et animations.
+         */
         .hero {
             min-height: 100vh;
             display: flex;
@@ -723,6 +826,11 @@
             color: var(--success);
             font-weight: 600;
         }
+        
+        /* 
+         * AUTRES SECTIONS : Styles pour promesses, features, testimonials, beta, footer.
+         * Utilisent des grilles responsives et animations.
+         */
         .section-alt {
             background: var(--bg-alt);
         }
@@ -1073,6 +1181,11 @@
             height: 32px;
             fill: white;
         }
+        
+        /* 
+         * MEDIA QUERIES RESPONSIVE : Ajustements pour tablette et mobile.
+         * Rend le layout plus compact et optimise pour petits écrans.
+         */
         /* RESPONSIVE MOBILE */
         @media (max-width: 1024px) {
             .hero-container {
@@ -1136,7 +1249,6 @@
                 transform: translateX(100%);
                 opacity: 0;
                 transition: all 0.4s ease;
-                z-index: 1000;
                 overflow-y: auto;
             }
             nav.active {
@@ -1369,6 +1481,8 @@
             </div>
         </div>
     </header>
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
     <section class="hero">
         <div class="container">
             <div class="hero-container">
@@ -1710,7 +1824,7 @@
                         <select id="country" name="country" required>
                             <option value="" class="lang-fr">Sélectionnez votre pays</option>
                             <option value="" class="lang-en">Select your country</option>
-                           
+                          
                             <optgroup label="🌍 Afrique / Africa">
                                 <option value="algerie">Algérie / Algeria</option>
                                 <option value="benin">Bénin / Benin</option>
@@ -1819,20 +1933,22 @@
         </svg>
     </a>
     <script>
-        // DETECTION MOBILE AGGRESSIVE AU DEBUT
+        // FONCTION DE DÉTECTION MOBILE : Vérifie l'user agent et la taille d'écran pour détecter les appareils mobiles.
+        // Ajoute une classe 'mobile-detected' au body si mobile.
         function detectMobile() {
             const userAgent = navigator.userAgent || navigator.vendor || window.opera;
             const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile|samsung|galaxy/i.test(userAgent.toLowerCase());
             const isSmallScreen = window.innerWidth <= 768;
-     
+    
             if (isMobile || isSmallScreen) {
                 document.body.classList.add('mobile-detected');
                 console.log('📱 MOBILE DETECTE !');
             }
-     
+    
             return isMobile || isSmallScreen;
         }
-        // EXECUTER DETECTION AU DEBUT
+        
+        // EXÉCUTION INITIALE : Détecte le mobile au chargement et initialise les variables.
         const isMobileDevice = detectMobile();
         const header = document.getElementById('header');
         const menuToggle = document.getElementById('menu-toggle');
@@ -1840,15 +1956,19 @@
         const themeToggle = document.getElementById('theme-toggle');
         const langToggle = document.getElementById('lang-toggle');
         const html = document.documentElement;
+        const body = document.body;
         const betaForm = document.getElementById('beta-form');
         const formSuccess = document.getElementById('form-success');
         let isDark = false;
         let isEnglish = false;
-        // FORCER AFFICHAGE HAMBURGER SUR MOBILE
+        
+        // FORCER LE MENU HAMBURGER SUR MOBILE : Assure que le toggle est visible sur mobile.
         if (isMobileDevice) {
             menuToggle.style.display = 'flex';
             console.log('🍔 Hamburger forcé visible');
         }
+        
+        // ÉVÉNEMENT LOAD : Initialise la langue basée sur le navigateur et met à jour le contenu du téléphone.
         window.addEventListener('load', () => {
             const browserLang = navigator.language || navigator.userLanguage;
             isEnglish = browserLang.startsWith('en');
@@ -1856,13 +1976,14 @@
             langToggle.textContent = isEnglish ? '🇬🇧' : '🇫🇷';
             localStorage.setItem('velmo-lang', isEnglish ? 'en' : 'fr');
             updatePhoneContent();
-     
+    
             // RE-DETECTER AU CHARGEMENT
             if (detectMobile()) {
                 menuToggle.style.display = 'flex';
             }
         });
-        // RE-DETECTER AU RESIZE
+        
+        // ÉVÉNEMENT RESIZE : Ré-détecte le mobile lors du redimensionnement de la fenêtre.
         window.addEventListener('resize', () => {
             if (detectMobile()) {
                 menuToggle.style.display = 'flex';
@@ -1871,45 +1992,63 @@
                 nav.classList.remove('active');
             }
         });
+        
+        // ÉVÉNEMENT SCROLL : Ajoute une classe 'scrolled' au header pour ombre.
         window.addEventListener('scroll', () => {
             header.classList.toggle('scrolled', window.scrollY > 50);
         });
+        
+        // CLICK MENU-TOGGLE : Ouvre/ferme le menu mobile, ajoute/retire no-scroll sur html et body.
         menuToggle.addEventListener('click', (e) => {
             e.stopPropagation();
             e.preventDefault();
             nav.classList.toggle('active');
             menuToggle.classList.toggle('active');
-            document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
-            console.log('🍔 Menu toggled:', nav.classList.contains('active'));
+            const isActive = nav.classList.contains('active');
+            html.classList.toggle('no-scroll', isActive);
+            body.classList.toggle('no-scroll', isActive);
+            console.log('🍔 Menu toggled:', isActive);
         });
+        
+        // FERMETURE MENU VIA LIENS : Ferme le menu quand un lien est cliqué, retire no-scroll.
         nav.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => {
                 nav.classList.remove('active');
                 menuToggle.classList.remove('active');
-                document.body.style.overflow = '';
+                html.classList.remove('no-scroll');
+                body.classList.remove('no-scroll');
             });
         });
+        
+        // CLICK HORS MENU : Ferme le menu si clic en dehors, retire no-scroll.
         document.addEventListener('click', (e) => {
             if (nav.classList.contains('active') &&
                 !nav.contains(e.target) &&
                 !menuToggle.contains(e.target)) {
                 nav.classList.remove('active');
                 menuToggle.classList.remove('active');
-                document.body.style.overflow = '';
+                html.classList.remove('no-scroll');
+                body.classList.remove('no-scroll');
             }
         });
+        
+        // TOGGLE THÈME : Change entre clair/sombre et sauvegarde en localStorage.
         themeToggle.addEventListener('click', () => {
             isDark = !isDark;
             html.setAttribute('data-theme', isDark ? 'dark' : 'light');
             themeToggle.textContent = isDark ? '☀️' : '🌙';
             localStorage.setItem('velmo-theme', isDark ? 'dark' : 'light');
         });
+        
+        // CHARGEMENT THÈME SAUVEGARDÉ : Applique le thème du localStorage.
         const savedTheme = localStorage.getItem('velmo-theme');
         if (savedTheme === 'dark') {
             isDark = true;
             html.setAttribute('data-theme', 'dark');
             themeToggle.textContent = '☀️';
         }
+        
+        // TOGGLE LANGUE : Change entre FR/EN et met à jour le contenu du téléphone.
         langToggle.addEventListener('click', () => {
             isEnglish = !isEnglish;
             html.setAttribute('lang', isEnglish ? 'en' : 'fr');
@@ -1917,6 +2056,8 @@
             localStorage.setItem('velmo-lang', isEnglish ? 'en' : 'fr');
             updatePhoneContent();
         });
+        
+        // OBSERVER D'INTERSECTION : Anime les sections quand visibles.
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -1925,6 +2066,8 @@
             });
         }, { threshold: 0.1, rootMargin: '0px 0px -100px 0px' });
         document.querySelectorAll('section:not(.hero)').forEach(el => observer.observe(el));
+        
+        // LIENS SMOOTH SCROLL : Défilement doux vers les ancres avec offset pour header.
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', e => {
                 e.preventDefault();
@@ -1939,6 +2082,8 @@
                 }
             });
         });
+        
+        // SOUMISSION FORMULAIRE : Simule une soumission réussie avec message.
         betaForm.addEventListener('submit', e => {
             e.preventDefault();
             betaForm.style.display = 'none';
@@ -1949,6 +2094,8 @@
                 formSuccess.classList.remove('show');
             }, 5000);
         });
+        
+        // MISE À JOUR CONTENU TÉLÉPHONE : Génère le contenu basé sur la langue.
         function updatePhoneContent() {
             const views = getPhoneViews();
             const phoneContent = document.getElementById('hero-phone-content');
@@ -1956,6 +2103,8 @@
                 phoneContent.innerHTML = views.dashboard;
             }
         }
+        
+        // VUES DU TÉLÉPHONE : Retourne les contenus pour chaque vue (dashboard, stock, etc.).
         function getPhoneViews() {
             return {
                 dashboard: `
@@ -2186,23 +2335,25 @@
                 `
             };
         }
+        
+        // CHANGEMENT DE VUE TÉLÉPHONE : Gère les clics sur les points de navigation pour changer le contenu.
         const navDots = document.querySelectorAll('.nav-dot');
         navDots.forEach(dot => {
             dot.addEventListener('click', () => {
                 const view = dot.getAttribute('data-view');
                 const phoneContent = document.getElementById('hero-phone-content');
                 const views = getPhoneViews();
-     
+    
                 navDots.forEach(d => {
                     d.classList.remove('active');
                 });
-     
+    
                 dot.classList.add('active');
-     
+    
                 phoneContent.style.transition = 'all 0.3s ease';
                 phoneContent.style.opacity = '0';
                 phoneContent.style.transform = 'translateY(10px)';
-     
+    
                 setTimeout(() => {
                     phoneContent.innerHTML = views[view];
                     phoneContent.style.opacity = '1';
@@ -2210,6 +2361,8 @@
                 }, 300);
             });
         });
+        
+        // ROTATION AUTOMATIQUE DES VUES : Change de vue toutes les 6 secondes.
         let currentViewIndex = 0;
         const viewKeys = ['dashboard', 'stock', 'analytics', 'offline'];
         setInterval(() => {
@@ -2219,12 +2372,16 @@
                 targetDot.click();
             }
         }, 6000);
+        
+        // PARALLAX HERO : Légère translation Y sur scroll pour effet parallax.
         window.addEventListener('scroll', () => {
             const hero = document.querySelector('.hero');
-            if (hero && window.pageYOffset < 800) {
-                hero.style.transform = `translateY(${window.pageYOffset * 0.2}px)`;
+            if (hero && window.scrollY < 800) {
+                hero.style.transform = `translateY(${window.scrollY * 0.2}px)`;
             }
         });
+        
+        // RACCOURCIS CLAVIER : Ctrl+K pour thème, Ctrl+L pour langue.
         document.addEventListener('keydown', e => {
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
                 e.preventDefault();
@@ -2235,9 +2392,13 @@
                 langToggle.click();
             }
         });
+        
+        // DOMCONTENTLOADED : Met à jour le contenu du téléphone au chargement complet.
         window.addEventListener('DOMContentLoaded', () => {
             updatePhoneContent();
         });
+        
+        // LOGS CONSOLE : Messages de debug pour vérifier l'optimisation mobile.
         console.log('%c⚡ Velmo - Mobile Optimized', 'font-size: 20px; font-weight: bold; color: #ff6200;');
         console.log('%c✨ Responsive design parfait pour mobile', 'font-size: 12px; color: #475569;');
         console.log('%c📱 Menu hamburger fonctionnel', 'font-size: 12px; color: #10b981;');
