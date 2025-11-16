@@ -18,7 +18,7 @@
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
-      
+       
             --bg-main: #ffffff;
             --bg-alt: #fff8f5;
             --bg-subtle: #fff0e6;
@@ -31,12 +31,12 @@
             --shadow-lg: 0 10px 15px -3px rgba(255, 98, 0, 0.1);
             --shadow-xl: 0 20px 25px -5px rgba(255, 98, 0, 0.1);
             --shadow-2xl: 0 25px 50px -12px rgba(255, 98, 0, 0.25);
-      
+       
             --radius-sm: 8px;
             --radius-md: 12px;
             --radius-lg: 16px;
             --radius-xl: 24px;
-      
+       
             --spacing-xs: 8px;
             --spacing-sm: 16px;
             --spacing-md: 24px;
@@ -277,42 +277,19 @@
         .menu-toggle.active span:nth-child(3) {
             transform: rotate(-45deg) translate(7px, -7px);
         }
-        /* DETECTION MOBILE AGGRESSIVE */
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .menu-toggle {
                 display: flex !important;
             }
-      
             .header-actions .icon-btn {
                 display: none !important;
             }
-      
             nav {
                 display: none;
             }
-      
             nav.active {
                 display: flex !important;
             }
-        }
-        /* DETECTION TABLETTE */
-        @media (max-width: 1024px) and (min-width: 769px) {
-            .menu-toggle {
-                display: flex !important;
-            }
-        }
-        /* FORCE MOBILE */
-        .mobile-detected .menu-toggle {
-            display: flex !important;
-        }
-        .mobile-detected nav:not(.active) {
-            display: none !important;
-        }
-        .mobile-detected nav.active {
-            display: flex !important;
-        }
-        .mobile-detected .header-actions .icon-btn {
-            display: none !important;
         }
         .hero {
             min-height: 100vh;
@@ -1733,7 +1710,7 @@
                         <select id="country" name="country" required>
                             <option value="" class="lang-fr">Sélectionnez votre pays</option>
                             <option value="" class="lang-en">Select your country</option>
-                          
+                           
                             <optgroup label="🌍 Afrique / Africa">
                                 <option value="algerie">Algérie / Algeria</option>
                                 <option value="benin">Bénin / Benin</option>
@@ -1847,12 +1824,12 @@
             const userAgent = navigator.userAgent || navigator.vendor || window.opera;
             const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile|samsung|galaxy/i.test(userAgent.toLowerCase());
             const isSmallScreen = window.innerWidth <= 768;
-      
+     
             if (isMobile || isSmallScreen) {
                 document.body.classList.add('mobile-detected');
                 console.log('📱 MOBILE DETECTE !');
             }
-      
+     
             return isMobile || isSmallScreen;
         }
         // EXECUTER DETECTION AU DEBUT
@@ -1879,7 +1856,7 @@
             langToggle.textContent = isEnglish ? '🇬🇧' : '🇫🇷';
             localStorage.setItem('velmo-lang', isEnglish ? 'en' : 'fr');
             updatePhoneContent();
-      
+     
             // RE-DETECTER AU CHARGEMENT
             if (detectMobile()) {
                 menuToggle.style.display = 'flex';
@@ -2215,17 +2192,17 @@
                 const view = dot.getAttribute('data-view');
                 const phoneContent = document.getElementById('hero-phone-content');
                 const views = getPhoneViews();
-      
+     
                 navDots.forEach(d => {
                     d.classList.remove('active');
                 });
-      
+     
                 dot.classList.add('active');
-      
+     
                 phoneContent.style.transition = 'all 0.3s ease';
                 phoneContent.style.opacity = '0';
                 phoneContent.style.transform = 'translateY(10px)';
-      
+     
                 setTimeout(() => {
                     phoneContent.innerHTML = views[view];
                     phoneContent.style.opacity = '1';
