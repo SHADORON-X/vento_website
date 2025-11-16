@@ -2,9 +2,9 @@
 <html lang="fr" data-theme="light">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"/>
   <title>Velmo — Gagnez plus. Vivez mieux.</title>
-  <meta name="description" content="Application légère, rapide et universelle. Pour tous les smartphones, même anciens." />
+  <meta name="description" content="Application légère, rapide et universelle. Pour tous les smartphones, même anciens."/>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -21,7 +21,7 @@
       --success: #10b981;
       --warning: #f59e0b;
       --danger: #ef4444;
-
+     
       --bg-main: #ffffff;
       --bg-alt: #fff8f5;
       --bg-subtle: #fff0e6;
@@ -34,12 +34,12 @@
       --shadow-lg: 0 10px 15px -3px rgba(255, 98, 0, 0.1);
       --shadow-xl: 0 20px 25px -5px rgba(255, 98, 0, 0.1);
       --shadow-2xl: 0 25px 50px -12px rgba(255, 98, 0, 0.25);
-
+     
       --radius-sm: 8px;
       --radius-md: 12px;
       --radius-lg: 16px;
       --radius-xl: 24px;
-
+     
       --spacing-xs: 8px;
       --spacing-sm: 16px;
       --spacing-md: 24px;
@@ -122,14 +122,14 @@
       top: 0;
       left: 0;
       right: 0;
-      background: rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(20px) saturate(180%);
       border-bottom: 1px solid var(--border);
       z-index: 1000;
       transition: all 0.3s ease;
     }
     [data-theme="dark"] header {
-      background: rgba(15, 23, 42, 0.8);
+      background: rgba(15, 23, 42, 0.95);
     }
     header.scrolled {
       box-shadow: var(--shadow-md);
@@ -148,6 +148,7 @@
       gap: 12px;
       cursor: pointer;
       transition: transform 0.3s ease;
+      z-index: 1002;
     }
     .logo-wrapper:hover {
       transform: translateY(-2px);
@@ -252,16 +253,30 @@
     .menu-toggle {
       display: none;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
       cursor: pointer;
       padding: 8px;
+      z-index: 1002;
+      background: var(--bg-alt);
+      border-radius: 8px;
+      border: 2px solid var(--border);
     }
     .menu-toggle span {
-      width: 24px;
-      height: 2px;
-      background: var(--text-primary);
-      border-radius: 2px;
+      width: 25px;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 3px;
       transition: all 0.3s ease;
+      display: block;
+    }
+    .menu-toggle.active span:nth-child(1) {
+      transform: rotate(45deg) translate(7px, 7px);
+    }
+    .menu-toggle.active span:nth-child(2) {
+      opacity: 0;
+    }
+    .menu-toggle.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -7px);
     }
     /* ========================================
        HERO - Layout moderne avec image
@@ -282,7 +297,7 @@
       position: absolute;
       width: 600px;
       height: 600px;
-      background: radial-gradient(circle, rgba(102, 126, 234, 0.1), transparent);
+      background: radial-gradient(circle, rgba(255, 98, 0, 0.1), transparent);
       top: -200px;
       right: -100px;
       border-radius: 50%;
@@ -319,8 +334,8 @@
       align-items: center;
       gap: 8px;
       padding: 8px 16px;
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-      border: 1px solid rgba(102, 126, 234, 0.2);
+      background: linear-gradient(135deg, rgba(255, 98, 0, 0.1), rgba(255, 69, 0, 0.1));
+      border: 1px solid rgba(255, 98, 0, 0.2);
       border-radius: 100px;
       font-size: 14px;
       font-weight: 600;
@@ -412,7 +427,7 @@
       border-radius: 40px;
       padding: 12px;
       box-shadow: var(--shadow-2xl);
-      border: 3px solid rgba(102, 126, 234, 0.3);
+      border: 3px solid rgba(255, 98, 0, 0.3);
     }
     .phone-screen {
       width: 100%;
@@ -457,11 +472,11 @@
       border-radius: 4px;
     }
     .content-card-phone {
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+      background: linear-gradient(135deg, rgba(255, 98, 0, 0.05), rgba(255, 69, 0, 0.05));
       padding: 20px;
       border-radius: 16px;
       margin-bottom: 16px;
-      border: 1px solid rgba(102, 126, 234, 0.1);
+      border: 1px solid rgba(255, 98, 0, 0.1);
       animation: slideInUp 0.5s ease-out;
     }
     @keyframes slideInUp {
@@ -503,7 +518,7 @@
     }
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      grid-template-columns: 1fr 1fr;
       gap: 12px;
       margin-top: 16px;
     }
@@ -513,7 +528,7 @@
       border-radius: 12px;
       text-align: center;
       box-shadow: var(--shadow-sm);
-      border: 1px solid rgba(102, 126, 234, 0.1);
+      border: 1px solid rgba(255, 98, 0, 0.1);
       transition: all 0.3s ease;
     }
     .stat-item:hover {
@@ -571,7 +586,7 @@
       fill: white;
     }
     .nav-dot:hover:not(.active) {
-      background: rgba(102, 126, 234, 0.1);
+      background: rgba(255, 98, 0, 0.1);
     }
     /* Product list */
     .product-item {
@@ -582,13 +597,13 @@
       padding: 12px;
       border-radius: 12px;
       margin-bottom: 12px;
-      border: 1px solid rgba(102, 126, 234, 0.1);
+      border: 1px solid rgba(255, 98, 0, 0.1);
       box-shadow: var(--shadow-sm);
     }
     .product-icon {
       width: 40px;
       height: 40px;
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+      background: linear-gradient(135deg, rgba(255, 98, 0, 0.1), rgba(255, 69, 0, 0.1));
       border-radius: 10px;
       display: flex;
       align-items: center;
@@ -634,7 +649,7 @@
       padding: 16px;
       border-radius: 12px;
       margin-bottom: 16px;
-      border: 1px solid rgba(102, 126, 234, 0.1);
+      border: 1px solid rgba(255, 98, 0, 0.1);
     }
     .chart-bars {
       display: flex;
@@ -702,15 +717,6 @@
       color: var(--success);
       font-weight: 600;
     }
-    /* Fade transition for content */
-    .phone-content.fade-out {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    .phone-content.fade-in {
-      opacity: 1;
-      transform: translateY(0);
-    }
     /* ========================================
        SECTIONS ALTERNÉES
        ======================================== */
@@ -727,8 +733,8 @@
       align-items: center;
       gap: 8px;
       padding: 6px 16px;
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-      border: 1px solid rgba(102, 126, 234, 0.2);
+      background: linear-gradient(135deg, rgba(255, 98, 0, 0.1), rgba(255, 69, 0, 0.1));
+      border: 1px solid rgba(255, 98, 0, 0.2);
       border-radius: 100px;
       font-size: 13px;
       font-weight: 600;
@@ -784,7 +790,7 @@
     .promise-icon {
       width: 64px;
       height: 64px;
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+      background: linear-gradient(135deg, rgba(255, 98, 0, 0.1), rgba(255, 69, 0, 0.1));
       border-radius: 16px;
       display: flex;
       align-items: center;
@@ -975,7 +981,7 @@
     .form-group select:focus {
       outline: none;
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      box-shadow: 0 0 0 3px rgba(255, 98, 0, 0.1);
     }
     .form-group textarea {
       resize: vertical;
@@ -983,7 +989,7 @@
     }
     .form-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: 1fr 1fr;
       gap: 16px;
     }
     .form-submit {
@@ -1068,6 +1074,7 @@
       z-index: 999;
       transition: all 0.3s ease;
       animation: floatWA 3s ease-in-out infinite;
+      overflow: hidden;
     }
     @keyframes floatWA {
       0%, 100% { transform: translateY(0); }
@@ -1085,6 +1092,8 @@
     /* ========================================
        RESPONSIVE - MOBILE ULTRA OPTIMISÉ
        ======================================== */
+   
+    /* TABLETTE */
     @media (max-width: 1024px) {
       .hero-container {
         grid-template-columns: 1fr;
@@ -1099,80 +1108,65 @@
       }
       .hero-image {
         order: -1;
-        max-width: 100%;
-        margin: 0 auto;
       }
-      .hero-phone {
-        max-width: 100%;
-      }
-      /* Grilles adaptatives */
       .promise-grid {
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
         gap: 24px;
       }
       .features-grid {
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-columns: repeat(3, 1fr);
         gap: 20px;
       }
       .testimonials-grid {
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 24px;
-      }
-      .stats-grid {
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      }
-      .form-row {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
       }
     }
-    @media (max-width: 900px) {
-      /* Hamburger menu pour landscape phone et petits tablets */
+    /* MOBILE - CORRECTIONS CRITIQUES */
+    @media (max-width: 768px) {
+      /* Reset font size */
+      html {
+        font-size: 16px;
+      }
+      /* Container mobile */
+      .container {
+        padding: 0 20px;
+      }
+      /* Sections spacing */
+      section {
+        padding: 60px 0;
+      }
+      /* HEADER MOBILE - FIX HAMBURGER */
+      .header-container {
+        padding: 14px 20px;
+      }
+      .logo-svg {
+        width: 36px;
+        height: 36px;
+      }
+      .logo-text {
+        font-size: 20px;
+      }
+      /* AFFICHER LE HAMBURGER */
       .menu-toggle {
         display: flex !important;
-        z-index: 1001;
-        position: relative;
-        width: 32px;
-        height: 32px;
-        padding: 4px;
-        background: var(--bg-alt);
-        border-radius: 8px;
       }
-      .menu-toggle span {
-        width: 24px;
-        height: 3px;
-        background: var(--primary);
-        border-radius: 2px;
-        transition: all 0.3s ease;
-      }
-      .menu-toggle.active span:nth-child(1) {
-        transform: rotate(45deg) translate(6px, 6px);
-        background: var(--primary);
-      }
-      .menu-toggle.active span:nth-child(2) {
-        opacity: 0;
-      }
-      .menu-toggle.active span:nth-child(3) {
-        transform: rotate(-45deg) translate(6px, -6px);
-        background: var(--primary);
-      }
-      /* Navigation mobile FULLSCREEN */
+      /* CACHER LA NAV PAR DÉFAUT */
       nav {
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        flex-direction: column;
         background: var(--bg-main);
-        padding: 100px 32px 32px;
-        gap: 24px;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        padding: 80px 24px 32px;
+        gap: 16px;
         transform: translateX(100%);
         opacity: 0;
-        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        z-index: 1000;
-        box-shadow: none;
-        align-items: stretch;
-        justify-content: flex-start;
+        transition: all 0.4s ease;
+        z-index: 1001;
         overflow-y: auto;
       }
       nav.active {
@@ -1181,401 +1175,154 @@
       }
       nav a {
         width: 100%;
-        padding: 20px 24px;
-        text-align: left;
-        border-radius: var(--radius-lg);
-        font-size: 20px;
-        margin-bottom: 8px;
-        border: 2px solid var(--border);
-        background: var(--bg-alt);
-        color: var(--text-primary);
+        padding: 18px 24px;
+        text-align: center;
+        font-size: 18px;
         font-weight: 600;
-        transition: all 0.3s ease;
+        border-radius: 12px;
+        background: var(--bg-alt);
+        border: 2px solid var(--border);
+        margin: 0;
       }
-      nav a:hover,
-      nav a:active {
+      nav a:hover {
         background: var(--primary);
         color: white;
         border-color: var(--primary);
-        transform: translateX(8px);
       }
       nav a::after {
         display: none;
       }
       .nav-cta {
-        margin-top: 16px;
-        text-align: center;
-        padding: 20px 24px;
-        font-size: 20px;
         background: var(--primary) !important;
         color: white !important;
         border: none !important;
+        margin-top: 8px;
       }
-      .nav-cta:hover {
-        transform: scale(1.02) !important;
-        box-shadow: 0 8px 20px rgba(255, 98, 0, 0.3);
+      /* CACHER LES BOUTONS THEME/LANG SUR MOBILE */
+      .header-actions .icon-btn {
+        display: none;
       }
-    }
-    @media (max-width: 600px) {
-      html {
-        font-size: 16px;
-      }
-      body {
-        overflow-x: hidden;
-      }
-      /* Sections avec plus d'espace */
-      section {
-        padding: 60px 0;
-      }
-      .container {
-        padding: 0 24px;
-        max-width: 100%;
-      }
-      /* Header mobile FIXE */
-      header {
-        padding: 0;
-      }
-      .header-container {
-        padding: 16px 24px;
-        position: relative;
-      }
-      .logo-svg {
-        width: 44px;
-        height: 44px;
-      }
-      .logo-text {
-        font-size: 24px;
-      }
-      /* Hero mobile avec GRAND ÉCRAN */
+      /* HERO MOBILE */
       .hero {
-        min-height: 100vh;
-        padding: 120px 24px 80px;
-        display: flex;
-        align-items: center;
+        min-height: auto;
+        padding: 100px 20px 60px;
       }
       .hero-container {
-        gap: 48px;
-        width: 100%;
-      }
-      .hero-badge {
-        font-size: 14px;
-        padding: 8px 16px;
+        gap: 40px;
       }
       h1 {
-        font-size: 2.5rem !important;
+        font-size: 2.2rem !important;
         line-height: 1.1;
-        margin-bottom: 24px !important;
       }
       .hero-desc {
-        font-size: 18px;
-        margin-bottom: 32px;
-        line-height: 1.7;
+        font-size: 17px;
+        margin-bottom: 28px;
       }
       .hero-cta {
         flex-direction: column;
-        gap: 16px;
-        width: 100%;
+        gap: 12px;
       }
       .btn {
         width: 100%;
-        padding: 18px 32px;
-        font-size: 17px;
-        font-weight: 700;
-      }
-      /* Phone mockup PLUS GRAND sur mobile */
-      .hero-image {
-        max-width: 100%;
+        padding: 16px 24px;
+        font-size: 16px;
       }
       .hero-phone {
-        max-width: 340px;
-        margin: 0 auto;
+        max-width: 280px;
       }
-      .phone-mockup {
-        padding: 12px;
-        border-radius: 40px;
-        border-width: 4px;
-      }
-      .phone-screen {
-        border-radius: 32px;
-      }
-      .phone-notch {
-        width: 110px;
-        height: 26px;
-      }
-      .phone-content {
-        padding: 20px;
-        font-size: 15px;
-      }
-      .content-card-phone {
-        padding: 20px;
-        margin-bottom: 16px;
-        border-radius: 16px;
-      }
-      .card-title {
-        font-size: 15px;
-      }
-      .card-value {
-        font-size: 28px;
-      }
-      .card-subtitle {
-        font-size: 13px;
-      }
-      .stats-grid {
-        gap: 12px;
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      }
-      .stat-item {
-        padding: 16px;
-      }
-      .stat-label {
-        font-size: 12px;
-      }
-      .stat-value {
-        font-size: 22px;
-      }
-      .phone-nav {
-        gap: 20px;
-        padding: 8px 20px;
-        bottom: 10px;
-      }
-      .nav-dot {
-        width: 36px;
-        height: 36px;
-      }
-      .nav-dot svg {
-        width: 18px;
-        height: 18px;
-      }
-      /* Section headers mobile */
+      /* SECTION HEADERS */
       .section-header {
-        margin-bottom: 48px;
-        padding: 0 8px;
-      }
-      .section-badge {
-        font-size: 13px;
-        padding: 6px 14px;
+        margin-bottom: 40px;
       }
       .section-title {
-        font-size: 2rem !important;
-        margin-bottom: 20px;
-        line-height: 1.2;
+        font-size: 1.8rem !important;
       }
       .section-desc {
-        font-size: 17px;
-        line-height: 1.7;
+        font-size: 16px;
       }
-      /* GRILLES MOBILE : MAX 2 COLONNES, ADAPTATIF */
+      /* GRILLES MOBILE - 1 COLONNE PARTOUT */
       .promise-grid {
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 24px;
+        grid-template-columns: 1fr !important;
+        gap: 20px;
       }
       .features-grid {
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-columns: 1fr !important;
         gap: 16px;
       }
       .testimonials-grid {
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 24px;
+        grid-template-columns: 1fr !important;
+        gap: 20px;
       }
-      /* Cards mobile */
+      /* CARDS MOBILE */
       .promise-card {
-        padding: 32px;
-      }
-      .feature-card {
-        padding: 24px;
-      }
-      .testimonial-card {
         padding: 28px;
       }
-      .promise-icon {
-        width: 64px;
-        height: 64px;
-        font-size: 32px;
-        margin-bottom: 24px;
+      .feature-card {
+        padding: 28px;
       }
-      .promise-card h3 {
-        font-size: 22px;
-        margin-bottom: 12px;
+      .testimonial-card {
+        padding: 24px;
       }
-      .promise-card p {
-        font-size: 16px;
-        line-height: 1.7;
-      }
-      .feature-icon {
-        font-size: 44px;
-        margin-bottom: 16px;
-      }
-      .feature-card h4 {
-        font-size: 18px;
-        margin-bottom: 10px;
-      }
-      .feature-card p {
-        font-size: 15px;
-        line-height: 1.6;
-      }
-      /* Form mobile */
+      /* FORM MOBILE */
       .beta-container {
-        padding: 32px;
+        padding: 28px 20px;
       }
       .form-row {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important;
         gap: 0;
-      }
-      .form-group {
-        margin-bottom: 24px;
-      }
-      .form-group label {
-        font-size: 15px;
-        margin-bottom: 10px;
       }
       .form-group input,
       .form-group textarea,
       .form-group select {
-        padding: 16px 20px;
+        padding: 14px 16px;
         font-size: 16px;
-        border-width: 2px;
       }
-      .form-group textarea {
-        min-height: 140px;
-      }
-      /* Footer mobile */
-      footer {
-        padding: 48px 24px;
-      }
-      .footer-logo {
-        margin-bottom: 32px;
-      }
-      .social-icons {
-        flex-wrap: wrap;
-        gap: 16px;
-        margin-top: 24px;
-      }
-      .social-icon {
-        width: 48px;
-        height: 48px;
-      }
-      /* WhatsApp float mobile */
+      /* WHATSAPP BUTTON */
       .whatsapp-float {
-        width: 64px;
-        height: 64px;
-        bottom: 24px;
-        right: 24px;
+        width: 56px;
+        height: 56px;
+        bottom: 20px;
+        right: 20px;
       }
       .whatsapp-float svg {
-        width: 32px;
-        height: 32px;
-      }
-      /* Product items mobile */
-      .product-item {
-        padding: 12px;
-        margin-bottom: 12px;
-      }
-      .product-icon {
-        width: 40px;
-        height: 40px;
-        font-size: 20px;
-      }
-      .product-name {
-        font-size: 13px;
-      }
-      .product-stock {
-        font-size: 11px;
-      }
-      .stock-badge {
-        font-size: 10px;
-        padding: 4px 8px;
-      }
-      /* Chart mobile */
-      .chart-bars {
-        height: 110px;
-        gap: 8px;
-      }
-      .chart-container {
-        padding: 16px;
-        margin-bottom: 16px;
-      }
-      /* Testimonials mobile */
-      .testimonial-avatar {
-        width: 52px;
-        height: 52px;
-        font-size: 22px;
-      }
-      .testimonial-info h4 {
-        font-size: 17px;
-      }
-      .testimonial-info p {
-        font-size: 14px;
-      }
-      .testimonial-text {
-        font-size: 15px;
-        line-height: 1.7;
-      }
-      .testimonial-rating {
-        font-size: 18px;
-      }
-      /* Placeholder mobile */
-      .placeholder-line {
-        height: 8px;
-        margin-bottom: 6px;
-      }
-      /* Alert badges mobile */
-      .alert-badge,
-      .success-badge {
-        padding: 14px;
-        margin-bottom: 16px;
-      }
-      .alert-text,
-      .success-text {
-        font-size: 13px;
+        width: 28px;
+        height: 28px;
       }
     }
+    /* TRÈS PETIT MOBILE */
     @media (max-width: 480px) {
       html {
         font-size: 15px;
       }
       h1 {
-        font-size: 2rem !important;
+        font-size: 1.9rem !important;
       }
       .section-title {
-        font-size: 1.75rem !important;
+        font-size: 1.6rem !important;
       }
       .hero {
-        padding: 110px 20px 60px;
+        padding: 90px 16px 50px;
       }
       .hero-phone {
-        max-width: 300px;
+        max-width: 260px;
       }
-      /* TOUTES LES GRILLES EN 1 COLONNE */
-      .features-grid {
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 20px;
-      }
-      .stats-grid {
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-        gap: 10px;
+      .container {
+        padding: 0 16px;
       }
       .promise-card,
       .feature-card,
       .testimonial-card {
-        padding: 24px;
+        padding: 24px 20px;
       }
       .beta-container {
-        padding: 24px;
-      }
-      .btn {
-        padding: 16px 24px;
-        font-size: 16px;
+        padding: 24px 16px;
       }
       nav {
-        padding: 90px 24px 24px;
+        padding: 70px 20px 28px;
       }
       nav a {
-        font-size: 18px;
-        padding: 18px 20px;
-      }
-      .nav-cta {
-        font-size: 18px;
-        padding: 18px 20px;
+        padding: 16px 20px;
+        font-size: 17px;
       }
     }
     /* ========================================
@@ -1626,8 +1373,8 @@
             <span class="lang-fr">Phase Beta Ouverte</span>
             <span class="lang-en">Beta Phase Open</span>
           </div>
-          <h1 class="lang-fr">Gagnez plus. Vivez mieux.</h1>
-          <h1 class="lang-en">Earn more. Live better.</h1>
+          <h1 class="lang-fr">Gagnez plus.<br>Vivez mieux.</h1>
+          <h1 class="lang-en">Earn more.<br>Live better.</h1>
           <p class="hero-desc lang-fr">
             La seule application dont tu as besoin pour gérer ton commerce. Simple, rapide et accessible partout — même hors ligne.
           </p>
@@ -1656,7 +1403,7 @@
                   <span>🔋 100%</span>
                 </div>
                 <div class="phone-content" id="hero-phone-content">
-                  <!-- Contenu dynamique injecté par JS -->
+                  <!-- Contenu dynamique -->
                 </div>
                 <div class="phone-nav">
                   <div class="nav-dot active" data-view="dashboard">
@@ -1965,6 +1712,7 @@
             <select id="country" name="country" required>
               <option value="" class="lang-fr">Sélectionnez votre pays</option>
               <option value="" class="lang-en">Select your country</option>
+             
               <optgroup label="🌍 Afrique / Africa">
                 <option value="algerie">Algérie / Algeria</option>
                 <option value="benin">Bénin / Benin</option>
@@ -2085,10 +1833,8 @@
     const html = document.documentElement;
     const betaForm = document.getElementById('beta-form');
     const formSuccess = document.getElementById('form-success');
-
     let isDark = false;
     let isEnglish = false;
-
     // Détection langue automatique
     window.addEventListener('load', () => {
       const browserLang = navigator.language || navigator.userLanguage;
@@ -2098,32 +1844,35 @@
       localStorage.setItem('velmo-lang', isEnglish ? 'en' : 'fr');
       updatePhoneContent();
     });
-
     // Header scroll
     window.addEventListener('scroll', () => {
       header.classList.toggle('scrolled', window.scrollY > 50);
     });
-
-    // Menu mobile
-    menuToggle.addEventListener('click', () => {
+    // Menu mobile - FIX HAMBURGER
+    menuToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
       nav.classList.toggle('active');
       menuToggle.classList.toggle('active');
+      document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
     });
-
+    // Fermer menu au clic sur les liens
     nav.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => {
         nav.classList.remove('active');
         menuToggle.classList.remove('active');
+        document.body.style.overflow = '';
       });
     });
-
+    // Fermer menu au clic en dehors
     document.addEventListener('click', (e) => {
-      if (!nav.contains(e.target) && !menuToggle.contains(e.target) && nav.classList.contains('active')) {
+      if (nav.classList.contains('active') &&
+          !nav.contains(e.target) &&
+          !menuToggle.contains(e.target)) {
         nav.classList.remove('active');
         menuToggle.classList.remove('active');
+        document.body.style.overflow = '';
       }
     });
-
     // Theme toggle
     themeToggle.addEventListener('click', () => {
       isDark = !isDark;
@@ -2131,14 +1880,12 @@
       themeToggle.textContent = isDark ? '☀️' : '🌙';
       localStorage.setItem('velmo-theme', isDark ? 'dark' : 'light');
     });
-
     const savedTheme = localStorage.getItem('velmo-theme');
     if (savedTheme === 'dark') {
       isDark = true;
       html.setAttribute('data-theme', 'dark');
       themeToggle.textContent = '☀️';
     }
-
     // Language toggle
     langToggle.addEventListener('click', () => {
       isEnglish = !isEnglish;
@@ -2147,7 +1894,6 @@
       localStorage.setItem('velmo-lang', isEnglish ? 'en' : 'fr');
       updatePhoneContent();
     });
-
     // Scroll reveal
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -2156,16 +1902,14 @@
         }
       });
     }, { threshold: 0.1, rootMargin: '0px 0px -100px 0px' });
-
     document.querySelectorAll('section:not(.hero)').forEach(el => observer.observe(el));
-
     // Smooth scroll
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', e => {
         e.preventDefault();
         const target = document.querySelector(anchor.getAttribute('href'));
         if (target) {
-          const headerHeight = 80;
+          const headerHeight = 70;
           const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - headerHeight;
           window.scrollTo({
             top: targetPosition,
@@ -2174,7 +1918,6 @@
         }
       });
     });
-
     // Form submission
     betaForm.addEventListener('submit', e => {
       e.preventDefault();
@@ -2186,7 +1929,6 @@
         formSuccess.classList.remove('show');
       }, 5000);
     });
-
     // Update phone content avec 4 vues dynamiques
     function updatePhoneContent() {
       const views = getPhoneViews();
@@ -2210,6 +1952,14 @@
             </div>
           </div>
           <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-label">${isEnglish ? "Growth" : "Croissance"}</div>
+              <div class="stat-value" style="color: var(--success);">+24%</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">${isEnglish ? "Best day" : "Meilleur jour"}</div>
+              <div class="stat-value">${isEnglish ? "Sun" : "Dim"}</div>
+            </div>
             <div class="stat-item">
               <div class="stat-label">${isEnglish ? "Transactions" : "Transactions"}</div>
               <div class="stat-value">45</div>
@@ -2327,13 +2077,13 @@
               ${isEnglish ? "Sales last 7 days" : "Ventes 7 derniers jours"}
             </div>
             <div class="chart-bars">
-              <div class="chart-bar" style="height: 45%; animation-delay: 0s;"></div>
-              <div class="chart-bar" style="height: 65%; animation-delay: 0.1s;"></div>
-              <div class="chart-bar" style="height: 75%; animation-delay: 0.2s;"></div>
-              <div class="chart-bar" style="height: 55%; animation-delay: 0.3s;"></div>
-              <div class="chart-bar" style="height: 85%; animation-delay: 0.4s;"></div>
-              <div class="chart-bar" style="height: 90%; animation-delay: 0.5s;"></div>
-              <div class="chart-bar" style="height: 100%; animation-delay: 0.6s;"></div>
+              <div class="chart-bar" style="height: 45%;"></div>
+              <div class="chart-bar" style="height: 65%;"></div>
+              <div class="chart-bar" style="height: 75%;"></div>
+              <div class="chart-bar" style="height: 55%;"></div>
+              <div class="chart-bar" style="height: 85%;"></div>
+              <div class="chart-bar" style="height: 90%;"></div>
+              <div class="chart-bar" style="height: 100%;"></div>
             </div>
             <div class="chart-labels">
               <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
@@ -2341,38 +2091,20 @@
           </div>
           <div class="stats-grid">
             <div class="stat-item">
-              <div class="stat-label">${isEnglish ? "Growth" : "Croissance"}</div>
-              <div class="stat-value" style="color: var(--success);">+24%</div>
+              <div class="stat-label">${isEnglish ? "Total" : "Total"}</div>
+              <div class="stat-value">8.5M</div>
             </div>
             <div class="stat-item">
-              <div class="stat-label">${isEnglish ? "Best day" : "Meilleur jour"}</div>
-              <div class="stat-value">${isEnglish ? "Sun" : "Dim"}</div>
+              <div class="stat-label">${isEnglish ? "Growth" : "Croissance"}</div>
+              <div class="stat-value" style="color: var(--success);">+18%</div>
             </div>
-          </div>
-          <div class="content-card-phone">
-            <div style="font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 12px;">
-              📊 ${isEnglish ? "Top Products" : "Top Produits"}
+            <div class="stat-item">
+              <div class="stat-label">${isEnglish ? "Peak Day" : "Jour Pic"}</div>
+              <div class="stat-value">1.8M</div>
             </div>
-            <div class="product-item" style="margin-bottom: 8px;">
-              <div class="product-icon">🍚</div>
-              <div class="product-info">
-                <div class="product-name">${isEnglish ? "Rice 5kg" : "Riz 5kg"}</div>
-                <div class="product-stock">147 ${isEnglish ? "sales" : "ventes"}</div>
-              </div>
-            </div>
-            <div class="product-item" style="margin-bottom: 8px;">
-              <div class="product-icon">💧</div>
-              <div class="product-info">
-                <div class="product-name">${isEnglish ? "Water 1.5L" : "Eau 1.5L"}</div>
-                <div class="product-stock">98 ${isEnglish ? "sales" : "ventes"}</div>
-              </div>
-            </div>
-            <div class="product-item" style="margin-bottom: 0;">
-              <div class="product-icon">🥤</div>
-              <div class="product-info">
-                <div class="product-name">${isEnglish ? "Soda Pack" : "Pack Soda"}</div>
-                <div class="product-stock">76 ${isEnglish ? "sales" : "ventes"}</div>
-              </div>
+            <div class="stat-item">
+              <div class="stat-label">${isEnglish ? "Avg Daily" : "Moy. Jour"}</div>
+              <div class="stat-value">1.2M</div>
             </div>
           </div>
         `,
@@ -2383,8 +2115,8 @@
               ${isEnglish ? "Offline Mode" : "Mode Hors-ligne"}
             </div>
             <div style="font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 24px;">
-              ${isEnglish 
-                ? "Keep working without internet. Everything syncs automatically when you're back online." 
+              ${isEnglish
+                ? "Keep working without internet. Everything syncs automatically when you're back online."
                 : "Continuez à travailler sans internet. Tout se synchronise automatiquement quand vous êtes en ligne."}
             </div>
           </div>
@@ -2407,10 +2139,10 @@
               💡 ${isEnglish ? "Features Available Offline" : "Fonctions Hors-ligne"}
             </div>
             <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.8;">
-              • ${isEnglish ? "Record sales" : "Enregistrer ventes"}
-              • ${isEnglish ? "Check inventory" : "Vérifier stock"}
-              • ${isEnglish ? "View history" : "Voir historique"}
-              • ${isEnglish ? "Manage debts" : "Gérer dettes"}
+              • ${isEnglish ? "Record sales" : "Enregistrer ventes"}<br>
+              • ${isEnglish ? "Check inventory" : "Vérifier stock"}<br>
+              • ${isEnglish ? "View history" : "Voir historique"}<br>
+              • ${isEnglish ? "Manage debts" : "Gérer dettes"}<br>
               • ${isEnglish ? "Add products" : "Ajouter produits"}
             </div>
           </div>
@@ -2432,22 +2164,20 @@
         const view = dot.getAttribute('data-view');
         const phoneContent = document.getElementById('hero-phone-content');
         const views = getPhoneViews();
- 
+       
         // Remove active class
         navDots.forEach(d => {
           d.classList.remove('active');
-          d.querySelector('svg').style.fill = '#64748b';
         });
- 
+       
         // Add active class
         dot.classList.add('active');
-        dot.querySelector('svg').style.fill = 'white';
- 
+       
         // Transition animation
         phoneContent.style.transition = 'all 0.3s ease';
         phoneContent.style.opacity = '0';
         phoneContent.style.transform = 'translateY(10px)';
- 
+       
         setTimeout(() => {
           phoneContent.innerHTML = views[view];
           phoneContent.style.opacity = '1';
@@ -2455,8 +2185,7 @@
         }, 300);
       });
     });
-
-    // Auto-rotation des vues (optionnel)
+    // Auto-rotation des vues
     let currentViewIndex = 0;
     const viewKeys = ['dashboard', 'stock', 'analytics', 'offline'];
     setInterval(() => {
@@ -2466,7 +2195,6 @@
         targetDot.click();
       }
     }, 6000);
-
     // Parallax effect
     window.addEventListener('scroll', () => {
       const hero = document.querySelector('.hero');
@@ -2474,7 +2202,6 @@
         hero.style.transform = `translateY(${window.pageYOffset * 0.2}px)`;
       }
     });
-
     // Keyboard shortcuts
     document.addEventListener('keydown', e => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
@@ -2486,37 +2213,15 @@
         langToggle.click();
       }
     });
-
-    // Logo animation
-    document.querySelector('.logo-wrapper').addEventListener('mouseenter', function() {
-      const svg = this.querySelector('.logo-svg');
-      svg.style.animation = 'none';
-      setTimeout(() => {
-        svg.style.animation = 'pulse 1s ease-in-out';
-      }, 10);
+    // Initialiser le contenu du téléphone au chargement
+    window.addEventListener('DOMContentLoaded', () => {
+      updatePhoneContent();
     });
-
-    // Interactive phone content animation
-    const phoneContent = document.getElementById('hero-phone-content');
-    if (phoneContent) {
-      setInterval(() => {
-        const cards = phoneContent.querySelectorAll('.content-card-phone, .stat-item');
-        cards.forEach((card, index) => {
-          setTimeout(() => {
-            card.style.animation = 'none';
-            setTimeout(() => {
-              card.style.animation = 'fadeInUp 0.5s ease-out';
-            }, 10);
-          }, index * 100);
-        });
-      }, 5000);
-    }
-
     // Console logs
-    console.log('%c⚡ Velmo - Designed like a real startup', 'font-size: 20px; font-weight: bold; color: #667eea;');
-    console.log('%c✨ Modern design with perfect spacing and rhythm', 'font-size: 12px; color: #475569;');
-    console.log('%c🎨 Built with attention to every detail', 'font-size: 12px; color: #475569;');
-    console.log('%c🚀 Ready for production', 'font-size: 12px; color: #10b981;');
+    console.log('%c⚡ Velmo - Mobile Optimized', 'font-size: 20px; font-weight: bold; color: #ff6200;');
+    console.log('%c✨ Responsive design parfait pour mobile', 'font-size: 12px; color: #475569;');
+    console.log('%c📱 Menu hamburger fonctionnel', 'font-size: 12px; color: #10b981;');
+    console.log('%c🚀 Prêt pour Samsung Galaxy A16 et tous mobiles', 'font-size: 12px; color: #10b981;');
   </script>
 </body>
 </html>
