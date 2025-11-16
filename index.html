@@ -283,15 +283,15 @@
       cursor: pointer;
       padding: 8px;
       z-index: 1002;
-      background: var(--bg-alt);
+      background: var(--primary);
       border-radius: 8px;
-      border: 2px solid var(--border);
+      border: 2px solid var(--primary-dark);
     }
 
     .menu-toggle span {
       width: 25px;
       height: 3px;
-      background: var(--primary);
+      background: white;
       border-radius: 3px;
       transition: all 0.3s ease;
       display: block;
@@ -307,6 +307,49 @@
 
     .menu-toggle.active span:nth-child(3) {
       transform: rotate(-45deg) translate(7px, -7px);
+    }
+
+    /* DETECTION MOBILE AGGRESSIVE */
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: flex !important;
+      }
+      
+      .header-actions .icon-btn {
+        display: none !important;
+      }
+      
+      nav {
+        display: none;
+      }
+      
+      nav.active {
+        display: flex !important;
+      }
+    }
+
+    /* DETECTION TABLETTE */
+    @media (max-width: 1024px) and (min-width: 769px) {
+      .menu-toggle {
+        display: flex !important;
+      }
+    }
+
+    /* FORCE MOBILE */
+    .mobile-detected .menu-toggle {
+      display: flex !important;
+    }
+
+    .mobile-detected nav:not(.active) {
+      display: none !important;
+    }
+
+    .mobile-detected nav.active {
+      display: flex !important;
+    }
+
+    .mobile-detected .header-actions .icon-btn {
+      display: none !important;
     }
 
     .hero {
@@ -2003,6 +2046,23 @@
   </a>
 
   <script>
+    // DETECTION MOBILE AGGRESSIVE AU DEBUT
+    function detectMobile() {
+      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+      const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile|samsung|galaxy/i.test(userAgent.toLowerCase());
+      const isSmallScreen = window.innerWidth <= 768;
+      
+      if (isMobile || isSmallScreen) {
+        document.body.classList.add('mobile-detected');
+        console.log('📱 MOBILE DETECTE !');
+      }
+      
+      return isMobile || isSmallScreen;
+    }
+
+    // EXECUTER DETECTION AU DEBUT
+    const isMobileDevice = detectMobile();
+
     const header = document.getElementById('header');
     const menuToggle = document.getElementById('menu-toggle');
     const nav = document.getElementById('nav');
@@ -2015,6 +2075,12 @@
     let isDark = false;
     let isEnglish = false;
 
+    // FORCER AFFICHAGE HAMBURGER SUR MOBILE
+    if (isMobileDevice) {
+      menuToggle.style.display = 'flex';
+      console.log('🍔 Hamburger forcé visible');
+    }
+
     window.addEventListener('load', () => {
       const browserLang = navigator.language || navigator.userLanguage;
       isEnglish = browserLang.startsWith('en');
@@ -2022,6 +2088,21 @@
       langToggle.textContent = isEnglish ? '🇬🇧' : '🇫🇷';
       localStorage.setItem('velmo-lang', isEnglish ? 'en' : 'fr');
       updatePhoneContent();
+      
+      // RE-DETECTER AU CHARGEMENT
+      if (detectMobile()) {
+        menuToggle.style.display = 'flex';
+      }
+    });
+
+    // RE-DETECTER AU RESIZE
+    window.addEventListener('resize', () => {
+      if (detectMobile()) {
+        menuToggle.style.display = 'flex';
+      } else {
+        menuToggle.style.display = 'none';
+        nav.classList.remove('active');
+      }
     });
 
     window.addEventListener('scroll', () => {
@@ -2030,9 +2111,11 @@
 
     menuToggle.addEventListener('click', (e) => {
       e.stopPropagation();
+      e.preventDefault();
       nav.classList.toggle('active');
       menuToggle.classList.toggle('active');
       document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
+      console.log('🍔 Menu toggled:', nav.classList.contains('active'));
     });
 
     nav.querySelectorAll('a').forEach(link => {
