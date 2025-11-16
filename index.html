@@ -9,9 +9,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    /* ========================================
-       VARIABLES - Design moderne avec ORANGE
-       ======================================== */
     :root {
       --primary: #ff6200;
       --primary-dark: #e55a00;
@@ -21,7 +18,7 @@
       --success: #10b981;
       --warning: #f59e0b;
       --danger: #ef4444;
-     
+      
       --bg-main: #ffffff;
       --bg-alt: #fff8f5;
       --bg-subtle: #fff0e6;
@@ -34,12 +31,12 @@
       --shadow-lg: 0 10px 15px -3px rgba(255, 98, 0, 0.1);
       --shadow-xl: 0 20px 25px -5px rgba(255, 98, 0, 0.1);
       --shadow-2xl: 0 25px 50px -12px rgba(255, 98, 0, 0.25);
-     
+      
       --radius-sm: 8px;
       --radius-md: 12px;
       --radius-lg: 16px;
       --radius-xl: 24px;
-     
+      
       --spacing-xs: 8px;
       --spacing-sm: 16px;
       --spacing-md: 24px;
@@ -48,6 +45,7 @@
       --spacing-2xl: 64px;
       --spacing-3xl: 96px;
     }
+
     [data-theme="dark"] {
       --bg-main: #0f172a;
       --bg-alt: #1e293b;
@@ -60,18 +58,18 @@
       --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
       --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
     }
-    /* ========================================
-       BASE - Reset moderne
-       ======================================== */
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+
     html {
       scroll-behavior: smooth;
       font-size: 16px;
     }
+
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: var(--bg-main);
@@ -82,41 +80,46 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
+
     .container {
       max-width: 1280px;
       margin: 0 auto;
       padding: 0 clamp(20px, 5vw, 40px);
     }
+
     section {
       padding: var(--spacing-3xl) 0;
       opacity: 0;
       transform: translateY(30px);
       transition: opacity 0.6s ease, transform 0.6s ease;
     }
+
     section.visible {
       opacity: 1;
       transform: translateY(0);
     }
+
     h1, h2, h3, h4, h5, h6 {
       font-weight: 800;
       line-height: 1.2;
       letter-spacing: -0.02em;
       color: var(--text-primary);
     }
+
     h1 { font-size: clamp(2.5rem, 6vw, 4rem); }
     h2 { font-size: clamp(2rem, 5vw, 3rem); }
     h3 { font-size: clamp(1.5rem, 4vw, 2rem); }
+
     p {
       line-height: 1.75;
       color: var(--text-secondary);
     }
+
     a {
       text-decoration: none;
       color: inherit;
     }
-    /* ========================================
-       HEADER - Sticky avec CTA
-       ======================================== */
+
     header {
       position: fixed;
       top: 0;
@@ -125,15 +128,18 @@
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(20px) saturate(180%);
       border-bottom: 1px solid var(--border);
-      z-index: 1000;
+      z-index: 999;
       transition: all 0.3s ease;
     }
+
     [data-theme="dark"] header {
       background: rgba(15, 23, 42, 0.95);
     }
+
     header.scrolled {
       box-shadow: var(--shadow-md);
     }
+
     .header-container {
       display: flex;
       align-items: center;
@@ -141,40 +147,51 @@
       padding: 16px 40px;
       max-width: 1440px;
       margin: 0 auto;
+      position: relative;
+      z-index: 1002;
     }
+
     .logo-wrapper {
       display: flex;
       align-items: center;
       gap: 12px;
       cursor: pointer;
       transition: transform 0.3s ease;
-      z-index: 1002;
+      z-index: 1003;
+      position: relative;
     }
+
     .logo-wrapper:hover {
       transform: translateY(-2px);
     }
+
     .logo-svg {
       width: 40px;
       height: 40px;
       transition: all 0.3s ease;
     }
+
     .logo-svg circle {
       fill: var(--primary);
       transition: fill 0.3s ease;
     }
+
     .logo-svg text {
       fill: white;
       font-weight: 900;
       font-size: 32px;
     }
+
     .logo-svg:hover circle {
       fill: var(--primary-dark);
       animation: pulse 1s ease-in-out infinite;
     }
+
     @keyframes pulse {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.05); }
     }
+
     .logo-text {
       font-size: 24px;
       font-weight: 900;
@@ -183,11 +200,13 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
+
     nav {
       display: flex;
       align-items: center;
       gap: 32px;
     }
+
     nav a {
       font-size: 15px;
       font-weight: 500;
@@ -195,9 +214,11 @@
       transition: all 0.2s ease;
       position: relative;
     }
+
     nav a:hover {
       color: var(--primary);
     }
+
     nav a::after {
       content: '';
       position: absolute;
@@ -208,9 +229,11 @@
       background: var(--primary);
       transition: width 0.3s ease;
     }
+
     nav a:hover::after {
       width: 100%;
     }
+
     .nav-cta {
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       color: white !important;
@@ -220,18 +243,24 @@
       box-shadow: var(--shadow-md);
       transition: all 0.3s ease;
     }
+
     .nav-cta:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-lg);
     }
+
     .nav-cta::after {
       display: none;
     }
+
     .header-actions {
       display: flex;
       gap: 12px;
       align-items: center;
+      position: relative;
+      z-index: 1003;
     }
+
     .icon-btn {
       width: 40px;
       height: 40px;
@@ -244,43 +273,93 @@
       cursor: pointer;
       transition: all 0.3s ease;
       font-size: 18px;
+      position: relative;
+      z-index: 1003;
     }
+
     .icon-btn:hover {
       transform: scale(1.1);
       border-color: var(--primary);
       background: var(--primary);
     }
+
     .menu-toggle {
       display: none;
       flex-direction: column;
       gap: 5px;
       cursor: pointer;
       padding: 8px;
-      z-index: 1002;
-      background: var(--bg-alt);
+      z-index: 1003;
+      background: var(--primary);
       border-radius: 8px;
-      border: 2px solid var(--border);
+      border: 2px solid var(--primary-dark);
+      position: relative;
     }
+
     .menu-toggle span {
       width: 25px;
       height: 3px;
-      background: var(--primary);
+      background: white;
       border-radius: 3px;
       transition: all 0.3s ease;
       display: block;
     }
+
     .menu-toggle.active span:nth-child(1) {
       transform: rotate(45deg) translate(7px, 7px);
     }
+
     .menu-toggle.active span:nth-child(2) {
       opacity: 0;
     }
+
     .menu-toggle.active span:nth-child(3) {
       transform: rotate(-45deg) translate(7px, -7px);
     }
-    /* ========================================
-       HERO - Layout moderne avec image
-       ======================================== */
+
+    /* DETECTION MOBILE AGGRESSIVE */
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: flex !important;
+      }
+      
+      .header-actions .icon-btn {
+        display: none !important;
+      }
+      
+      nav {
+        display: none;
+      }
+      
+      nav.active {
+        display: flex !important;
+      }
+    }
+
+    /* DETECTION TABLETTE */
+    @media (max-width: 1024px) and (min-width: 769px) {
+      .menu-toggle {
+        display: flex !important;
+      }
+    }
+
+    /* FORCE MOBILE */
+    .mobile-detected .menu-toggle {
+      display: flex !important;
+    }
+
+    .mobile-detected nav:not(.active) {
+      display: none !important;
+    }
+
+    .mobile-detected nav.active {
+      display: flex !important;
+    }
+
+    .mobile-detected .header-actions .icon-btn {
+      display: none !important;
+    }
+
     .hero {
       min-height: 100vh;
       display: flex;
@@ -292,6 +371,7 @@
       opacity: 1 !important;
       transform: translateY(0) !important;
     }
+
     .hero::before {
       content: '';
       position: absolute;
@@ -303,11 +383,13 @@
       border-radius: 50%;
       animation: float 20s ease-in-out infinite;
     }
+
     @keyframes float {
       0%, 100% { transform: translate(0, 0) rotate(0deg); }
       33% { transform: translate(30px, -50px) rotate(120deg); }
       66% { transform: translate(-20px, 20px) rotate(240deg); }
     }
+
     .hero-container {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -316,9 +398,11 @@
       position: relative;
       z-index: 1;
     }
+
     .hero-content {
       animation: fadeInUp 0.8s ease-out;
     }
+
     @keyframes fadeInUp {
       from {
         opacity: 0;
@@ -329,6 +413,7 @@
         transform: translateY(0);
       }
     }
+
     .hero-badge {
       display: inline-flex;
       align-items: center;
@@ -343,10 +428,12 @@
       margin-bottom: 24px;
       animation: fadeInUp 0.8s ease-out 0.2s both;
     }
+
     .hero h1 {
       margin-bottom: 24px;
       animation: fadeInUp 0.8s ease-out 0.3s both;
     }
+
     .hero-desc {
       font-size: 20px;
       line-height: 1.8;
@@ -355,12 +442,14 @@
       max-width: 540px;
       animation: fadeInUp 0.8s ease-out 0.4s both;
     }
+
     .hero-cta {
       display: flex;
       gap: 16px;
       flex-wrap: wrap;
       animation: fadeInUp 0.8s ease-out 0.5s both;
     }
+
     .btn {
       display: inline-flex;
       align-items: center;
@@ -376,28 +465,34 @@
       position: relative;
       overflow: hidden;
     }
+
     .btn-primary {
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       color: white;
       box-shadow: var(--shadow-lg);
     }
+
     .btn-primary:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-xl);
     }
+
     .btn-secondary {
       background: var(--bg-alt);
       color: var(--text-primary);
       border: 1px solid var(--border);
     }
+
     .btn-secondary:hover {
       background: var(--bg-subtle);
       transform: translateY(-2px);
     }
+
     .hero-image {
       position: relative;
       animation: fadeInRight 0.8s ease-out 0.6s both;
     }
+
     @keyframes fadeInRight {
       from {
         opacity: 0;
@@ -408,6 +503,7 @@
         transform: translateX(0);
       }
     }
+
     .hero-phone {
       width: 100%;
       max-width: 400px;
@@ -415,10 +511,12 @@
       position: relative;
       animation: floatPhone 6s ease-in-out infinite;
     }
+
     @keyframes floatPhone {
       0%, 100% { transform: translateY(0) rotate(-5deg); }
       50% { transform: translateY(-20px) rotate(5deg); }
     }
+
     .phone-mockup {
       position: relative;
       width: 100%;
@@ -429,6 +527,7 @@
       box-shadow: var(--shadow-2xl);
       border: 3px solid rgba(255, 98, 0, 0.3);
     }
+
     .phone-screen {
       width: 100%;
       height: 100%;
@@ -437,6 +536,7 @@
       overflow: hidden;
       position: relative;
     }
+
     .phone-notch {
       position: absolute;
       top: 0;
@@ -449,6 +549,7 @@
       border-bottom-right-radius: 20px;
       z-index: 10;
     }
+
     .status-bar {
       display: flex;
       justify-content: space-between;
@@ -457,6 +558,7 @@
       font-weight: 600;
       color: #0f172a;
     }
+
     .phone-content {
       padding: 20px;
       height: calc(100% - 50px);
@@ -464,13 +566,16 @@
       scrollbar-width: thin;
       scrollbar-color: var(--primary) #f1f5f9;
     }
+
     .phone-content::-webkit-scrollbar {
       width: 4px;
     }
+
     .phone-content::-webkit-scrollbar-thumb {
       background: var(--primary);
       border-radius: 4px;
     }
+
     .content-card-phone {
       background: linear-gradient(135deg, rgba(255, 98, 0, 0.05), rgba(255, 69, 0, 0.05));
       padding: 20px;
@@ -479,6 +584,7 @@
       border: 1px solid rgba(255, 98, 0, 0.1);
       animation: slideInUp 0.5s ease-out;
     }
+
     @keyframes slideInUp {
       from {
         opacity: 0;
@@ -489,6 +595,7 @@
         transform: translateY(0);
       }
     }
+
     .card-title {
       font-size: 14px;
       font-weight: 700;
@@ -498,6 +605,7 @@
       align-items: center;
       gap: 8px;
     }
+
     .card-value {
       font-size: 28px;
       font-weight: 900;
@@ -508,6 +616,7 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
+
     .card-subtitle {
       font-size: 12px;
       color: var(--success);
@@ -516,12 +625,14 @@
       align-items: center;
       gap: 4px;
     }
+
     .stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
       margin-top: 16px;
     }
+
     .stat-item {
       background: white;
       padding: 16px;
@@ -531,10 +642,12 @@
       border: 1px solid rgba(255, 98, 0, 0.1);
       transition: all 0.3s ease;
     }
+
     .stat-item:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-md);
     }
+
     .stat-label {
       font-size: 11px;
       color: var(--text-tertiary);
@@ -543,11 +656,13 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
+
     .stat-value {
       font-size: 20px;
       font-weight: 800;
       color: var(--primary);
     }
+
     .phone-nav {
       position: absolute;
       bottom: 12px;
@@ -562,6 +677,7 @@
       z-index: 5;
       box-shadow: var(--shadow-lg);
     }
+
     .nav-dot {
       width: 36px;
       height: 36px;
@@ -573,22 +689,26 @@
       cursor: pointer;
       position: relative;
     }
+
     .nav-dot.active {
       background: var(--primary);
     }
+
     .nav-dot svg {
       width: 18px;
       height: 18px;
       fill: #64748b;
       transition: fill 0.3s ease;
     }
+
     .nav-dot.active svg {
       fill: white;
     }
+
     .nav-dot:hover:not(.active) {
       background: rgba(255, 98, 0, 0.1);
     }
-    /* Product list */
+
     .product-item {
       display: flex;
       align-items: center;
@@ -600,6 +720,7 @@
       border: 1px solid rgba(255, 98, 0, 0.1);
       box-shadow: var(--shadow-sm);
     }
+
     .product-icon {
       width: 40px;
       height: 40px;
@@ -611,19 +732,23 @@
       font-size: 20px;
       flex-shrink: 0;
     }
+
     .product-info {
       flex: 1;
     }
+
     .product-name {
       font-size: 13px;
       font-weight: 700;
       color: #0f172a;
       margin-bottom: 2px;
     }
+
     .product-stock {
       font-size: 11px;
       color: var(--text-tertiary);
     }
+
     .stock-badge {
       padding: 4px 8px;
       border-radius: 6px;
@@ -631,19 +756,22 @@
       font-weight: 700;
       text-transform: uppercase;
     }
+
     .stock-ok {
       background: rgba(16, 185, 129, 0.1);
       color: var(--success);
     }
+
     .stock-low {
       background: rgba(245, 158, 11, 0.1);
       color: var(--warning);
     }
+
     .stock-out {
       background: rgba(239, 68, 68, 0.1);
       color: var(--danger);
     }
-    /* Chart container */
+
     .chart-container {
       background: white;
       padding: 16px;
@@ -651,6 +779,7 @@
       margin-bottom: 16px;
       border: 1px solid rgba(255, 98, 0, 0.1);
     }
+
     .chart-bars {
       display: flex;
       align-items: flex-end;
@@ -658,6 +787,7 @@
       height: 120px;
       margin-top: 12px;
     }
+
     .chart-bar {
       flex: 1;
       background: linear-gradient(to top, var(--primary), var(--primary-light));
@@ -666,6 +796,7 @@
       transition: all 0.3s ease;
       animation: barGrow 0.8s ease-out backwards;
     }
+
     @keyframes barGrow {
       from {
         height: 0;
@@ -676,10 +807,12 @@
         opacity: 1;
       }
     }
+
     .chart-bar:hover {
       opacity: 0.8;
       transform: translateY(-4px);
     }
+
     .chart-labels {
       display: flex;
       justify-content: space-between;
@@ -688,7 +821,7 @@
       color: var(--text-tertiary);
       font-weight: 600;
     }
-    /* Alert badge */
+
     .alert-badge {
       background: rgba(239, 68, 68, 0.1);
       border-left: 4px solid var(--danger);
@@ -696,12 +829,13 @@
       border-radius: 8px;
       margin-bottom: 16px;
     }
+
     .alert-text {
       font-size: 12px;
       color: var(--danger);
       font-weight: 600;
     }
-    /* Success badge */
+
     .success-badge {
       background: rgba(16, 185, 129, 0.1);
       border-left: 4px solid var(--success);
@@ -712,22 +846,23 @@
       align-items: center;
       gap: 8px;
     }
+
     .success-text {
       font-size: 12px;
       color: var(--success);
       font-weight: 600;
     }
-    /* ========================================
-       SECTIONS ALTERNÉES
-       ======================================== */
+
     .section-alt {
       background: var(--bg-alt);
     }
+
     .section-header {
       text-align: center;
       max-width: 800px;
       margin: 0 auto var(--spacing-2xl);
     }
+
     .section-badge {
       display: inline-flex;
       align-items: center;
@@ -741,23 +876,24 @@
       color: var(--primary);
       margin-bottom: 16px;
     }
+
     .section-title {
       margin-bottom: 20px;
     }
+
     .section-desc {
       font-size: 18px;
       color: var(--text-secondary);
       line-height: 1.8;
     }
-    /* ========================================
-       PROMESSE - Cartes avec placeholders
-       ======================================== */
+
     .promise-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 32px;
       margin-top: var(--spacing-2xl);
     }
+
     .promise-card {
       background: var(--bg-main);
       padding: 40px;
@@ -768,6 +904,7 @@
       position: relative;
       overflow: hidden;
     }
+
     .promise-card::before {
       content: '';
       position: absolute;
@@ -779,14 +916,17 @@
       transform: scaleX(0);
       transition: transform 0.3s ease;
     }
+
     .promise-card:hover {
       transform: translateY(-8px);
       box-shadow: var(--shadow-xl);
       border-color: var(--primary);
     }
+
     .promise-card:hover::before {
       transform: scaleX(1);
     }
+
     .promise-icon {
       width: 64px;
       height: 64px;
@@ -798,20 +938,24 @@
       font-size: 32px;
       margin-bottom: 24px;
     }
+
     .promise-card h3 {
       font-size: 24px;
       margin-bottom: 12px;
     }
+
     .promise-card p {
       font-size: 16px;
       line-height: 1.75;
       color: var(--text-secondary);
     }
+
     .promise-placeholder {
       margin-top: 20px;
       padding-top: 20px;
       border-top: 1px solid var(--border);
     }
+
     .placeholder-line {
       height: 10px;
       background: linear-gradient(90deg, var(--bg-subtle) 0%, var(--bg-alt) 50%, var(--bg-subtle) 100%);
@@ -820,22 +964,23 @@
       border-radius: 4px;
       margin-bottom: 8px;
     }
+
     @keyframes shimmer {
       0% { background-position: -200% 0; }
       100% { background-position: 200% 0; }
     }
+
     .placeholder-line:last-child {
       width: 60%;
     }
-    /* ========================================
-       FEATURES - Grille moderne
-       ======================================== */
+
     .features-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 24px;
       margin-top: var(--spacing-2xl);
     }
+
     .feature-card {
       background: var(--bg-main);
       padding: 32px;
@@ -844,38 +989,42 @@
       transition: all 0.3s ease;
       text-align: center;
     }
+
     .feature-card:hover {
       transform: translateY(-4px);
       box-shadow: var(--shadow-lg);
     }
+
     .feature-icon {
       font-size: 48px;
       margin-bottom: 20px;
       display: block;
       animation: bounce 2s ease-in-out infinite;
     }
+
     @keyframes bounce {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-10px); }
     }
+
     .feature-card h4 {
       font-size: 20px;
       margin-bottom: 12px;
       color: var(--primary);
     }
+
     .feature-card p {
       font-size: 15px;
       line-height: 1.7;
     }
-    /* ========================================
-       TESTIMONIALS
-       ======================================== */
+
     .testimonials-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 32px;
       margin-top: var(--spacing-2xl);
     }
+
     .testimonial-card {
       background: var(--bg-main);
       padding: 32px;
@@ -884,6 +1033,7 @@
       position: relative;
       transition: all 0.3s ease;
     }
+
     .testimonial-card::before {
       content: '"';
       position: absolute;
@@ -895,10 +1045,12 @@
       opacity: 0.1;
       line-height: 1;
     }
+
     .testimonial-card:hover {
       transform: translateY(-4px);
       box-shadow: var(--shadow-lg);
     }
+
     .testimonial-header {
       display: flex;
       align-items: center;
@@ -907,6 +1059,7 @@
       position: relative;
       z-index: 1;
     }
+
     .testimonial-avatar {
       width: 56px;
       height: 56px;
@@ -917,14 +1070,17 @@
       justify-content: center;
       font-size: 24px;
     }
+
     .testimonial-info h4 {
       font-size: 18px;
       margin-bottom: 4px;
     }
+
     .testimonial-info p {
       font-size: 14px;
       color: var(--text-tertiary);
     }
+
     .testimonial-text {
       font-size: 15px;
       line-height: 1.75;
@@ -934,16 +1090,16 @@
       z-index: 1;
       margin-bottom: 16px;
     }
+
     .testimonial-rating {
       color: #f59e0b;
       font-size: 18px;
     }
-    /* ========================================
-       FORM - Moderne et épuré
-       ======================================== */
+
     .beta-section {
       background: var(--bg-main);
     }
+
     .beta-container {
       max-width: 720px;
       margin: 0 auto;
@@ -953,9 +1109,11 @@
       border: 1px solid var(--border);
       box-shadow: var(--shadow-lg);
     }
+
     .form-group {
       margin-bottom: 24px;
     }
+
     .form-group label {
       display: block;
       font-size: 14px;
@@ -963,6 +1121,7 @@
       color: var(--text-primary);
       margin-bottom: 8px;
     }
+
     .form-group input,
     .form-group textarea,
     .form-group select {
@@ -976,6 +1135,7 @@
       color: var(--text-primary);
       transition: all 0.3s ease;
     }
+
     .form-group input:focus,
     .form-group textarea:focus,
     .form-group select:focus {
@@ -983,18 +1143,22 @@
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(255, 98, 0, 0.1);
     }
+
     .form-group textarea {
       resize: vertical;
       min-height: 120px;
     }
+
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 16px;
     }
+
     .form-submit {
       margin-top: 32px;
     }
+
     .form-success {
       display: none;
       padding: 20px;
@@ -1005,18 +1169,18 @@
       font-weight: 600;
       text-align: center;
     }
+
     .form-success.show {
       display: block;
     }
-    /* ========================================
-       FOOTER
-       ======================================== */
+
     footer {
       background: var(--bg-alt);
       padding: var(--spacing-2xl) 0;
       border-top: 1px solid var(--border);
       text-align: center;
     }
+
     .footer-logo {
       display: flex;
       align-items: center;
@@ -1024,12 +1188,14 @@
       gap: 12px;
       margin-bottom: 24px;
     }
+
     .social-icons {
       display: flex;
       justify-content: center;
       gap: 16px;
       margin-top: 24px;
     }
+
     .social-icon {
       width: 44px;
       height: 44px;
@@ -1041,23 +1207,24 @@
       justify-content: center;
       transition: all 0.3s ease;
     }
+
     .social-icon:hover {
       background: var(--primary);
       border-color: var(--primary);
       transform: translateY(-4px);
     }
+
     .social-icon svg {
       width: 20px;
       height: 20px;
       fill: var(--text-secondary);
       transition: fill 0.3s ease;
     }
+
     .social-icon:hover svg {
       fill: white;
     }
-    /* ========================================
-       WHATSAPP FLOAT
-       ======================================== */
+
     .whatsapp-float {
       position: fixed;
       bottom: 24px;
@@ -1074,83 +1241,89 @@
       z-index: 999;
       transition: all 0.3s ease;
       animation: floatWA 3s ease-in-out infinite;
-      overflow: hidden;
     }
+
     @keyframes floatWA {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-10px); }
     }
+
     .whatsapp-float:hover {
       transform: scale(1.1);
       box-shadow: 0 20px 40px rgba(37, 211, 102, 0.4);
     }
+
     .whatsapp-float svg {
       width: 32px;
       height: 32px;
       fill: white;
     }
-    /* ========================================
-       RESPONSIVE - MOBILE ULTRA OPTIMISÉ
-       ======================================== */
-   
-    /* TABLETTE */
+
+    /* RESPONSIVE MOBILE */
     @media (max-width: 1024px) {
       .hero-container {
         grid-template-columns: 1fr;
         gap: 48px;
         text-align: center;
       }
+
       .hero-desc {
         margin: 0 auto 32px;
       }
+
       .hero-cta {
         justify-content: center;
       }
+
       .hero-image {
         order: -1;
       }
+
       .promise-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 24px;
       }
+
       .features-grid {
         grid-template-columns: repeat(3, 1fr);
         gap: 20px;
       }
+
       .testimonials-grid {
         grid-template-columns: repeat(2, 1fr);
       }
     }
-    /* MOBILE - CORRECTIONS CRITIQUES */
+
     @media (max-width: 768px) {
-      /* Reset font size */
       html {
         font-size: 16px;
       }
-      /* Container mobile */
+
       .container {
         padding: 0 20px;
       }
-      /* Sections spacing */
+
       section {
         padding: 60px 0;
       }
-      /* HEADER MOBILE - FIX HAMBURGER */
+
       .header-container {
         padding: 14px 20px;
       }
+
       .logo-svg {
         width: 36px;
         height: 36px;
       }
+
       .logo-text {
         font-size: 20px;
       }
-      /* AFFICHER LE HAMBURGER */
+
       .menu-toggle {
         display: flex !important;
       }
-      /* CACHER LA NAV PAR DÉFAUT */
+
       nav {
         position: fixed;
         top: 0;
@@ -1169,10 +1342,12 @@
         z-index: 1001;
         overflow-y: auto;
       }
+
       nav.active {
         transform: translateX(0);
         opacity: 1;
       }
+
       nav a {
         width: 100%;
         padding: 18px 24px;
@@ -1184,156 +1359,242 @@
         border: 2px solid var(--border);
         margin: 0;
       }
+
       nav a:hover {
         background: var(--primary);
         color: white;
         border-color: var(--primary);
       }
+
       nav a::after {
         display: none;
       }
+
       .nav-cta {
         background: var(--primary) !important;
         color: white !important;
         border: none !important;
         margin-top: 8px;
       }
-      /* CACHER LES BOUTONS THEME/LANG SUR MOBILE */
+
       .header-actions .icon-btn {
         display: none;
       }
-      /* HERO MOBILE */
+
       .hero {
         min-height: auto;
         padding: 100px 20px 60px;
       }
+
       .hero-container {
         gap: 40px;
       }
+
       h1 {
         font-size: 2.2rem !important;
         line-height: 1.1;
       }
+
       .hero-desc {
         font-size: 17px;
         margin-bottom: 28px;
       }
+
       .hero-cta {
         flex-direction: column;
         gap: 12px;
       }
+
       .btn {
         width: 100%;
         padding: 16px 24px;
         font-size: 16px;
       }
+
       .hero-phone {
         max-width: 280px;
       }
-      /* SECTION HEADERS */
+
       .section-header {
         margin-bottom: 40px;
       }
+
       .section-title {
         font-size: 1.8rem !important;
       }
+
       .section-desc {
         font-size: 16px;
       }
-      /* GRILLES MOBILE - 1 COLONNE PARTOUT */
+
       .promise-grid {
         grid-template-columns: 1fr !important;
         gap: 20px;
       }
+
       .features-grid {
         grid-template-columns: 1fr !important;
         gap: 16px;
       }
+
       .testimonials-grid {
         grid-template-columns: 1fr !important;
         gap: 20px;
       }
-      /* CARDS MOBILE */
+
       .promise-card {
         padding: 28px;
       }
+
       .feature-card {
         padding: 28px;
       }
+
       .testimonial-card {
         padding: 24px;
       }
-      /* FORM MOBILE */
+
       .beta-container {
         padding: 28px 20px;
       }
+
       .form-row {
         grid-template-columns: 1fr !important;
         gap: 0;
       }
+
       .form-group input,
       .form-group textarea,
       .form-group select {
         padding: 14px 16px;
         font-size: 16px;
       }
-      /* WHATSAPP BUTTON */
+
       .whatsapp-float {
         width: 56px;
         height: 56px;
         bottom: 20px;
         right: 20px;
       }
+
       .whatsapp-float svg {
         width: 28px;
         height: 28px;
       }
     }
-    /* TRÈS PETIT MOBILE */
+
     @media (max-width: 480px) {
       html {
         font-size: 15px;
       }
+
       h1 {
         font-size: 1.9rem !important;
       }
+
       .section-title {
         font-size: 1.6rem !important;
       }
+
       .hero {
-        padding: 90px 16px 50px;
+        padding: 80px 16px 50px;
       }
+
+      /* TELEPHONE ENCORE PLUS PETIT */
       .hero-phone {
-        max-width: 260px;
+        max-width: 240px;
       }
+
+      .phone-mockup {
+        padding: 8px;
+        border-radius: 30px;
+      }
+
+      .phone-screen {
+        border-radius: 24px;
+      }
+
+      .phone-content {
+        padding: 14px;
+      }
+
+      .content-card-phone {
+        padding: 16px;
+        margin-bottom: 12px;
+      }
+
+      .card-title {
+        font-size: 13px;
+      }
+
+      .card-value {
+        font-size: 24px;
+      }
+
+      .stats-grid {
+        gap: 10px;
+      }
+
+      .stat-item {
+        padding: 12px;
+      }
+
+      .stat-label {
+        font-size: 10px;
+      }
+
+      .stat-value {
+        font-size: 18px;
+      }
+
+      .product-item {
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+
+      .product-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+      }
+
+      .product-name {
+        font-size: 12px;
+      }
+
+      .product-stock {
+        font-size: 10px;
+      }
+
       .container {
         padding: 0 16px;
       }
+
       .promise-card,
       .feature-card,
       .testimonial-card {
         padding: 24px 20px;
       }
+
       .beta-container {
         padding: 24px 16px;
       }
+
       nav {
         padding: 70px 20px 28px;
       }
+
       nav a {
         padding: 16px 20px;
         font-size: 17px;
       }
     }
-    /* ========================================
-       TRADUCTIONS
-       ======================================== */
+
     [lang="en"] .lang-fr { display: none; }
     [lang="fr"] .lang-en { display: none; }
   </style>
 </head>
 <body>
-  <!-- HEADER -->
   <header id="header">
     <div class="header-container">
       <div class="logo-wrapper">
@@ -1343,6 +1604,7 @@
         </svg>
         <div class="logo-text">Velmo</div>
       </div>
+
       <nav id="nav">
         <a href="#promesse"><span class="lang-fr">Promesse</span><span class="lang-en">Promise</span></a>
         <a href="#features"><span class="lang-fr">Fonctions</span><span class="lang-en">Features</span></a>
@@ -1352,6 +1614,7 @@
           <span class="lang-en">🚀 Join Beta</span>
         </a>
       </nav>
+
       <div class="header-actions">
         <button class="icon-btn" id="theme-toggle" title="Toggle theme">🌙</button>
         <button class="icon-btn" id="lang-toggle" title="Change language">🇫🇷</button>
@@ -1363,7 +1626,7 @@
       </div>
     </div>
   </header>
-  <!-- HERO -->
+
   <section class="hero">
     <div class="container">
       <div class="hero-container">
@@ -1373,14 +1636,17 @@
             <span class="lang-fr">Phase Beta Ouverte</span>
             <span class="lang-en">Beta Phase Open</span>
           </div>
+
           <h1 class="lang-fr">Gagnez plus.<br>Vivez mieux.</h1>
           <h1 class="lang-en">Earn more.<br>Live better.</h1>
+
           <p class="hero-desc lang-fr">
             La seule application dont tu as besoin pour gérer ton commerce. Simple, rapide et accessible partout — même hors ligne.
           </p>
           <p class="hero-desc lang-en">
             The only app you need to manage your business. Simple, fast and accessible everywhere — even offline.
           </p>
+
           <div class="hero-cta">
             <a href="#beta" class="btn btn-primary">
               <span class="lang-fr">Rejoindre la Beta</span>
@@ -1393,6 +1659,7 @@
             </a>
           </div>
         </div>
+
         <div class="hero-image">
           <div class="hero-phone">
             <div class="phone-mockup">
@@ -1402,9 +1669,7 @@
                   <span>9:41</span>
                   <span>🔋 100%</span>
                 </div>
-                <div class="phone-content" id="hero-phone-content">
-                  <!-- Contenu dynamique -->
-                </div>
+                <div class="phone-content" id="hero-phone-content"></div>
                 <div class="phone-nav">
                   <div class="nav-dot active" data-view="dashboard">
                     <svg viewBox="0 0 24 24">
@@ -1434,7 +1699,7 @@
       </div>
     </div>
   </section>
-  <!-- PROMESSE -->
+
   <section class="section-alt" id="promesse">
     <div class="container">
       <div class="section-header">
@@ -1452,6 +1717,7 @@
           A simple app that transforms how you manage your business
         </p>
       </div>
+
       <div class="promise-grid">
         <div class="promise-card">
           <div class="promise-icon">📈</div>
@@ -1469,6 +1735,7 @@
             <div class="placeholder-line"></div>
           </div>
         </div>
+
         <div class="promise-card">
           <div class="promise-icon">📦</div>
           <h3 class="lang-fr">Suivre vos stocks</h3>
@@ -1485,6 +1752,7 @@
             <div class="placeholder-line"></div>
           </div>
         </div>
+
         <div class="promise-card">
           <div class="promise-icon">💼</div>
           <h3 class="lang-fr">Gérer sans stress</h3>
@@ -1501,6 +1769,7 @@
             <div class="placeholder-line"></div>
           </div>
         </div>
+
         <div class="promise-card">
           <div class="promise-icon">📴</div>
           <h3 class="lang-fr">Même sans internet</h3>
@@ -1520,7 +1789,7 @@
       </div>
     </div>
   </section>
-  <!-- WHY VELMO -->
+
   <section>
     <div class="container">
       <div class="section-header">
@@ -1538,6 +1807,7 @@
           In many regions, technology remains complicated and inaccessible. Velmo changes that.
         </p>
       </div>
+
       <div style="max-width: 800px; margin: 0 auto; text-align: center;">
         <p style="font-size: 20px; line-height: 1.8; color: var(--text-secondary); margin-bottom: 24px;" class="lang-fr">
           C'est <strong style="color: var(--primary);">l'outil universel des petits commerçants du monde entier</strong>.
@@ -1550,7 +1820,7 @@
       </div>
     </div>
   </section>
-  <!-- FEATURES -->
+
   <section class="section-alt" id="features">
     <div class="container">
       <div class="section-header">
@@ -1562,6 +1832,7 @@
         <h2 class="section-title lang-fr">Tout ce qui rend Velmo unique</h2>
         <h2 class="section-title lang-en">What makes Velmo unique</h2>
       </div>
+
       <div class="features-grid">
         <div class="feature-card">
           <span class="feature-icon">🌍</span>
@@ -1570,6 +1841,7 @@
           <p class="lang-fr">Fonctionne sur tous les smartphones, même anciens</p>
           <p class="lang-en">Works on all smartphones, even old ones</p>
         </div>
+
         <div class="feature-card">
           <span class="feature-icon">⚡</span>
           <h4 class="lang-fr">Ultra légère</h4>
@@ -1577,6 +1849,7 @@
           <p class="lang-fr">Application rapide qui économise votre batterie</p>
           <p class="lang-en">Fast app that saves your battery</p>
         </div>
+
         <div class="feature-card">
           <span class="feature-icon">🚀</span>
           <h4 class="lang-fr">Simple & Rapide</h4>
@@ -1584,6 +1857,7 @@
           <p class="lang-fr">Interface intuitive sans complications</p>
           <p class="lang-en">Intuitive interface without complications</p>
         </div>
+
         <div class="feature-card">
           <span class="feature-icon">📚</span>
           <h4 class="lang-fr">Apprendre</h4>
@@ -1591,6 +1865,7 @@
           <p class="lang-fr">Outils pour développer vos compétences</p>
           <p class="lang-en">Tools to develop your skills</p>
         </div>
+
         <div class="feature-card">
           <span class="feature-icon">💬</span>
           <h4 class="lang-fr">Communiquer</h4>
@@ -1598,6 +1873,7 @@
           <p class="lang-fr">Restez connecté avec vos clients</p>
           <p class="lang-en">Stay connected with your customers</p>
         </div>
+
         <div class="feature-card">
           <span class="feature-icon">🔐</span>
           <h4 class="lang-fr">Sécurisé</h4>
@@ -1608,7 +1884,7 @@
       </div>
     </div>
   </section>
-  <!-- TESTIMONIALS -->
+
   <section id="testimonials">
     <div class="container">
       <div class="section-header">
@@ -1620,6 +1896,7 @@
         <h2 class="section-title lang-fr">Ils utilisent déjà Velmo</h2>
         <h2 class="section-title lang-en">They're already using Velmo</h2>
       </div>
+
       <div class="testimonials-grid">
         <div class="testimonial-card">
           <div class="testimonial-header">
@@ -1638,6 +1915,7 @@
           </p>
           <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
         </div>
+
         <div class="testimonial-card">
           <div class="testimonial-header">
             <div class="testimonial-avatar">👩</div>
@@ -1655,6 +1933,7 @@
           </p>
           <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
         </div>
+
         <div class="testimonial-card">
           <div class="testimonial-header">
             <div class="testimonial-avatar">👨</div>
@@ -1675,7 +1954,7 @@
       </div>
     </div>
   </section>
-  <!-- BETA FORM -->
+
   <section class="section-alt beta-section" id="beta">
     <div class="container">
       <div class="section-header">
@@ -1693,6 +1972,7 @@
           Be among the first to test Velmo and help us create the perfect tool for your business.
         </p>
       </div>
+
       <div class="beta-container">
         <form id="beta-form">
           <div class="form-row">
@@ -1701,18 +1981,20 @@
               <label for="name" class="lang-en">Full name</label>
               <input type="text" id="name" name="name" required>
             </div>
+
             <div class="form-group">
               <label for="email">Email</label>
               <input type="email" id="email" name="email" required>
             </div>
           </div>
+
           <div class="form-group">
             <label for="country" class="lang-fr">Pays</label>
             <label for="country" class="lang-en">Country</label>
             <select id="country" name="country" required>
               <option value="" class="lang-fr">Sélectionnez votre pays</option>
               <option value="" class="lang-en">Select your country</option>
-             
+              
               <optgroup label="🌍 Afrique / Africa">
                 <option value="algerie">Algérie / Algeria</option>
                 <option value="benin">Bénin / Benin</option>
@@ -1727,18 +2009,21 @@
                 <option value="togo">Togo</option>
                 <option value="tunisie">Tunisie / Tunisia</option>
               </optgroup>
+
               <optgroup label="🌎 Amérique / Americas">
                 <option value="canada">Canada</option>
                 <option value="usa">États-Unis / USA</option>
                 <option value="mexique">Mexique / Mexico</option>
                 <option value="bresil">Brésil / Brazil</option>
               </optgroup>
+
               <optgroup label="🌏 Asie / Asia">
                 <option value="chine">Chine / China</option>
                 <option value="inde">Inde / India</option>
                 <option value="japon">Japon / Japan</option>
                 <option value="coree-sud">Corée du Sud / South Korea</option>
               </optgroup>
+
               <optgroup label="🇪🇺 Europe">
                 <option value="france">France</option>
                 <option value="belgique">Belgique / Belgium</option>
@@ -1748,16 +2033,19 @@
               </optgroup>
             </select>
           </div>
+
           <div class="form-group">
             <label for="business" class="lang-fr">Domaine d'activité</label>
             <label for="business" class="lang-en">Business field</label>
             <input type="text" id="business" name="business" required>
           </div>
+
           <div class="form-group">
             <label for="needs" class="lang-fr">Vos besoins spécifiques</label>
             <label for="needs" class="lang-en">Your specific needs</label>
             <textarea id="needs" name="needs" required></textarea>
           </div>
+
           <div class="form-submit">
             <button type="submit" class="btn btn-primary" style="width: 100%;">
               <span class="lang-fr">Envoyer ma candidature</span>
@@ -1766,6 +2054,7 @@
             </button>
           </div>
         </form>
+
         <div class="form-success" id="form-success">
           <span class="lang-fr">✅ Merci ! Nous vous contacterons bientôt.</span>
           <span class="lang-en">✅ Thank you! We'll contact you soon.</span>
@@ -1773,7 +2062,7 @@
       </div>
     </div>
   </section>
-  <!-- FOOTER -->
+
   <footer>
     <div class="container">
       <div class="footer-logo">
@@ -1783,12 +2072,14 @@
         </svg>
         <div class="logo-text">Velmo</div>
       </div>
+
       <p style="margin: 24px 0; color: var(--text-secondary);">
         <a href="#promesse" style="margin: 0 12px;"><span class="lang-fr">Promesse</span><span class="lang-en">Promise</span></a> •
         <a href="#features" style="margin: 0 12px;"><span class="lang-fr">Fonctions</span><span class="lang-en">Features</span></a> •
         <a href="#beta" style="margin: 0 12px;">Beta</a> •
         <a href="mailto:contact@velmo.app" style="margin: 0 12px;">Support</a>
       </p>
+
       <div class="social-icons">
         <a href="https://wa.me/224622000000" class="social-icon">
           <svg viewBox="0 0 24 24">
@@ -1811,20 +2102,37 @@
           </svg>
         </a>
       </div>
+
       <p style="margin-top: 32px; font-size: 14px; color: var(--text-tertiary);">
         Velmo © 2025
       </p>
     </div>
   </footer>
-  <!-- WHATSAPP FLOAT -->
+
   <a href="https://wa.me/224622000000" target="_blank" class="whatsapp-float">
     <svg viewBox="0 0 32 32">
       <path d="M16 0c-8.837 0-16 7.163-16 16 0 2.825 0.737 5.607 2.137 8.048l-2.137 7.952 7.933-2.127c2.42 1.37 5.173 2.127 8.067 2.127 8.837 0 16-7.163 16-16s-7.163-16-16-16zM16 29.467c-2.482 0-4.908-0.646-7.07-1.87l-0.507-0.292-5.253 1.408 1.413-5.248-0.325-0.527c-1.331-2.183-2.037-4.706-2.037-7.293 0-7.658 6.23-13.888 13.778-13.888s13.778 6.23 13.778 13.888-6.23 13.822-13.778 13.822zM23.54 19.938c-0.397-0.199-2.348-1.158-2.713-1.29-0.366-0.132-0.632-0.199-0.897 0.199s-1.031 1.29-1.264 1.556c-0.232 0.266-0.464 0.298-0.861 0.099s-1.68-0.619-3.199-1.973c-1.182-1.053-1.981-2.354-2.213-2.752s-0.025-0.612 0.174-0.811c0.179-0.178 0.397-0.464 0.595-0.696s0.265-0.397 0.397-0.662c0.132-0.265 0.066-0.497-0.033-0.696s-0.897-2.162-1.229-2.96c-0.324-0.778-0.652-0.672-0.897-0.685-0.232-0.012-0.497-0.015-0.762-0.015s-0.695 0.099-1.060 0.497c-0.365 0.397-1.394 1.362-1.394 3.323s1.427 3.854 1.625 4.119c0.199 0.265 2.807 4.283 6.802 6.005 0.95 0.411 1.691 0.657 2.269 0.841 0.956 0.303 1.825 0.26 2.513 0.158 0.767-0.114 2.348-0.96 2.68-1.888s0.332-1.723 0.232-1.888c-0.099-0.165-0.365-0.265-0.762-0.464z"/>
     </svg>
   </a>
-  <!-- JAVASCRIPT -->
+
   <script>
-    // Variables globales
+    // DETECTION MOBILE AGGRESSIVE AU DEBUT
+    function detectMobile() {
+      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+      const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile|samsung|galaxy/i.test(userAgent.toLowerCase());
+      const isSmallScreen = window.innerWidth <= 768;
+      
+      if (isMobile || isSmallScreen) {
+        document.body.classList.add('mobile-detected');
+        console.log('📱 MOBILE DETECTE !');
+      }
+      
+      return isMobile || isSmallScreen;
+    }
+
+    // EXECUTER DETECTION AU DEBUT
+    const isMobileDevice = detectMobile();
+
     const header = document.getElementById('header');
     const menuToggle = document.getElementById('menu-toggle');
     const nav = document.getElementById('nav');
@@ -1833,9 +2141,16 @@
     const html = document.documentElement;
     const betaForm = document.getElementById('beta-form');
     const formSuccess = document.getElementById('form-success');
+
     let isDark = false;
     let isEnglish = false;
-    // Détection langue automatique
+
+    // FORCER AFFICHAGE HAMBURGER SUR MOBILE
+    if (isMobileDevice) {
+      menuToggle.style.display = 'flex';
+      console.log('🍔 Hamburger forcé visible');
+    }
+
     window.addEventListener('load', () => {
       const browserLang = navigator.language || navigator.userLanguage;
       isEnglish = browserLang.startsWith('en');
@@ -1843,19 +2158,36 @@
       langToggle.textContent = isEnglish ? '🇬🇧' : '🇫🇷';
       localStorage.setItem('velmo-lang', isEnglish ? 'en' : 'fr');
       updatePhoneContent();
+      
+      // RE-DETECTER AU CHARGEMENT
+      if (detectMobile()) {
+        menuToggle.style.display = 'flex';
+      }
     });
-    // Header scroll
+
+    // RE-DETECTER AU RESIZE
+    window.addEventListener('resize', () => {
+      if (detectMobile()) {
+        menuToggle.style.display = 'flex';
+      } else {
+        menuToggle.style.display = 'none';
+        nav.classList.remove('active');
+      }
+    });
+
     window.addEventListener('scroll', () => {
       header.classList.toggle('scrolled', window.scrollY > 50);
     });
-    // Menu mobile - FIX HAMBURGER
+
     menuToggle.addEventListener('click', (e) => {
       e.stopPropagation();
+      e.preventDefault();
       nav.classList.toggle('active');
       menuToggle.classList.toggle('active');
       document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
+      console.log('🍔 Menu toggled:', nav.classList.contains('active'));
     });
-    // Fermer menu au clic sur les liens
+
     nav.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => {
         nav.classList.remove('active');
@@ -1863,30 +2195,31 @@
         document.body.style.overflow = '';
       });
     });
-    // Fermer menu au clic en dehors
+
     document.addEventListener('click', (e) => {
-      if (nav.classList.contains('active') &&
-          !nav.contains(e.target) &&
+      if (nav.classList.contains('active') && 
+          !nav.contains(e.target) && 
           !menuToggle.contains(e.target)) {
         nav.classList.remove('active');
         menuToggle.classList.remove('active');
         document.body.style.overflow = '';
       }
     });
-    // Theme toggle
+
     themeToggle.addEventListener('click', () => {
       isDark = !isDark;
       html.setAttribute('data-theme', isDark ? 'dark' : 'light');
       themeToggle.textContent = isDark ? '☀️' : '🌙';
       localStorage.setItem('velmo-theme', isDark ? 'dark' : 'light');
     });
+
     const savedTheme = localStorage.getItem('velmo-theme');
     if (savedTheme === 'dark') {
       isDark = true;
       html.setAttribute('data-theme', 'dark');
       themeToggle.textContent = '☀️';
     }
-    // Language toggle
+
     langToggle.addEventListener('click', () => {
       isEnglish = !isEnglish;
       html.setAttribute('lang', isEnglish ? 'en' : 'fr');
@@ -1894,7 +2227,7 @@
       localStorage.setItem('velmo-lang', isEnglish ? 'en' : 'fr');
       updatePhoneContent();
     });
-    // Scroll reveal
+
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -1902,8 +2235,9 @@
         }
       });
     }, { threshold: 0.1, rootMargin: '0px 0px -100px 0px' });
+
     document.querySelectorAll('section:not(.hero)').forEach(el => observer.observe(el));
-    // Smooth scroll
+
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', e => {
         e.preventDefault();
@@ -1918,7 +2252,7 @@
         }
       });
     });
-    // Form submission
+
     betaForm.addEventListener('submit', e => {
       e.preventDefault();
       betaForm.style.display = 'none';
@@ -1929,7 +2263,7 @@
         formSuccess.classList.remove('show');
       }, 5000);
     });
-    // Update phone content avec 4 vues dynamiques
+
     function updatePhoneContent() {
       const views = getPhoneViews();
       const phoneContent = document.getElementById('hero-phone-content');
@@ -1937,6 +2271,7 @@
         phoneContent.innerHTML = views.dashboard;
       }
     }
+
     function getPhoneViews() {
       return {
         dashboard: `
@@ -1951,15 +2286,8 @@
               <span>+15% vs ${isEnglish ? "yesterday" : "hier"}</span>
             </div>
           </div>
+
           <div class="stats-grid">
-            <div class="stat-item">
-              <div class="stat-label">${isEnglish ? "Growth" : "Croissance"}</div>
-              <div class="stat-value" style="color: var(--success);">+24%</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">${isEnglish ? "Best day" : "Meilleur jour"}</div>
-              <div class="stat-value">${isEnglish ? "Sun" : "Dim"}</div>
-            </div>
             <div class="stat-item">
               <div class="stat-label">${isEnglish ? "Transactions" : "Transactions"}</div>
               <div class="stat-value">45</div>
@@ -1977,10 +2305,12 @@
               <div class="stat-value">156</div>
             </div>
           </div>
+
           <div class="success-badge">
             <span>✓</span>
             <span class="success-text">${isEnglish ? "All systems operational" : "Tous les systèmes opérationnels"}</span>
           </div>
+
           <div class="product-item">
             <div class="product-icon">🍚</div>
             <div class="product-info">
@@ -1989,6 +2319,7 @@
             </div>
             <span class="stock-badge stock-ok">✓ ${isEnglish ? "In stock" : "En stock"}</span>
           </div>
+
           <div class="product-item">
             <div class="product-icon">🥤</div>
             <div class="product-info">
@@ -1997,6 +2328,7 @@
             </div>
             <span class="stock-badge stock-ok">✓ ${isEnglish ? "Available" : "Disponible"}</span>
           </div>
+
           <div class="product-item">
             <div class="product-icon">🍞</div>
             <div class="product-info">
@@ -2006,6 +2338,7 @@
             <span class="stock-badge stock-ok">✓ OK</span>
           </div>
         `,
+
         stock: `
           <div class="content-card-phone">
             <div class="card-title">
@@ -2013,9 +2346,11 @@
               <span>${isEnglish ? "Inventory Management" : "Gestion Stock"}</span>
             </div>
           </div>
+
           <div class="alert-badge">
             <div class="alert-text">⚠ ${isEnglish ? "3 products low in stock" : "3 produits en rupture"}</div>
           </div>
+
           <div class="product-item">
             <div class="product-icon">💧</div>
             <div class="product-info">
@@ -2024,6 +2359,7 @@
             </div>
             <span class="stock-badge stock-ok">✓ OK</span>
           </div>
+
           <div class="product-item">
             <div class="product-icon">🍚</div>
             <div class="product-info">
@@ -2032,6 +2368,7 @@
             </div>
             <span class="stock-badge stock-low">⚠ ${isEnglish ? "Low" : "Bas"}</span>
           </div>
+
           <div class="product-item">
             <div class="product-icon">🛢️</div>
             <div class="product-info">
@@ -2040,6 +2377,7 @@
             </div>
             <span class="stock-badge stock-out">✗ ${isEnglish ? "Out" : "Vide"}</span>
           </div>
+
           <div class="product-item">
             <div class="product-icon">🍬</div>
             <div class="product-info">
@@ -2048,6 +2386,7 @@
             </div>
             <span class="stock-badge stock-low">⚠ ${isEnglish ? "Low" : "Bas"}</span>
           </div>
+
           <div class="product-item">
             <div class="product-icon">🥤</div>
             <div class="product-info">
@@ -2056,6 +2395,7 @@
             </div>
             <span class="stock-badge stock-ok">✓ OK</span>
           </div>
+
           <div class="product-item">
             <div class="product-icon">🍞</div>
             <div class="product-info">
@@ -2065,6 +2405,7 @@
             <span class="stock-badge stock-ok">✓ OK</span>
           </div>
         `,
+
         analytics: `
           <div class="content-card-phone">
             <div class="card-title">
@@ -2072,42 +2413,64 @@
               <span>${isEnglish ? "Weekly Analytics" : "Analytics Hebdo"}</span>
             </div>
           </div>
+
           <div class="chart-container">
             <div style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">
               ${isEnglish ? "Sales last 7 days" : "Ventes 7 derniers jours"}
             </div>
             <div class="chart-bars">
-              <div class="chart-bar" style="height: 45%;"></div>
-              <div class="chart-bar" style="height: 65%;"></div>
-              <div class="chart-bar" style="height: 75%;"></div>
-              <div class="chart-bar" style="height: 55%;"></div>
-              <div class="chart-bar" style="height: 85%;"></div>
-              <div class="chart-bar" style="height: 90%;"></div>
-              <div class="chart-bar" style="height: 100%;"></div>
+              <div class="chart-bar" style="height: 45%; animation-delay: 0s;"></div>
+              <div class="chart-bar" style="height: 65%; animation-delay: 0.1s;"></div>
+              <div class="chart-bar" style="height: 75%; animation-delay: 0.2s;"></div>
+              <div class="chart-bar" style="height: 55%; animation-delay: 0.3s;"></div>
+              <div class="chart-bar" style="height: 85%; animation-delay: 0.4s;"></div>
+              <div class="chart-bar" style="height: 90%; animation-delay: 0.5s;"></div>
+              <div class="chart-bar" style="height: 100%; animation-delay: 0.6s;"></div>
             </div>
             <div class="chart-labels">
               <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
             </div>
           </div>
+
           <div class="stats-grid">
             <div class="stat-item">
-              <div class="stat-label">${isEnglish ? "Total" : "Total"}</div>
-              <div class="stat-value">8.5M</div>
-            </div>
-            <div class="stat-item">
               <div class="stat-label">${isEnglish ? "Growth" : "Croissance"}</div>
-              <div class="stat-value" style="color: var(--success);">+18%</div>
+              <div class="stat-value" style="color: var(--success);">+24%</div>
             </div>
             <div class="stat-item">
-              <div class="stat-label">${isEnglish ? "Peak Day" : "Jour Pic"}</div>
-              <div class="stat-value">1.8M</div>
+              <div class="stat-label">${isEnglish ? "Best day" : "Meilleur jour"}</div>
+              <div class="stat-value">${isEnglish ? "Sun" : "Dim"}</div>
             </div>
-            <div class="stat-item">
-              <div class="stat-label">${isEnglish ? "Avg Daily" : "Moy. Jour"}</div>
-              <div class="stat-value">1.2M</div>
+          </div>
+
+          <div class="content-card-phone">
+            <div style="font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 12px;">
+              📊 ${isEnglish ? "Top Products" : "Top Produits"}
+            </div>
+            <div class="product-item" style="margin-bottom: 8px;">
+              <div class="product-icon">🍚</div>
+              <div class="product-info">
+                <div class="product-name">${isEnglish ? "Rice 5kg" : "Riz 5kg"}</div>
+                <div class="product-stock">147 ${isEnglish ? "sales" : "ventes"}</div>
+              </div>
+            </div>
+            <div class="product-item" style="margin-bottom: 8px;">
+              <div class="product-icon">💧</div>
+              <div class="product-info">
+                <div class="product-name">${isEnglish ? "Water 1.5L" : "Eau 1.5L"}</div>
+                <div class="product-stock">98 ${isEnglish ? "sales" : "ventes"}</div>
+              </div>
+            </div>
+            <div class="product-item" style="margin-bottom: 0;">
+              <div class="product-icon">🥤</div>
+              <div class="product-info">
+                <div class="product-name">${isEnglish ? "Soda Pack" : "Pack Soda"}</div>
+                <div class="product-stock">76 ${isEnglish ? "sales" : "ventes"}</div>
+              </div>
             </div>
           </div>
         `,
+
         offline: `
           <div class="content-card-phone" style="text-align: center; padding: 40px 20px;">
             <div style="font-size: 64px; margin-bottom: 20px;">📴</div>
@@ -2115,15 +2478,17 @@
               ${isEnglish ? "Offline Mode" : "Mode Hors-ligne"}
             </div>
             <div style="font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 24px;">
-              ${isEnglish
-                ? "Keep working without internet. Everything syncs automatically when you're back online."
+              ${isEnglish 
+                ? "Keep working without internet. Everything syncs automatically when you're back online." 
                 : "Continuez à travailler sans internet. Tout se synchronise automatiquement quand vous êtes en ligne."}
             </div>
           </div>
+
           <div class="success-badge">
             <span>✓</span>
             <span class="success-text">${isEnglish ? "Local data saved" : "Données locales sauvegardées"}</span>
           </div>
+
           <div class="stats-grid">
             <div class="stat-item">
               <div class="stat-label">${isEnglish ? "Sync Status" : "Statut Sync"}</div>
@@ -2134,6 +2499,7 @@
               <div class="stat-value" style="font-size: 14px;">2m</div>
             </div>
           </div>
+
           <div class="content-card-phone">
             <div style="font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 12px;">
               💡 ${isEnglish ? "Features Available Offline" : "Fonctions Hors-ligne"}
@@ -2146,6 +2512,7 @@
               • ${isEnglish ? "Add products" : "Ajouter produits"}
             </div>
           </div>
+
           <div class="product-item">
             <div class="product-icon">🔄</div>
             <div class="product-info">
@@ -2157,27 +2524,24 @@
         `
       };
     }
-    // Navigation entre les vues
+
     const navDots = document.querySelectorAll('.nav-dot');
     navDots.forEach(dot => {
       dot.addEventListener('click', () => {
         const view = dot.getAttribute('data-view');
         const phoneContent = document.getElementById('hero-phone-content');
         const views = getPhoneViews();
-       
-        // Remove active class
+        
         navDots.forEach(d => {
           d.classList.remove('active');
         });
-       
-        // Add active class
+        
         dot.classList.add('active');
-       
-        // Transition animation
+        
         phoneContent.style.transition = 'all 0.3s ease';
         phoneContent.style.opacity = '0';
         phoneContent.style.transform = 'translateY(10px)';
-       
+        
         setTimeout(() => {
           phoneContent.innerHTML = views[view];
           phoneContent.style.opacity = '1';
@@ -2185,7 +2549,7 @@
         }, 300);
       });
     });
-    // Auto-rotation des vues
+
     let currentViewIndex = 0;
     const viewKeys = ['dashboard', 'stock', 'analytics', 'offline'];
     setInterval(() => {
@@ -2195,14 +2559,14 @@
         targetDot.click();
       }
     }, 6000);
-    // Parallax effect
+
     window.addEventListener('scroll', () => {
       const hero = document.querySelector('.hero');
       if (hero && window.pageYOffset < 800) {
         hero.style.transform = `translateY(${window.pageYOffset * 0.2}px)`;
       }
     });
-    // Keyboard shortcuts
+
     document.addEventListener('keydown', e => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
@@ -2213,11 +2577,11 @@
         langToggle.click();
       }
     });
-    // Initialiser le contenu du téléphone au chargement
+
     window.addEventListener('DOMContentLoaded', () => {
       updatePhoneContent();
     });
-    // Console logs
+
     console.log('%c⚡ Velmo - Mobile Optimized', 'font-size: 20px; font-weight: bold; color: #ff6200;');
     console.log('%c✨ Responsive design parfait pour mobile', 'font-size: 12px; color: #475569;');
     console.log('%c📱 Menu hamburger fonctionnel', 'font-size: 12px; color: #10b981;');
