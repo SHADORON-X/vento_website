@@ -1,2591 +1,2270 @@
 <!DOCTYPE html>
 <html lang="fr" data-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"/>
-  <title>Velmo — Gagnez plus. Vivez mieux.</title>
-  <meta name="description" content="Application légère, rapide et universelle. Pour tous les smartphones, même anciens."/>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --primary: #ff6200;
-      --primary-dark: #e55a00;
-      --primary-light: #ff8c42;
-      --secondary: #ff4500;
-      --accent: #ffa500;
-      --success: #10b981;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      
-      --bg-main: #ffffff;
-      --bg-alt: #fff8f5;
-      --bg-subtle: #fff0e6;
-      --text-primary: #0f172a;
-      --text-secondary: #475569;
-      --text-tertiary: #94a3b8;
-      --border: #ffe4d1;
-      --shadow-sm: 0 1px 2px 0 rgba(255, 98, 0, 0.05);
-      --shadow-md: 0 4px 6px -1px rgba(255, 98, 0, 0.1);
-      --shadow-lg: 0 10px 15px -3px rgba(255, 98, 0, 0.1);
-      --shadow-xl: 0 20px 25px -5px rgba(255, 98, 0, 0.1);
-      --shadow-2xl: 0 25px 50px -12px rgba(255, 98, 0, 0.25);
-      
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 16px;
-      --radius-xl: 24px;
-      
-      --spacing-xs: 8px;
-      --spacing-sm: 16px;
-      --spacing-md: 24px;
-      --spacing-lg: 32px;
-      --spacing-xl: 48px;
-      --spacing-2xl: 64px;
-      --spacing-3xl: 96px;
-    }
-
-    [data-theme="dark"] {
-      --bg-main: #0f172a;
-      --bg-alt: #1e293b;
-      --bg-subtle: #334155;
-      --text-primary: #f1f5f9;
-      --text-secondary: #cbd5e1;
-      --text-tertiary: #64748b;
-      --border: #334155;
-      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-      font-size: 16px;
-    }
-
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: var(--bg-main);
-      color: var(--text-primary);
-      line-height: 1.6;
-      overflow-x: hidden;
-      transition: background 0.3s ease, color 0.3s ease;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-
-    .container {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 0 clamp(20px, 5vw, 40px);
-    }
-
-    section {
-      padding: var(--spacing-3xl) 0;
-      opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
-    }
-
-    section.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    h1, h2, h3, h4, h5, h6 {
-      font-weight: 800;
-      line-height: 1.2;
-      letter-spacing: -0.02em;
-      color: var(--text-primary);
-    }
-
-    h1 { font-size: clamp(2.5rem, 6vw, 4rem); }
-    h2 { font-size: clamp(2rem, 5vw, 3rem); }
-    h3 { font-size: clamp(1.5rem, 4vw, 2rem); }
-
-    p {
-      line-height: 1.75;
-      color: var(--text-secondary);
-    }
-
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
-
-    header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(20px) saturate(180%);
-      border-bottom: 1px solid var(--border);
-      z-index: 999;
-      transition: all 0.3s ease;
-    }
-
-    [data-theme="dark"] header {
-      background: rgba(15, 23, 42, 0.95);
-    }
-
-    header.scrolled {
-      box-shadow: var(--shadow-md);
-    }
-
-    .header-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 40px;
-      max-width: 1440px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 1002;
-    }
-
-    .logo-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      transition: transform 0.3s ease;
-      z-index: 1003;
-      position: relative;
-    }
-
-    .logo-wrapper:hover {
-      transform: translateY(-2px);
-    }
-
-    .logo-svg {
-      width: 40px;
-      height: 40px;
-      transition: all 0.3s ease;
-    }
-
-    .logo-svg circle {
-      fill: var(--primary);
-      transition: fill 0.3s ease;
-    }
-
-    .logo-svg text {
-      fill: white;
-      font-weight: 900;
-      font-size: 32px;
-    }
-
-    .logo-svg:hover circle {
-      fill: var(--primary-dark);
-      animation: pulse 1s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-
-    .logo-text {
-      font-size: 24px;
-      font-weight: 900;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    nav {
-      display: flex;
-      align-items: center;
-      gap: 32px;
-    }
-
-    nav a {
-      font-size: 15px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      transition: all 0.2s ease;
-      position: relative;
-    }
-
-    nav a:hover {
-      color: var(--primary);
-    }
-
-    nav a::after {
-      content: '';
-      position: absolute;
-      bottom: -4px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: var(--primary);
-      transition: width 0.3s ease;
-    }
-
-    nav a:hover::after {
-      width: 100%;
-    }
-
-    .nav-cta {
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      color: white !important;
-      padding: 10px 24px;
-      border-radius: 100px;
-      font-weight: 600;
-      box-shadow: var(--shadow-md);
-      transition: all 0.3s ease;
-    }
-
-    .nav-cta:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .nav-cta::after {
-      display: none;
-    }
-
-    .header-actions {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      position: relative;
-      z-index: 1003;
-    }
-
-    .icon-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      background: var(--bg-alt);
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 18px;
-      position: relative;
-      z-index: 1003;
-    }
-
-    .icon-btn:hover {
-      transform: scale(1.1);
-      border-color: var(--primary);
-      background: var(--primary);
-    }
-
-    .menu-toggle {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-      padding: 8px;
-      z-index: 1003;
-      background: var(--primary);
-      border-radius: 8px;
-      border: 2px solid var(--primary-dark);
-      position: relative;
-    }
-
-    .menu-toggle span {
-      width: 25px;
-      height: 3px;
-      background: white;
-      border-radius: 3px;
-      transition: all 0.3s ease;
-      display: block;
-    }
-
-    .menu-toggle.active span:nth-child(1) {
-      transform: rotate(45deg) translate(7px, 7px);
-    }
-
-    .menu-toggle.active span:nth-child(2) {
-      opacity: 0;
-    }
-
-    .menu-toggle.active span:nth-child(3) {
-      transform: rotate(-45deg) translate(7px, -7px);
-    }
-
-    /* DETECTION MOBILE AGGRESSIVE */
-    @media (max-width: 768px) {
-      .menu-toggle {
-        display: flex !important;
-      }
-      
-      .header-actions .icon-btn {
-        display: none !important;
-      }
-      
-      nav {
-        display: none;
-      }
-      
-      nav.active {
-        display: flex !important;
-      }
-    }
-
-    /* DETECTION TABLETTE */
-    @media (max-width: 1024px) and (min-width: 769px) {
-      .menu-toggle {
-        display: flex !important;
-      }
-    }
-
-    /* FORCE MOBILE */
-    .mobile-detected .menu-toggle {
-      display: flex !important;
-    }
-
-    .mobile-detected nav:not(.active) {
-      display: none !important;
-    }
-
-    .mobile-detected nav.active {
-      display: flex !important;
-    }
-
-    .mobile-detected .header-actions .icon-btn {
-      display: none !important;
-    }
-
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      padding: 120px 0 80px;
-      background: var(--bg-main);
-      position: relative;
-      overflow: hidden;
-      opacity: 1 !important;
-      transform: translateY(0) !important;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(255, 98, 0, 0.1), transparent);
-      top: -200px;
-      right: -100px;
-      border-radius: 50%;
-      animation: float 20s ease-in-out infinite;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translate(0, 0) rotate(0deg); }
-      33% { transform: translate(30px, -50px) rotate(120deg); }
-      66% { transform: translate(-20px, 20px) rotate(240deg); }
-    }
-
-    .hero-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 80px;
-      align-items: center;
-      position: relative;
-      z-index: 1;
-    }
-
-    .hero-content {
-      animation: fadeInUp 0.8s ease-out;
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      background: linear-gradient(135deg, rgba(255, 98, 0, 0.1), rgba(255, 69, 0, 0.1));
-      border: 1px solid rgba(255, 98, 0, 0.2);
-      border-radius: 100px;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--primary);
-      margin-bottom: 24px;
-      animation: fadeInUp 0.8s ease-out 0.2s both;
-    }
-
-    .hero h1 {
-      margin-bottom: 24px;
-      animation: fadeInUp 0.8s ease-out 0.3s both;
-    }
-
-    .hero-desc {
-      font-size: 20px;
-      line-height: 1.8;
-      color: var(--text-secondary);
-      margin-bottom: 32px;
-      max-width: 540px;
-      animation: fadeInUp 0.8s ease-out 0.4s both;
-    }
-
-    .hero-cta {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      animation: fadeInUp 0.8s ease-out 0.5s both;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 16px 32px;
-      font-size: 16px;
-      font-weight: 600;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: none;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      color: white;
-      box-shadow: var(--shadow-lg);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-xl);
-    }
-
-    .btn-secondary {
-      background: var(--bg-alt);
-      color: var(--text-primary);
-      border: 1px solid var(--border);
-    }
-
-    .btn-secondary:hover {
-      background: var(--bg-subtle);
-      transform: translateY(-2px);
-    }
-
-    .hero-image {
-      position: relative;
-      animation: fadeInRight 0.8s ease-out 0.6s both;
-    }
-
-    @keyframes fadeInRight {
-      from {
-        opacity: 0;
-        transform: translateX(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-
-    .hero-phone {
-      width: 100%;
-      max-width: 400px;
-      margin: 0 auto;
-      position: relative;
-      animation: floatPhone 6s ease-in-out infinite;
-    }
-
-    @keyframes floatPhone {
-      0%, 100% { transform: translateY(0) rotate(-5deg); }
-      50% { transform: translateY(-20px) rotate(5deg); }
-    }
-
-    .phone-mockup {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 9 / 19;
-      background: linear-gradient(145deg, #1e293b, #0f172a);
-      border-radius: 40px;
-      padding: 12px;
-      box-shadow: var(--shadow-2xl);
-      border: 3px solid rgba(255, 98, 0, 0.3);
-    }
-
-    .phone-screen {
-      width: 100%;
-      height: 100%;
-      background: white;
-      border-radius: 32px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .phone-notch {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 120px;
-      height: 28px;
-      background: #0f172a;
-      border-bottom-left-radius: 20px;
-      border-bottom-right-radius: 20px;
-      z-index: 10;
-    }
-
-    .status-bar {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px 20px;
-      font-size: 12px;
-      font-weight: 600;
-      color: #0f172a;
-    }
-
-    .phone-content {
-      padding: 20px;
-      height: calc(100% - 50px);
-      overflow-y: auto;
-      scrollbar-width: thin;
-      scrollbar-color: var(--primary) #f1f5f9;
-    }
-
-    .phone-content::-webkit-scrollbar {
-      width: 4px;
-    }
-
-    .phone-content::-webkit-scrollbar-thumb {
-      background: var(--primary);
-      border-radius: 4px;
-    }
-
-    .content-card-phone {
-      background: linear-gradient(135deg, rgba(255, 98, 0, 0.05), rgba(255, 69, 0, 0.05));
-      padding: 20px;
-      border-radius: 16px;
-      margin-bottom: 16px;
-      border: 1px solid rgba(255, 98, 0, 0.1);
-      animation: slideInUp 0.5s ease-out;
-    }
-
-    @keyframes slideInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .card-title {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .card-value {
-      font-size: 28px;
-      font-weight: 900;
-      color: #0f172a;
-      margin-bottom: 4px;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .card-subtitle {
-      font-size: 12px;
-      color: var(--success);
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 16px;
-    }
-
-    .stat-item {
-      background: white;
-      padding: 16px;
-      border-radius: 12px;
-      text-align: center;
-      box-shadow: var(--shadow-sm);
-      border: 1px solid rgba(255, 98, 0, 0.1);
-      transition: all 0.3s ease;
-    }
-
-    .stat-item:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
-    }
-
-    .stat-label {
-      font-size: 11px;
-      color: var(--text-tertiary);
-      font-weight: 600;
-      margin-bottom: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .stat-value {
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--primary);
-    }
-
-    .phone-nav {
-      position: absolute;
-      bottom: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 24px;
-      background: rgba(15, 23, 42, 0.95);
-      backdrop-filter: blur(10px);
-      padding: 8px 20px;
-      border-radius: 24px;
-      z-index: 5;
-      box-shadow: var(--shadow-lg);
-    }
-
-    .nav-dot {
-      width: 36px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      position: relative;
-    }
-
-    .nav-dot.active {
-      background: var(--primary);
-    }
-
-    .nav-dot svg {
-      width: 18px;
-      height: 18px;
-      fill: #64748b;
-      transition: fill 0.3s ease;
-    }
-
-    .nav-dot.active svg {
-      fill: white;
-    }
-
-    .nav-dot:hover:not(.active) {
-      background: rgba(255, 98, 0, 0.1);
-    }
-
-    .product-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: white;
-      padding: 12px;
-      border-radius: 12px;
-      margin-bottom: 12px;
-      border: 1px solid rgba(255, 98, 0, 0.1);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .product-icon {
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(135deg, rgba(255, 98, 0, 0.1), rgba(255, 69, 0, 0.1));
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      flex-shrink: 0;
-    }
-
-    .product-info {
-      flex: 1;
-    }
-
-    .product-name {
-      font-size: 13px;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 2px;
-    }
-
-    .product-stock {
-      font-size: 11px;
-      color: var(--text-tertiary);
-    }
-
-    .stock-badge {
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-
-    .stock-ok {
-      background: rgba(16, 185, 129, 0.1);
-      color: var(--success);
-    }
-
-    .stock-low {
-      background: rgba(245, 158, 11, 0.1);
-      color: var(--warning);
-    }
-
-    .stock-out {
-      background: rgba(239, 68, 68, 0.1);
-      color: var(--danger);
-    }
-
-    .chart-container {
-      background: white;
-      padding: 16px;
-      border-radius: 12px;
-      margin-bottom: 16px;
-      border: 1px solid rgba(255, 98, 0, 0.1);
-    }
-
-    .chart-bars {
-      display: flex;
-      align-items: flex-end;
-      gap: 8px;
-      height: 120px;
-      margin-top: 12px;
-    }
-
-    .chart-bar {
-      flex: 1;
-      background: linear-gradient(to top, var(--primary), var(--primary-light));
-      border-radius: 6px 6px 0 0;
-      position: relative;
-      transition: all 0.3s ease;
-      animation: barGrow 0.8s ease-out backwards;
-    }
-
-    @keyframes barGrow {
-      from {
-        height: 0;
-        opacity: 0;
-      }
-      to {
-        height: 100%;
-        opacity: 1;
-      }
-    }
-
-    .chart-bar:hover {
-      opacity: 0.8;
-      transform: translateY(-4px);
-    }
-
-    .chart-labels {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 8px;
-      font-size: 10px;
-      color: var(--text-tertiary);
-      font-weight: 600;
-    }
-
-    .alert-badge {
-      background: rgba(239, 68, 68, 0.1);
-      border-left: 4px solid var(--danger);
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 16px;
-    }
-
-    .alert-text {
-      font-size: 12px;
-      color: var(--danger);
-      font-weight: 600;
-    }
-
-    .success-badge {
-      background: rgba(16, 185, 129, 0.1);
-      border-left: 4px solid var(--success);
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .success-text {
-      font-size: 12px;
-      color: var(--success);
-      font-weight: 600;
-    }
-
-    .section-alt {
-      background: var(--bg-alt);
-    }
-
-    .section-header {
-      text-align: center;
-      max-width: 800px;
-      margin: 0 auto var(--spacing-2xl);
-    }
-
-    .section-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 16px;
-      background: linear-gradient(135deg, rgba(255, 98, 0, 0.1), rgba(255, 69, 0, 0.1));
-      border: 1px solid rgba(255, 98, 0, 0.2);
-      border-radius: 100px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--primary);
-      margin-bottom: 16px;
-    }
-
-    .section-title {
-      margin-bottom: 20px;
-    }
-
-    .section-desc {
-      font-size: 18px;
-      color: var(--text-secondary);
-      line-height: 1.8;
-    }
-
-    .promise-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 32px;
-      margin-top: var(--spacing-2xl);
-    }
-
-    .promise-card {
-      background: var(--bg-main);
-      padding: 40px;
-      border-radius: var(--radius-xl);
-      border: 1px solid var(--border);
-      transition: all 0.3s ease;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .promise-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
-      transform: scaleX(0);
-      transition: transform 0.3s ease;
-    }
-
-    .promise-card:hover {
-      transform: translateY(-8px);
-      box-shadow: var(--shadow-xl);
-      border-color: var(--primary);
-    }
-
-    .promise-card:hover::before {
-      transform: scaleX(1);
-    }
-
-    .promise-icon {
-      width: 64px;
-      height: 64px;
-      background: linear-gradient(135deg, rgba(255, 98, 0, 0.1), rgba(255, 69, 0, 0.1));
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 32px;
-      margin-bottom: 24px;
-    }
-
-    .promise-card h3 {
-      font-size: 24px;
-      margin-bottom: 12px;
-    }
-
-    .promise-card p {
-      font-size: 16px;
-      line-height: 1.75;
-      color: var(--text-secondary);
-    }
-
-    .promise-placeholder {
-      margin-top: 20px;
-      padding-top: 20px;
-      border-top: 1px solid var(--border);
-    }
-
-    .placeholder-line {
-      height: 10px;
-      background: linear-gradient(90deg, var(--bg-subtle) 0%, var(--bg-alt) 50%, var(--bg-subtle) 100%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s ease-in-out infinite;
-      border-radius: 4px;
-      margin-bottom: 8px;
-    }
-
-    @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
-    }
-
-    .placeholder-line:last-child {
-      width: 60%;
-    }
-
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 24px;
-      margin-top: var(--spacing-2xl);
-    }
-
-    .feature-card {
-      background: var(--bg-main);
-      padding: 32px;
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      transition: all 0.3s ease;
-      text-align: center;
-    }
-
-    .feature-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .feature-icon {
-      font-size: 48px;
-      margin-bottom: 20px;
-      display: block;
-      animation: bounce 2s ease-in-out infinite;
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-
-    .feature-card h4 {
-      font-size: 20px;
-      margin-bottom: 12px;
-      color: var(--primary);
-    }
-
-    .feature-card p {
-      font-size: 15px;
-      line-height: 1.7;
-    }
-
-    .testimonials-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 32px;
-      margin-top: var(--spacing-2xl);
-    }
-
-    .testimonial-card {
-      background: var(--bg-main);
-      padding: 32px;
-      border-radius: var(--radius-xl);
-      border: 1px solid var(--border);
-      position: relative;
-      transition: all 0.3s ease;
-    }
-
-    .testimonial-card::before {
-      content: '"';
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      font-size: 80px;
-      font-family: Georgia, serif;
-      color: var(--primary);
-      opacity: 0.1;
-      line-height: 1;
-    }
-
-    .testimonial-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .testimonial-header {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 20px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .testimonial-avatar {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-    }
-
-    .testimonial-info h4 {
-      font-size: 18px;
-      margin-bottom: 4px;
-    }
-
-    .testimonial-info p {
-      font-size: 14px;
-      color: var(--text-tertiary);
-    }
-
-    .testimonial-text {
-      font-size: 15px;
-      line-height: 1.75;
-      font-style: italic;
-      color: var(--text-secondary);
-      position: relative;
-      z-index: 1;
-      margin-bottom: 16px;
-    }
-
-    .testimonial-rating {
-      color: #f59e0b;
-      font-size: 18px;
-    }
-
-    .beta-section {
-      background: var(--bg-main);
-    }
-
-    .beta-container {
-      max-width: 720px;
-      margin: 0 auto;
-      background: var(--bg-alt);
-      padding: var(--spacing-2xl);
-      border-radius: var(--radius-xl);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .form-group {
-      margin-bottom: 24px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 8px;
-    }
-
-    .form-group input,
-    .form-group textarea,
-    .form-group select {
-      width: 100%;
-      padding: 12px 16px;
-      font-size: 15px;
-      font-family: 'Inter', sans-serif;
-      background: var(--bg-main);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      color: var(--text-primary);
-      transition: all 0.3s ease;
-    }
-
-    .form-group input:focus,
-    .form-group textarea:focus,
-    .form-group select:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(255, 98, 0, 0.1);
-    }
-
-    .form-group textarea {
-      resize: vertical;
-      min-height: 120px;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .form-submit {
-      margin-top: 32px;
-    }
-
-    .form-success {
-      display: none;
-      padding: 20px;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid var(--success);
-      border-radius: var(--radius-md);
-      color: var(--success);
-      font-weight: 600;
-      text-align: center;
-    }
-
-    .form-success.show {
-      display: block;
-    }
-
-    footer {
-      background: var(--bg-alt);
-      padding: var(--spacing-2xl) 0;
-      border-top: 1px solid var(--border);
-      text-align: center;
-    }
-
-    .footer-logo {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .social-icons {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      margin-top: 24px;
-    }
-
-    .social-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: var(--bg-main);
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-    }
-
-    .social-icon:hover {
-      background: var(--primary);
-      border-color: var(--primary);
-      transform: translateY(-4px);
-    }
-
-    .social-icon svg {
-      width: 20px;
-      height: 20px;
-      fill: var(--text-secondary);
-      transition: fill 0.3s ease;
-    }
-
-    .social-icon:hover svg {
-      fill: white;
-    }
-
-    .whatsapp-float {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      width: 60px;
-      height: 60px;
-      background: linear-gradient(135deg, #25D366, #128C7E);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: var(--shadow-xl);
-      cursor: pointer;
-      z-index: 999;
-      transition: all 0.3s ease;
-      animation: floatWA 3s ease-in-out infinite;
-    }
-
-    @keyframes floatWA {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-
-    .whatsapp-float:hover {
-      transform: scale(1.1);
-      box-shadow: 0 20px 40px rgba(37, 211, 102, 0.4);
-    }
-
-    .whatsapp-float svg {
-      width: 32px;
-      height: 32px;
-      fill: white;
-    }
-
-    /* RESPONSIVE MOBILE */
-    @media (max-width: 1024px) {
-      .hero-container {
-        grid-template-columns: 1fr;
-        gap: 48px;
-        text-align: center;
-      }
-
-      .hero-desc {
-        margin: 0 auto 32px;
-      }
-
-      .hero-cta {
-        justify-content: center;
-      }
-
-      .hero-image {
-        order: -1;
-      }
-
-      .promise-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 24px;
-      }
-
-      .features-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-      }
-
-      .testimonials-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 768px) {
-      html {
-        font-size: 16px;
-      }
-
-      .container {
-        padding: 0 20px;
-      }
-
-      section {
-        padding: 60px 0;
-      }
-
-      .header-container {
-        padding: 14px 20px;
-      }
-
-      .logo-svg {
-        width: 36px;
-        height: 36px;
-      }
-
-      .logo-text {
-        font-size: 20px;
-      }
-
-      .menu-toggle {
-        display: flex !important;
-      }
-
-      nav {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: var(--bg-main);
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: stretch;
-        padding: 80px 24px 32px;
-        gap: 16px;
-        transform: translateX(100%);
-        opacity: 0;
-        transition: all 0.4s ease;
-        z-index: 1001;
-        overflow-y: auto;
-      }
-
-      nav.active {
-        transform: translateX(0);
-        opacity: 1;
-      }
-
-      nav a {
-        width: 100%;
-        padding: 18px 24px;
-        text-align: center;
-        font-size: 18px;
-        font-weight: 600;
-        border-radius: 12px;
-        background: var(--bg-alt);
-        border: 2px solid var(--border);
-        margin: 0;
-      }
-
-      nav a:hover {
-        background: var(--primary);
-        color: white;
-        border-color: var(--primary);
-      }
-
-      nav a::after {
-        display: none;
-      }
-
-      .nav-cta {
-        background: var(--primary) !important;
-        color: white !important;
-        border: none !important;
-        margin-top: 8px;
-      }
-
-      .header-actions .icon-btn {
-        display: none;
-      }
-
-      .hero {
-        min-height: auto;
-        padding: 100px 20px 60px;
-      }
-
-      .hero-container {
-        gap: 40px;
-      }
-
-      h1 {
-        font-size: 2.2rem !important;
-        line-height: 1.1;
-      }
-
-      .hero-desc {
-        font-size: 17px;
-        margin-bottom: 28px;
-      }
-
-      .hero-cta {
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .btn {
-        width: 100%;
-        padding: 16px 24px;
-        font-size: 16px;
-      }
-
-      .hero-phone {
-        max-width: 280px;
-      }
-
-      .section-header {
-        margin-bottom: 40px;
-      }
-
-      .section-title {
-        font-size: 1.8rem !important;
-      }
-
-      .section-desc {
-        font-size: 16px;
-      }
-
-      .promise-grid {
-        grid-template-columns: 1fr !important;
-        gap: 20px;
-      }
-
-      .features-grid {
-        grid-template-columns: 1fr !important;
-        gap: 16px;
-      }
-
-      .testimonials-grid {
-        grid-template-columns: 1fr !important;
-        gap: 20px;
-      }
-
-      .promise-card {
-        padding: 28px;
-      }
-
-      .feature-card {
-        padding: 28px;
-      }
-
-      .testimonial-card {
-        padding: 24px;
-      }
-
-      .beta-container {
-        padding: 28px 20px;
-      }
-
-      .form-row {
-        grid-template-columns: 1fr !important;
-        gap: 0;
-      }
-
-      .form-group input,
-      .form-group textarea,
-      .form-group select {
-        padding: 14px 16px;
-        font-size: 16px;
-      }
-
-      .whatsapp-float {
-        width: 56px;
-        height: 56px;
-        bottom: 20px;
-        right: 20px;
-      }
-
-      .whatsapp-float svg {
-        width: 28px;
-        height: 28px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      html {
-        font-size: 15px;
-      }
-
-      h1 {
-        font-size: 1.9rem !important;
-      }
-
-      .section-title {
-        font-size: 1.6rem !important;
-      }
-
-      .hero {
-        padding: 80px 16px 50px;
-      }
-
-      /* TELEPHONE ENCORE PLUS PETIT */
-      .hero-phone {
-        max-width: 240px;
-      }
-
-      .phone-mockup {
-        padding: 8px;
-        border-radius: 30px;
-      }
-
-      .phone-screen {
-        border-radius: 24px;
-      }
-
-      .phone-content {
-        padding: 14px;
-      }
-
-      .content-card-phone {
-        padding: 16px;
-        margin-bottom: 12px;
-      }
-
-      .card-title {
-        font-size: 13px;
-      }
-
-      .card-value {
-        font-size: 24px;
-      }
-
-      .stats-grid {
-        gap: 10px;
-      }
-
-      .stat-item {
-        padding: 12px;
-      }
-
-      .stat-label {
-        font-size: 10px;
-      }
-
-      .stat-value {
-        font-size: 18px;
-      }
-
-      .product-item {
-        padding: 10px;
-        margin-bottom: 10px;
-      }
-
-      .product-icon {
-        width: 36px;
-        height: 36px;
-        font-size: 18px;
-      }
-
-      .product-name {
-        font-size: 12px;
-      }
-
-      .product-stock {
-        font-size: 10px;
-      }
-
-      .container {
-        padding: 0 16px;
-      }
-
-      .promise-card,
-      .feature-card,
-      .testimonial-card {
-        padding: 24px 20px;
-      }
-
-      .beta-container {
-        padding: 24px 16px;
-      }
-
-      nav {
-        padding: 70px 20px 28px;
-      }
-
-      nav a {
-        padding: 16px 20px;
-        font-size: 17px;
-      }
-    }
-
-    [lang="en"] .lang-fr { display: none; }
-    [lang="fr"] .lang-en { display: none; }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"/>
+    <title>Velmo — Gagnez plus. Vivez mieux.</title>
+    <meta name="description" content="Application légère, rapide et universelle. Pour tous les smartphones, même anciens."/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff6200;
+            --primary-dark: #e55a00;
+            --primary-light: #ff8c42;
+            --secondary: #ff4500;
+            --accent: #ffa500;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        
+            --bg-main: #ffffff;
+            --bg-alt: #fff8f5;
+            --bg-subtle: #fff0e6;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-tertiary: #94a3b8;
+            --border: #ffe4d1;
+            --shadow-sm: 0 1px 2px 0 rgba(255, 98, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(255, 98, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(255, 98, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(255, 98, 0, 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgba(255, 98, 0, 0.25);
+        
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+        
+            --spacing-xs: 8px;
+            --spacing-sm: 16px;
+            --spacing-md: 24px;
+            --spacing-lg: 32px;
+            --spacing-xl: 48px;
+            --spacing-2xl: 64px;
+            --spacing-3xl: 96px;
+        }
+        [data-theme="dark"] {
+            --bg-main: #0f172a;
+            --bg-alt: #1e293b;
+            --bg-subtle: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-tertiary: #64748b;
+            --border: #334155;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 clamp(20px, 5vw, 40px);
+        }
+        section {
+            padding: var(--spacing-3xl) 0;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+        }
+        h1 { font-size: clamp(2.5rem, 6vw, 4rem); }
+        h2 { font-size: clamp(2rem, 5vw, 3rem); }
+        h3 { font-size: clamp(1.5rem, 4vw, 2rem); }
+        p {
+            line-height: 1.75;
+            color: var(--text-secondary);
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid var(--border);
+            z-index: 999;
+            transition: all 0.3s ease;
+        }
+        [data-theme="dark"] header {
+            background: rgba(15, 23, 42, 0.95);
+        }
+        header.scrolled {
+            box-shadow: var(--shadow-md);
+        }
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 40px;
+            max-width: 1440px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1002;
+        }
+        .logo-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            z-index: 1003;
+            position: relative;
+        }
+        .logo-wrapper:hover {
+            transform: translateY(-2px);
+        }
+        .logo-svg {
+            width: 40px;
+            height: 40px;
+            transition: all 0.3s ease;
+        }
+        .logo-svg circle {
+            fill: var(--primary);
+            transition: fill 0.3s ease;
+        }
+        .logo-svg text {
+            fill: white;
+            font-weight: 900;
+            font-size: 32px;
+        }
+        .logo-svg:hover circle {
+            fill: var(--primary-dark);
+            animation: pulse 1s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .logo-text {
+            font-size: 24px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+        nav a {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        nav a:hover {
+            color: var(--primary);
+        }
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+        nav a:hover::after {
+            width: 100%;
+        }
+        .nav-cta {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white !important;
+            padding: 10px 24px;
+            border-radius: 100px;
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        .nav-cta::after {
+            display: none;
+        }
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            position: relative;
+            z-index: 1003;
+        }
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 18px;
+            position: relative;
+            z-index: 1003;
+        }
+        .icon-btn:hover {
+            transform: scale(1.1);
+            border-color: var(--primary);
+            background: var(--primary);
+        }
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px;
+            z-index: 1003;
+            background: var(--primary);
+            border-radius: 8px;
+            border: 2px solid var(--primary-dark);
+            position: relative;
+        }
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background: white;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+            display: block;
+        }
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(7px, 7px);
+        }
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+        /* DETECTION MOBILE AGGRESSIVE */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: flex !important;
+            }
+        
+            .header-actions .icon-btn {
+                display: none !important;
+            }
+        
+            nav {
+                display: none;
+            }
+        
+            nav.active {
+                display: flex !important;
+            }
+        }
+        /* DETECTION TABLETTE */
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .menu-toggle {
+                display: flex !important;
+            }
+        }
+        /* FORCE MOBILE */
+        .mobile-detected .menu-toggle {
+            display: flex !important;
+        }
+        .mobile-detected nav:not(.active) {
+            display: none !important;
+        }
+        .mobile-detected nav.active {
+            display: flex !important;
+        }
+        .mobile-detected .header-actions .icon-btn {
+            display: none !important;
+        }
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 0 80px;
+            background: var(--bg-main);
+            position: relative;
+            overflow: hidden;
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255, 98, 0, 0.1), transparent);
+            top: -200px;
+            right: -100px;
+            border-radius: 50%;
+            animation: float 20s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -50px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+        .hero-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-content {
+            animation: fadeInUp 0.8s ease-out;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, rgba(255, 98, 0, 0.1), rgba(255, 69, 0, 0.1));
+            border: 1px solid rgba(255, 98, 0, 0.2);
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 24px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+        .hero h1 {
+            margin-bottom: 24px;
+            animation: fadeInUp 0.8s ease-out 0.3s both;
+        }
+        .hero-desc {
+            font-size: 20px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            max-width: 540px;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+        .hero-cta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.5s both;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: var(--shadow-lg);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+        .btn-secondary {
+            background: var(--bg-alt);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover {
+            background: var(--bg-subtle);
+            transform: translateY(-2px);
+        }
+        .hero-image {
+            position: relative;
+            animation: fadeInRight 0.8s ease-out 0.6s both;
+        }
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        .hero-phone {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            position: relative;
+            animation: floatPhone 6s ease-in-out infinite;
+        }
+        @keyframes floatPhone {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        .phone-mockup {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 9 / 19;
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border-radius: 40px;
+            padding: 12px;
+            box-shadow: var(--shadow-2xl);
+            border: 3px solid rgba(255, 98, 0, 0.3);
+        }
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+        }
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 28px;
+            background: #0f172a;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            z-index: 10;
+        }
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+        .phone-content {
+            padding: 20px;
+            height: calc(100% - 50px);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) #f1f5f9;
+        }
+        .phone-content::-webkit-scrollbar {
+            width: 4px;
+        }
+        .phone-content::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+        .content-card-phone {
+            background: linear-gradient(135deg, rgba(255, 98, 0, 0.05), rgba(255, 69, 0, 0.05));
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 98, 0, 0.1);
+            animation: slideInUp 0.5s ease-out;
+        }
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-value {
+            font-size: 28px;
+            font-weight: 900;
+            color: #0f172a;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .card-subtitle {
+            font-size: 12px;
+            color: var(--success);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .stat-item {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(255, 98, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .stat-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            font-weight: 600;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .stat-value {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        .phone-nav {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 24px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 8px 20px;
+            border-radius: 24px;
+            z-index: 5;
+            box-shadow: var(--shadow-lg);
+        }
+        .nav-dot {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        .nav-dot.active {
+            background: var(--primary);
+        }
+        .nav-dot svg {
+            width: 18px;
+            height: 18px;
+            fill: #64748b;
+            transition: fill 0.3s ease;
+        }
+        .nav-dot.active svg {
+            fill: white;
+        }
+        .nav-dot:hover:not(.active) {
+            background: rgba(255, 98, 0, 0.1);
+        }
+        .product-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255, 98, 0, 0.1);
+            box-shadow: var(--shadow-sm);
+        }
+        .product-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, rgba(255, 98, 0, 0.1), rgba(255, 69, 0, 0.1));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .product-info {
+            flex: 1;
+        }
+        .product-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 2px;
+        }
+        .product-stock {
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+        .stock-badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .stock-ok {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        .stock-low {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+        .stock-out {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+        .chart-container {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 98, 0, 0.1);
+        }
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            height: 120px;
+            margin-top: 12px;
+        }
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--primary), var(--primary-light));
+            border-radius: 6px 6px 0 0;
+            position: relative;
+            transition: all 0.3s ease;
+            animation: barGrow 0.8s ease-out backwards;
+        }
+        @keyframes barGrow {
+            from {
+                height: 0;
+                opacity: 0;
+            }
+            to {
+                height: 100%;
+                opacity: 1;
+            }
+        }
+        .chart-bar:hover {
+            opacity: 0.8;
+            transform: translateY(-4px);
+        }
+        .chart-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 10px;
+            color: var(--text-tertiary);
+            font-weight: 600;
+        }
+        .alert-badge {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid var(--danger);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        .alert-text {
+            font-size: 12px;
+            color: var(--danger);
+            font-weight: 600;
+        }
+        .success-badge {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid var(--success);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .success-text {
+            font-size: 12px;
+            color: var(--success);
+            font-weight: 600;
+        }
+        .section-alt {
+            background: var(--bg-alt);
+        }
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto var(--spacing-2xl);
+        }
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: linear-gradient(135deg, rgba(255, 98, 0, 0.1), rgba(255, 69, 0, 0.1));
+            border: 1px solid rgba(255, 98, 0, 0.2);
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
+        .section-title {
+            margin-bottom: 20px;
+        }
+        .section-desc {
+            font-size: 18px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .promise-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            margin-top: var(--spacing-2xl);
+        }
+        .promise-card {
+            background: var(--bg-main);
+            padding: 40px;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .promise-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        .promise-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary);
+        }
+        .promise-card:hover::before {
+            transform: scaleX(1);
+        }
+        .promise-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, rgba(255, 98, 0, 0.1), rgba(255, 69, 0, 0.1));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: 24px;
+        }
+        .promise-card h3 {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+        .promise-card p {
+            font-size: 16px;
+            line-height: 1.75;
+            color: var(--text-secondary);
+        }
+        .promise-placeholder {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+        .placeholder-line {
+            height: 10px;
+            background: linear-gradient(90deg, var(--bg-subtle) 0%, var(--bg-alt) 50%, var(--bg-subtle) 100%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s ease-in-out infinite;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .placeholder-line:last-child {
+            width: 60%;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: var(--spacing-2xl);
+        }
+        .feature-card {
+            background: var(--bg-main);
+            padding: 32px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            display: block;
+            animation: bounce 2s ease-in-out infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .feature-card h4 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
+        .feature-card p {
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+            margin-top: var(--spacing-2xl);
+        }
+        .testimonial-card {
+            background: var(--bg-main);
+            padding: 32px;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 80px;
+            font-family: Georgia, serif;
+            color: var(--primary);
+            opacity: 0.1;
+            line-height: 1;
+        }
+        .testimonial-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        .testimonial-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .testimonial-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .testimonial-info h4 {
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+        .testimonial-info p {
+            font-size: 14px;
+            color: var(--text-tertiary);
+        }
+        .testimonial-text {
+            font-size: 15px;
+            line-height: 1.75;
+            font-style: italic;
+            color: var(--text-secondary);
+            position: relative;
+            z-index: 1;
+            margin-bottom: 16px;
+        }
+        .testimonial-rating {
+            color: #f59e0b;
+            font-size: 18px;
+        }
+        .beta-section {
+            background: var(--bg-main);
+        }
+        .beta-container {
+            max-width: 720px;
+            margin: 0 auto;
+            background: var(--bg-alt);
+            padding: var(--spacing-2xl);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-lg);
+        }
+        .form-group {
+            margin-bottom: 24px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        .form-group input, 
+        .form-group textarea, 
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        .form-group input:focus, 
+        .form-group textarea:focus, 
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 98, 0, 0.1);
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .form-submit {
+            margin-top: 32px;
+        }
+        .form-success {
+            display: none;
+            padding: 20px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success);
+            border-radius: var(--radius-md);
+            color: var(--success);
+            font-weight: 600;
+            text-align: center;
+        }
+        .form-success.show {
+            display: block;
+        }
+        footer {
+            background: var(--bg-alt);
+            padding: var(--spacing-2xl) 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 24px;
+        }
+        .social-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .social-icon:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-4px);
+        }
+        .social-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--text-secondary);
+            transition: fill 0.3s ease;
+        }
+        .social-icon:hover svg {
+            fill: white;
+        }
+        .whatsapp-float {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-xl);
+            cursor: pointer;
+            z-index: 999;
+            transition: all 0.3s ease;
+            animation: floatWA 3s ease-in-out infinite;
+        }
+        @keyframes floatWA {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 0 20px 40px rgba(37, 211, 102, 0.4);
+        }
+        .whatsapp-float svg {
+            width: 32px;
+            height: 32px;
+            fill: white;
+        }
+        /* RESPONSIVE MOBILE */
+        @media (max-width: 1024px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: 48px;
+                text-align: center;
+            }
+            .hero-desc {
+                margin: 0 auto 32px;
+            }
+            .hero-cta {
+                justify-content: center;
+            }
+            .promise-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 24px;
+            }
+            .features-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+            }
+            .testimonials-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 768px) {
+            html {
+                font-size: 16px;
+            }
+            .container {
+                padding: 0 20px;
+            }
+            section {
+                padding: 60px 0;
+            }
+            .header-container {
+                padding: 14px 20px;
+            }
+            .logo-svg {
+                width: 36px;
+                height: 36px;
+            }
+            .logo-text {
+                font-size: 20px;
+            }
+            .menu-toggle {
+                display: flex !important;
+            }
+            nav {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: var(--bg-main);
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: stretch;
+                padding: 80px 24px 32px;
+                gap: 16px;
+                transform: translateX(100%);
+                opacity: 0;
+                transition: all 0.4s ease;
+                z-index: 1001;
+                overflow-y: auto;
+            }
+            nav.active {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            nav a {
+                width: 100%;
+                padding: 18px 24px;
+                text-align: center;
+                font-size: 18px;
+                font-weight: 600;
+                border-radius: 12px;
+                background: var(--bg-alt);
+                border: 2px solid var(--border);
+                margin: 0;
+            }
+            nav a:hover {
+                background: var(--primary);
+                color: white;
+                border-color: var(--primary);
+            }
+            nav a::after {
+                display: none;
+            }
+            .nav-cta {
+                background: var(--primary) !important;
+                color: white !important;
+                border: none !important;
+                margin-top: 8px;
+            }
+            .header-actions .icon-btn {
+                display: none;
+            }
+            .hero {
+                min-height: auto;
+                padding: 100px 20px 60px;
+            }
+            .hero-container {
+                gap: 40px;
+            }
+            h1 {
+                font-size: 2.2rem !important;
+                line-height: 1.1;
+            }
+            .hero-desc {
+                font-size: 17px;
+                margin-bottom: 28px;
+            }
+            .hero-cta {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .btn {
+                width: 100%;
+                padding: 16px 24px;
+                font-size: 16px;
+            }
+            .hero-phone {
+                max-width: 280px;
+            }
+            .section-header {
+                margin-bottom: 40px;
+            }
+            .section-title {
+                font-size: 1.8rem !important;
+            }
+            .section-desc {
+                font-size: 16px;
+            }
+            .promise-grid {
+                grid-template-columns: 1fr !important;
+                gap: 20px;
+            }
+            .features-grid {
+                grid-template-columns: 1fr !important;
+                gap: 16px;
+            }
+            .testimonials-grid {
+                grid-template-columns: 1fr !important;
+                gap: 20px;
+            }
+            .promise-card {
+                padding: 28px;
+            }
+            .feature-card {
+                padding: 28px;
+            }
+            .testimonial-card {
+                padding: 24px;
+            }
+            .beta-container {
+                padding: 28px 20px;
+            }
+            .form-row {
+                grid-template-columns: 1fr !important;
+                gap: 0;
+            }
+            .form-group input, 
+            .form-group textarea, 
+            .form-group select {
+                padding: 14px 16px;
+                font-size: 16px;
+            }
+            .whatsapp-float {
+                width: 56px;
+                height: 56px;
+                bottom: 20px;
+                right: 20px;
+            }
+            .whatsapp-float svg {
+                width: 28px;
+                height: 28px;
+            }
+        }
+        @media (max-width: 480px) {
+            html {
+                font-size: 15px;
+            }
+            h1 {
+                font-size: 1.9rem !important;
+            }
+            .section-title {
+                font-size: 1.6rem !important;
+            }
+            .hero {
+                padding: 80px 16px 50px;
+            }
+            /* TELEPHONE ENCORE PLUS PETIT */
+            .hero-phone {
+                max-width: 240px;
+            }
+            .phone-mockup {
+                padding: 8px;
+                border-radius: 30px;
+            }
+            .phone-screen {
+                border-radius: 24px;
+            }
+            .phone-content {
+                padding: 14px;
+            }
+            .content-card-phone {
+                padding: 16px;
+                margin-bottom: 12px;
+            }
+            .card-title {
+                font-size: 13px;
+            }
+            .card-value {
+                font-size: 24px;
+            }
+            .stats-grid {
+                gap: 10px;
+            }
+            .stat-item {
+                padding: 12px;
+            }
+            .stat-label {
+                font-size: 10px;
+            }
+            .stat-value {
+                font-size: 18px;
+            }
+            .product-item {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+            .product-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 18px;
+            }
+            .product-name {
+                font-size: 12px;
+            }
+            .product-stock {
+                font-size: 10px;
+            }
+            .container {
+                padding: 0 16px;
+            }
+            .promise-card, 
+            .feature-card, 
+            .testimonial-card {
+                padding: 24px 20px;
+            }
+            .beta-container {
+                padding: 24px 16px;
+            }
+            nav {
+                padding: 70px 20px 28px;
+            }
+            nav a {
+                padding: 16px 20px;
+                font-size: 17px;
+            }
+        }
+        [lang="en"] .lang-fr { display: none; }
+        [lang="fr"] .lang-en { display: none; }
+    </style>
 </head>
 <body>
-  <header id="header">
-    <div class="header-container">
-      <div class="logo-wrapper">
-        <svg class="logo-svg" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="45" fill="#ff6200"/>
-          <text x="50" y="65" text-anchor="middle" fill="white" font-size="50" font-weight="900">V</text>
-        </svg>
-        <div class="logo-text">Velmo</div>
-      </div>
-
-      <nav id="nav">
-        <a href="#promesse"><span class="lang-fr">Promesse</span><span class="lang-en">Promise</span></a>
-        <a href="#features"><span class="lang-fr">Fonctions</span><span class="lang-en">Features</span></a>
-        <a href="#testimonials"><span class="lang-fr">Témoignages</span><span class="lang-en">Reviews</span></a>
-        <a href="#beta" class="nav-cta">
-          <span class="lang-fr">🚀 Rejoindre Beta</span>
-          <span class="lang-en">🚀 Join Beta</span>
-        </a>
-      </nav>
-
-      <div class="header-actions">
-        <button class="icon-btn" id="theme-toggle" title="Toggle theme">🌙</button>
-        <button class="icon-btn" id="lang-toggle" title="Change language">🇫🇷</button>
-        <div class="menu-toggle" id="menu-toggle">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <section class="hero">
-    <div class="container">
-      <div class="hero-container">
-        <div class="hero-content">
-          <div class="hero-badge">
-            <span>✨</span>
-            <span class="lang-fr">Phase Beta Ouverte</span>
-            <span class="lang-en">Beta Phase Open</span>
-          </div>
-
-          <h1 class="lang-fr">Gagnez plus.<br>Vivez mieux.</h1>
-          <h1 class="lang-en">Earn more.<br>Live better.</h1>
-
-          <p class="hero-desc lang-fr">
-            La seule application dont tu as besoin pour gérer ton commerce. Simple, rapide et accessible partout — même hors ligne.
-          </p>
-          <p class="hero-desc lang-en">
-            The only app you need to manage your business. Simple, fast and accessible everywhere — even offline.
-          </p>
-
-          <div class="hero-cta">
-            <a href="#beta" class="btn btn-primary">
-              <span class="lang-fr">Rejoindre la Beta</span>
-              <span class="lang-en">Join the Beta</span>
-              <span>→</span>
-            </a>
-            <a href="#promesse" class="btn btn-secondary">
-              <span class="lang-fr">En savoir plus</span>
-              <span class="lang-en">Learn more</span>
-            </a>
-          </div>
-        </div>
-
-        <div class="hero-image">
-          <div class="hero-phone">
-            <div class="phone-mockup">
-              <div class="phone-notch"></div>
-              <div class="phone-screen">
-                <div class="status-bar">
-                  <span>9:41</span>
-                  <span>🔋 100%</span>
+    <header id="header">
+        <div class="header-container">
+            <div class="logo-wrapper">
+                <svg class="logo-svg" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="#ff6200"/>
+                    <text x="50" y="65" text-anchor="middle" fill="white" font-size="50" font-weight="900">V</text>
+                </svg>
+                <div class="logo-text">Velmo</div>
+            </div>
+            <nav id="nav">
+                <a href="#promesse"><span class="lang-fr">Promesse</span><span class="lang-en">Promise</span></a>
+                <a href="#features"><span class="lang-fr">Fonctions</span><span class="lang-en">Features</span></a>
+                <a href="#testimonials"><span class="lang-fr">Témoignages</span><span class="lang-en">Reviews</span></a>
+                <a href="#beta" class="nav-cta">
+                    <span class="lang-fr">🚀 Rejoindre Beta</span>
+                    <span class="lang-en">🚀 Join Beta</span>
+                </a>
+            </nav>
+            <div class="header-actions">
+                <button class="icon-btn" id="theme-toggle" title="Toggle theme">🌙</button>
+                <button class="icon-btn" id="lang-toggle" title="Change language">🇫🇷</button>
+                <div class="menu-toggle" id="menu-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </div>
-                <div class="phone-content" id="hero-phone-content"></div>
-                <div class="phone-nav">
-                  <div class="nav-dot active" data-view="dashboard">
-                    <svg viewBox="0 0 24 24">
-                      <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
-                    </svg>
-                  </div>
-                  <div class="nav-dot" data-view="stock">
-                    <svg viewBox="0 0 24 24">
-                      <path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/>
-                    </svg>
-                  </div>
-                  <div class="nav-dot" data-view="analytics">
-                    <svg viewBox="0 0 24 24">
-                      <path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/>
-                    </svg>
-                  </div>
-                  <div class="nav-dot" data-view="offline">
-                    <svg viewBox="0 0 24 24">
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                    </svg>
-                  </div>
+            </div>
+        </div>
+    </header>
+    <section class="hero">
+        <div class="container">
+            <div class="hero-container">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <span>✨</span>
+                        <span class="lang-fr">Phase Beta Ouverte</span>
+                        <span class="lang-en">Beta Phase Open</span>
+                    </div>
+                    <h1 class="lang-fr">Gagnez plus.<br>Vivez mieux.</h1>
+                    <h1 class="lang-en">Earn more.<br>Live better.</h1>
+                    <p class="hero-desc lang-fr">
+                        La seule application dont tu as besoin pour gérer ton commerce. Simple, rapide et accessible partout — même hors ligne.
+                    </p>
+                    <p class="hero-desc lang-en">
+                        The only app you need to manage your business. Simple, fast and accessible everywhere — even offline.
+                    </p>
+                    <div class="hero-cta">
+                        <a href="#beta" class="btn btn-primary">
+                            <span class="lang-fr">Rejoindre la Beta</span>
+                            <span class="lang-en">Join the Beta</span>
+                            <span>→</span>
+                        </a>
+                        <a href="#promesse" class="btn btn-secondary">
+                            <span class="lang-fr">En savoir plus</span>
+                            <span class="lang-en">Learn more</span>
+                        </a>
+                    </div>
                 </div>
-              </div>
+                <div class="hero-image">
+                    <div class="hero-phone">
+                        <div class="phone-mockup">
+                            <div class="phone-notch"></div>
+                            <div class="phone-screen">
+                                <div class="status-bar">
+                                    <span>9:41</span>
+                                    <span>🔋 100%</span>
+                                </div>
+                                <div class="phone-content" id="hero-phone-content"></div>
+                                <div class="phone-nav">
+                                    <div class="nav-dot active" data-view="dashboard">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="nav-dot" data-view="stock">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="nav-dot" data-view="analytics">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="nav-dot" data-view="offline">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section-alt" id="promesse">
-    <div class="container">
-      <div class="section-header">
-        <div class="section-badge">
-          <span>💎</span>
-          <span class="lang-fr">Notre Promesse</span>
-          <span class="lang-en">Our Promise</span>
-        </div>
-        <h2 class="section-title lang-fr">Tout ce dont vous avez besoin</h2>
-        <h2 class="section-title lang-en">Everything you need</h2>
-        <p class="section-desc lang-fr">
-          Une application simple qui transforme la façon dont vous gérez votre commerce
-        </p>
-        <p class="section-desc lang-en">
-          A simple app that transforms how you manage your business
-        </p>
-      </div>
-
-      <div class="promise-grid">
-        <div class="promise-card">
-          <div class="promise-icon">📈</div>
-          <h3 class="lang-fr">Vendre mieux</h3>
-          <h3 class="lang-en">Sell better</h3>
-          <p class="lang-fr">
-            Suivez vos ventes en temps réel avec des graphiques clairs. Prenez des décisions rapides et augmentez vos profits.
-          </p>
-          <p class="lang-en">
-            Track your sales in real-time with clear charts. Make quick decisions and increase your profits.
-          </p>
-          <div class="promise-placeholder">
-            <div class="placeholder-line"></div>
-            <div class="placeholder-line"></div>
-            <div class="placeholder-line"></div>
-          </div>
-        </div>
-
-        <div class="promise-card">
-          <div class="promise-icon">📦</div>
-          <h3 class="lang-fr">Suivre vos stocks</h3>
-          <h3 class="lang-en">Track inventory</h3>
-          <p class="lang-fr">
-            Recevez des alertes automatiques. Ne soyez plus jamais à court de produits essentiels.
-          </p>
-          <p class="lang-en">
-            Receive automatic alerts. Never run out of essential products again.
-          </p>
-          <div class="promise-placeholder">
-            <div class="placeholder-line"></div>
-            <div class="placeholder-line"></div>
-            <div class="placeholder-line"></div>
-          </div>
-        </div>
-
-        <div class="promise-card">
-          <div class="promise-icon">💼</div>
-          <h3 class="lang-fr">Gérer sans stress</h3>
-          <h3 class="lang-en">Manage stress-free</h3>
-          <p class="lang-fr">
-            Tout centralisé : ventes, dettes, stocks. Interface simple et rapide qui ne vous fait pas perdre de temps.
-          </p>
-          <p class="lang-en">
-            Everything centralized: sales, debts, inventory. Simple and fast interface that doesn't waste your time.
-          </p>
-          <div class="promise-placeholder">
-            <div class="placeholder-line"></div>
-            <div class="placeholder-line"></div>
-            <div class="placeholder-line"></div>
-          </div>
-        </div>
-
-        <div class="promise-card">
-          <div class="promise-icon">📴</div>
-          <h3 class="lang-fr">Même sans internet</h3>
-          <h3 class="lang-en">Even without internet</h3>
-          <p class="lang-fr">
-            Travaillez hors ligne. Velmo synchronise automatiquement vos données dès que vous êtes connecté.
-          </p>
-          <p class="lang-en">
-            Work offline. Velmo automatically syncs your data as soon as you're connected.
-          </p>
-          <div class="promise-placeholder">
-            <div class="placeholder-line"></div>
-            <div class="placeholder-line"></div>
-            <div class="placeholder-line"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <div class="container">
-      <div class="section-header">
-        <div class="section-badge">
-          <span>🎯</span>
-          <span class="lang-fr">Mission</span>
-          <span class="lang-en">Mission</span>
-        </div>
-        <h2 class="section-title lang-fr">Pourquoi Velmo existe ?</h2>
-        <h2 class="section-title lang-en">Why Velmo exists?</h2>
-        <p class="section-desc lang-fr">
-          Dans beaucoup de régions, la technologie reste compliquée et inaccessible. Velmo change ça.
-        </p>
-        <p class="section-desc lang-en">
-          In many regions, technology remains complicated and inaccessible. Velmo changes that.
-        </p>
-      </div>
-
-      <div style="max-width: 800px; margin: 0 auto; text-align: center;">
-        <p style="font-size: 20px; line-height: 1.8; color: var(--text-secondary); margin-bottom: 24px;" class="lang-fr">
-          C'est <strong style="color: var(--primary);">l'outil universel des petits commerçants du monde entier</strong>.
-          Une application qui fonctionne partout, pour ceux qui veulent avancer — sans obstacle.
-        </p>
-        <p style="font-size: 20px; line-height: 1.8; color: var(--text-secondary); margin-bottom: 24px;" class="lang-en">
-          It's <strong style="color: var(--primary);">the universal tool for small merchants worldwide</strong>.
-          An application that works everywhere, for those who want to move forward — without obstacles.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <section class="section-alt" id="features">
-    <div class="container">
-      <div class="section-header">
-        <div class="section-badge">
-          <span>⚡</span>
-          <span class="lang-fr">Fonctionnalités</span>
-          <span class="lang-en">Features</span>
-        </div>
-        <h2 class="section-title lang-fr">Tout ce qui rend Velmo unique</h2>
-        <h2 class="section-title lang-en">What makes Velmo unique</h2>
-      </div>
-
-      <div class="features-grid">
-        <div class="feature-card">
-          <span class="feature-icon">🌍</span>
-          <h4 class="lang-fr">Universelle</h4>
-          <h4 class="lang-en">Universal</h4>
-          <p class="lang-fr">Fonctionne sur tous les smartphones, même anciens</p>
-          <p class="lang-en">Works on all smartphones, even old ones</p>
-        </div>
-
-        <div class="feature-card">
-          <span class="feature-icon">⚡</span>
-          <h4 class="lang-fr">Ultra légère</h4>
-          <h4 class="lang-en">Ultra lightweight</h4>
-          <p class="lang-fr">Application rapide qui économise votre batterie</p>
-          <p class="lang-en">Fast app that saves your battery</p>
-        </div>
-
-        <div class="feature-card">
-          <span class="feature-icon">🚀</span>
-          <h4 class="lang-fr">Simple & Rapide</h4>
-          <h4 class="lang-en">Simple & Fast</h4>
-          <p class="lang-fr">Interface intuitive sans complications</p>
-          <p class="lang-en">Intuitive interface without complications</p>
-        </div>
-
-        <div class="feature-card">
-          <span class="feature-icon">📚</span>
-          <h4 class="lang-fr">Apprendre</h4>
-          <h4 class="lang-en">Learn</h4>
-          <p class="lang-fr">Outils pour développer vos compétences</p>
-          <p class="lang-en">Tools to develop your skills</p>
-        </div>
-
-        <div class="feature-card">
-          <span class="feature-icon">💬</span>
-          <h4 class="lang-fr">Communiquer</h4>
-          <h4 class="lang-en">Communicate</h4>
-          <p class="lang-fr">Restez connecté avec vos clients</p>
-          <p class="lang-en">Stay connected with your customers</p>
-        </div>
-
-        <div class="feature-card">
-          <span class="feature-icon">🔐</span>
-          <h4 class="lang-fr">Sécurisé</h4>
-          <h4 class="lang-en">Secure</h4>
-          <p class="lang-fr">Vos données en sécurité totale</p>
-          <p class="lang-en">Your data in total security</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="testimonials">
-    <div class="container">
-      <div class="section-header">
-        <div class="section-badge">
-          <span>⭐</span>
-          <span class="lang-fr">Témoignages</span>
-          <span class="lang-en">Testimonials</span>
-        </div>
-        <h2 class="section-title lang-fr">Ils utilisent déjà Velmo</h2>
-        <h2 class="section-title lang-en">They're already using Velmo</h2>
-      </div>
-
-      <div class="testimonials-grid">
-        <div class="testimonial-card">
-          <div class="testimonial-header">
-            <div class="testimonial-avatar">👨</div>
-            <div class="testimonial-info">
-              <h4>Bakary Soumah</h4>
-              <p class="lang-fr">Commerçant - Conakry</p>
-              <p class="lang-en">Merchant - Conakry</p>
+    </section>
+    <section class="section-alt" id="promesse">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-badge">
+                    <span>💎</span>
+                    <span class="lang-fr">Notre Promesse</span>
+                    <span class="lang-en">Our Promise</span>
+                </div>
+                <h2 class="section-title lang-fr">Tout ce dont vous avez besoin</h2>
+                <h2 class="section-title lang-en">Everything you need</h2>
+                <p class="section-desc lang-fr">
+                    Une application simple qui transforme la façon dont vous gérez votre commerce
+                </p>
+                <p class="section-desc lang-en">
+                    A simple app that transforms how you manage your business
+                </p>
             </div>
-          </div>
-          <p class="testimonial-text lang-fr">
-            "Avec Velmo, j'ai pu gérer mon commerce même avec un vieux smartphone. Je vois mes ventes facilement et je ne me perds plus."
-          </p>
-          <p class="testimonial-text lang-en">
-            "With Velmo, I was able to manage my business even with an old smartphone. I see my sales easily and I don't get lost anymore."
-          </p>
-          <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
-        </div>
-
-        <div class="testimonial-card">
-          <div class="testimonial-header">
-            <div class="testimonial-avatar">👩</div>
-            <div class="testimonial-info">
-              <h4>Fatou Diallo</h4>
-              <p class="lang-fr">Vendeuse - Bamako</p>
-              <p class="lang-en">Seller - Bamako</p>
+            <div class="promise-grid">
+                <div class="promise-card">
+                    <div class="promise-icon">📈</div>
+                    <h3 class="lang-fr">Vendre mieux</h3>
+                    <h3 class="lang-en">Sell better</h3>
+                    <p class="lang-fr">
+                        Suivez vos ventes en temps réel avec des graphiques clairs. Prenez des décisions rapides et augmentez vos profits.
+                    </p>
+                    <p class="lang-en">
+                        Track your sales in real-time with clear charts. Make quick decisions and increase your profits.
+                    </p>
+                    <div class="promise-placeholder">
+                        <div class="placeholder-line"></div>
+                        <div class="placeholder-line"></div>
+                        <div class="placeholder-line"></div>
+                    </div>
+                </div>
+                <div class="promise-card">
+                    <div class="promise-icon">📦</div>
+                    <h3 class="lang-fr">Suivre vos stocks</h3>
+                    <h3 class="lang-en">Track inventory</h3>
+                    <p class="lang-fr">
+                        Recevez des alertes automatiques. Ne soyez plus jamais à court de produits essentiels.
+                    </p>
+                    <p class="lang-en">
+                        Receive automatic alerts. Never run out of essential products again.
+                    </p>
+                    <div class="promise-placeholder">
+                        <div class="placeholder-line"></div>
+                        <div class="placeholder-line"></div>
+                        <div class="placeholder-line"></div>
+                    </div>
+                </div>
+                <div class="promise-card">
+                    <div class="promise-icon">💼</div>
+                    <h3 class="lang-fr">Gérer sans stress</h3>
+                    <h3 class="lang-en">Manage stress-free</h3>
+                    <p class="lang-fr">
+                        Tout centralisé : ventes, dettes, stocks. Interface simple et rapide qui ne vous fait pas perdre de temps.
+                    </p>
+                    <p class="lang-en">
+                        Everything centralized: sales, debts, inventory. Simple and fast interface that doesn't waste your time.
+                    </p>
+                    <div class="promise-placeholder">
+                        <div class="placeholder-line"></div>
+                        <div class="placeholder-line"></div>
+                        <div class="placeholder-line"></div>
+                    </div>
+                </div>
+                <div class="promise-card">
+                    <div class="promise-icon">📴</div>
+                    <h3 class="lang-fr">Même sans internet</h3>
+                    <h3 class="lang-en">Even without internet</h3>
+                    <p class="lang-fr">
+                        Travaillez hors ligne. Velmo synchronise automatiquement vos données dès que vous êtes connecté.
+                    </p>
+                    <p class="lang-en">
+                        Work offline. Velmo automatically syncs your data as soon as you're connected.
+                    </p>
+                    <div class="promise-placeholder">
+                        <div class="placeholder-line"></div>
+                        <div class="placeholder-line"></div>
+                        <div class="placeholder-line"></div>
+                    </div>
+                </div>
             </div>
-          </div>
-          <p class="testimonial-text lang-fr">
-            "Avant j'écrivais tout sur papier. Maintenant avec Velmo je sais combien j'ai vendu chaque jour. Même sans réseau !"
-          </p>
-          <p class="testimonial-text lang-en">
-            "Before I wrote everything on paper. Now with Velmo I know how much I sold each day. Even without network!"
-          </p>
-          <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
         </div>
-
-        <div class="testimonial-card">
-          <div class="testimonial-header">
-            <div class="testimonial-avatar">👨</div>
-            <div class="testimonial-info">
-              <h4>Moussa Traoré</h4>
-              <p class="lang-fr">Boutique - Dakar</p>
-              <p class="lang-en">Shop - Dakar</p>
+    </section>
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <div class="section-badge">
+                    <span>🎯</span>
+                    <span class="lang-fr">Mission</span>
+                    <span class="lang-en">Mission</span>
+                </div>
+                <h2 class="section-title lang-fr">Pourquoi Velmo existe ?</h2>
+                <h2 class="section-title lang-en">Why Velmo exists?</h2>
+                <p class="section-desc lang-fr">
+                    Dans beaucoup de régions, la technologie reste compliquée et inaccessible. Velmo change ça.
+                </p>
+                <p class="section-desc lang-en">
+                    In many regions, technology remains complicated and inaccessible. Velmo changes that.
+                </p>
             </div>
-          </div>
-          <p class="testimonial-text lang-fr">
-            "Simple et efficace ! Je peux suivre mon stock et mes clients me font confiance car je note tout dans Velmo."
-          </p>
-          <p class="testimonial-text lang-en">
-            "Simple and effective! I can track my inventory and my customers trust me because I record everything in Velmo."
-          </p>
-          <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section-alt beta-section" id="beta">
-    <div class="container">
-      <div class="section-header">
-        <div class="section-badge">
-          <span>🚀</span>
-          <span class="lang-fr">Phase Beta</span>
-          <span class="lang-en">Beta Phase</span>
-        </div>
-        <h2 class="section-title lang-fr">Rejoignez la beta de Velmo</h2>
-        <h2 class="section-title lang-en">Join Velmo's beta</h2>
-        <p class="section-desc lang-fr">
-          Soyez parmi les premiers à tester Velmo et aidez-nous à créer l'outil parfait pour votre commerce.
-        </p>
-        <p class="section-desc lang-en">
-          Be among the first to test Velmo and help us create the perfect tool for your business.
-        </p>
-      </div>
-
-      <div class="beta-container">
-        <form id="beta-form">
-          <div class="form-row">
-            <div class="form-group">
-              <label for="name" class="lang-fr">Nom complet</label>
-              <label for="name" class="lang-en">Full name</label>
-              <input type="text" id="name" name="name" required>
+            <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+                <p style="font-size: 20px; line-height: 1.8; color: var(--text-secondary); margin-bottom: 24px;" class="lang-fr">
+                    C'est <strong style="color: var(--primary);">l'outil universel des petits commerçants du monde entier</strong>.
+                    Une application qui fonctionne partout, pour ceux qui veulent avancer — sans obstacle.
+                </p>
+                <p style="font-size: 20px; line-height: 1.8; color: var(--text-secondary); margin-bottom: 24px;" class="lang-en">
+                    It's <strong style="color: var(--primary);">the universal tool for small merchants worldwide</strong>.
+                    An application that works everywhere, for those who want to move forward — without obstacles.
+                </p>
             </div>
-
-            <div class="form-group">
-              <label for="email">Email</label>
-              <input type="email" id="email" name="email" required>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="country" class="lang-fr">Pays</label>
-            <label for="country" class="lang-en">Country</label>
-            <select id="country" name="country" required>
-              <option value="" class="lang-fr">Sélectionnez votre pays</option>
-              <option value="" class="lang-en">Select your country</option>
-              
-              <optgroup label="🌍 Afrique / Africa">
-                <option value="algerie">Algérie / Algeria</option>
-                <option value="benin">Bénin / Benin</option>
-                <option value="burkina-faso">Burkina Faso</option>
-                <option value="cameroun">Cameroun / Cameroon</option>
-                <option value="cote-ivoire">Côte d'Ivoire</option>
-                <option value="guinee">Guinée / Guinea</option>
-                <option value="mali">Mali</option>
-                <option value="maroc">Maroc / Morocco</option>
-                <option value="niger">Niger</option>
-                <option value="senegal">Sénégal / Senegal</option>
-                <option value="togo">Togo</option>
-                <option value="tunisie">Tunisie / Tunisia</option>
-              </optgroup>
-
-              <optgroup label="🌎 Amérique / Americas">
-                <option value="canada">Canada</option>
-                <option value="usa">États-Unis / USA</option>
-                <option value="mexique">Mexique / Mexico</option>
-                <option value="bresil">Brésil / Brazil</option>
-              </optgroup>
-
-              <optgroup label="🌏 Asie / Asia">
-                <option value="chine">Chine / China</option>
-                <option value="inde">Inde / India</option>
-                <option value="japon">Japon / Japan</option>
-                <option value="coree-sud">Corée du Sud / South Korea</option>
-              </optgroup>
-
-              <optgroup label="🇪🇺 Europe">
-                <option value="france">France</option>
-                <option value="belgique">Belgique / Belgium</option>
-                <option value="suisse">Suisse / Switzerland</option>
-                <option value="allemagne">Allemagne / Germany</option>
-                <option value="espagne">Espagne / Spain</option>
-              </optgroup>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="business" class="lang-fr">Domaine d'activité</label>
-            <label for="business" class="lang-en">Business field</label>
-            <input type="text" id="business" name="business" required>
-          </div>
-
-          <div class="form-group">
-            <label for="needs" class="lang-fr">Vos besoins spécifiques</label>
-            <label for="needs" class="lang-en">Your specific needs</label>
-            <textarea id="needs" name="needs" required></textarea>
-          </div>
-
-          <div class="form-submit">
-            <button type="submit" class="btn btn-primary" style="width: 100%;">
-              <span class="lang-fr">Envoyer ma candidature</span>
-              <span class="lang-en">Submit application</span>
-              <span>→</span>
-            </button>
-          </div>
-        </form>
-
-        <div class="form-success" id="form-success">
-          <span class="lang-fr">✅ Merci ! Nous vous contacterons bientôt.</span>
-          <span class="lang-en">✅ Thank you! We'll contact you soon.</span>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <footer>
-    <div class="container">
-      <div class="footer-logo">
-        <svg class="logo-svg" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="45" fill="#ff6200"/>
-          <text x="50" y="65" text-anchor="middle" fill="white" font-size="50" font-weight="900">V</text>
+    </section>
+    <section class="section-alt" id="features">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-badge">
+                    <span>⚡</span>
+                    <span class="lang-fr">Fonctionnalités</span>
+                    <span class="lang-en">Features</span>
+                </div>
+                <h2 class="section-title lang-fr">Tout ce qui rend Velmo unique</h2>
+                <h2 class="section-title lang-en">What makes Velmo unique</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">🌍</span>
+                    <h4 class="lang-fr">Universelle</h4>
+                    <h4 class="lang-en">Universal</h4>
+                    <p class="lang-fr">Fonctionne sur tous les smartphones, même anciens</p>
+                    <p class="lang-en">Works on all smartphones, even old ones</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">⚡</span>
+                    <h4 class="lang-fr">Ultra légère</h4>
+                    <h4 class="lang-en">Ultra lightweight</h4>
+                    <p class="lang-fr">Application rapide qui économise votre batterie</p>
+                    <p class="lang-en">Fast app that saves your battery</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🚀</span>
+                    <h4 class="lang-fr">Simple & Rapide</h4>
+                    <h4 class="lang-en">Simple & Fast</h4>
+                    <p class="lang-fr">Interface intuitive sans complications</p>
+                    <p class="lang-en">Intuitive interface without complications</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📚</span>
+                    <h4 class="lang-fr">Apprendre</h4>
+                    <h4 class="lang-en">Learn</h4>
+                    <p class="lang-fr">Outils pour développer vos compétences</p>
+                    <p class="lang-en">Tools to develop your skills</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">💬</span>
+                    <h4 class="lang-fr">Communiquer</h4>
+                    <h4 class="lang-en">Communicate</h4>
+                    <p class="lang-fr">Restez connecté avec vos clients</p>
+                    <p class="lang-en">Stay connected with your customers</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🔐</span>
+                    <h4 class="lang-fr">Sécurisé</h4>
+                    <h4 class="lang-en">Secure</h4>
+                    <p class="lang-fr">Vos données en sécurité totale</p>
+                    <p class="lang-en">Your data in total security</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-badge">
+                    <span>⭐</span>
+                    <span class="lang-fr">Témoignages</span>
+                    <span class="lang-en">Testimonials</span>
+                </div>
+                <h2 class="section-title lang-fr">Ils utilisent déjà Velmo</h2>
+                <h2 class="section-title lang-en">They're already using Velmo</h2>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">👨</div>
+                        <div class="testimonial-info">
+                            <h4>Bakary Soumah</h4>
+                            <p class="lang-fr">Commerçant - Conakry</p>
+                            <p class="lang-en">Merchant - Conakry</p>
+                        </div>
+                    </div>
+                    <p class="testimonial-text lang-fr">
+                        "Avec Velmo, j'ai pu gérer mon commerce même avec un vieux smartphone. Je vois mes ventes facilement et je ne me perds plus."
+                    </p>
+                    <p class="testimonial-text lang-en">
+                        "With Velmo, I was able to manage my business even with an old smartphone. I see my sales easily and I don't get lost anymore."
+                    </p>
+                    <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">👩</div>
+                        <div class="testimonial-info">
+                            <h4>Fatou Diallo</h4>
+                            <p class="lang-fr">Vendeuse - Bamako</p>
+                            <p class="lang-en">Seller - Bamako</p>
+                        </div>
+                    </div>
+                    <p class="testimonial-text lang-fr">
+                        "Avant j'écrivais tout sur papier. Maintenant avec Velmo je sais combien j'ai vendu chaque jour. Même sans réseau !"
+                    </p>
+                    <p class="testimonial-text lang-en">
+                        "Before I wrote everything on paper. Now with Velmo I know how much I sold each day. Even without network!"
+                    </p>
+                    <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">👨</div>
+                        <div class="testimonial-info">
+                            <h4>Moussa Traoré</h4>
+                            <p class="lang-fr">Boutique - Dakar</p>
+                            <p class="lang-en">Shop - Dakar</p>
+                        </div>
+                    </div>
+                    <p class="testimonial-text lang-fr">
+                        "Simple et efficace ! Je peux suivre mon stock et mes clients me font confiance car je note tout dans Velmo."
+                    </p>
+                    <p class="testimonial-text lang-en">
+                        "Simple and effective! I can track my inventory and my customers trust me because I record everything in Velmo."
+                    </p>
+                    <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="section-alt beta-section" id="beta">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-badge">
+                    <span>🚀</span>
+                    <span class="lang-fr">Phase Beta</span>
+                    <span class="lang-en">Beta Phase</span>
+                </div>
+                <h2 class="section-title lang-fr">Rejoignez la beta de Velmo</h2>
+                <h2 class="section-title lang-en">Join Velmo's beta</h2>
+                <p class="section-desc lang-fr">
+                    Soyez parmi les premiers à tester Velmo et aidez-nous à créer l'outil parfait pour votre commerce.
+                </p>
+                <p class="section-desc lang-en">
+                    Be among the first to test Velmo and help us create the perfect tool for your business.
+                </p>
+            </div>
+            <div class="beta-container">
+                <form id="beta-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name" class="lang-fr">Nom complet</label>
+                            <label for="name" class="lang-en">Full name</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="country" class="lang-fr">Pays</label>
+                        <label for="country" class="lang-en">Country</label>
+                        <select id="country" name="country" required>
+                            <option value="" class="lang-fr">Sélectionnez votre pays</option>
+                            <option value="" class="lang-en">Select your country</option>
+                            
+                            <optgroup label="🌍 Afrique / Africa">
+                                <option value="algerie">Algérie / Algeria</option>
+                                <option value="benin">Bénin / Benin</option>
+                                <option value="burkina-faso">Burkina Faso</option>
+                                <option value="cameroun">Cameroun / Cameroon</option>
+                                <option value="cote-ivoire">Côte d'Ivoire</option>
+                                <option value="guinee">Guinée / Guinea</option>
+                                <option value="mali">Mali</option>
+                                <option value="maroc">Maroc / Morocco</option>
+                                <option value="niger">Niger</option>
+                                <option value="senegal">Sénégal / Senegal</option>
+                                <option value="togo">Togo</option>
+                                <option value="tunisie">Tunisie / Tunisia</option>
+                            </optgroup>
+                            <optgroup label="🌎 Amérique / Americas">
+                                <option value="canada">Canada</option>
+                                <option value="usa">États-Unis / USA</option>
+                                <option value="mexique">Mexique / Mexico</option>
+                                <option value="bresil">Brésil / Brazil</option>
+                            </optgroup>
+                            <optgroup label="🌏 Asie / Asia">
+                                <option value="chine">Chine / China</option>
+                                <option value="inde">Inde / India</option>
+                                <option value="japon">Japon / Japan</option>
+                                <option value="coree-sud">Corée du Sud / South Korea</option>
+                            </optgroup>
+                            <optgroup label="🇪🇺 Europe">
+                                <option value="france">France</option>
+                                <option value="belgique">Belgique / Belgium</option>
+                                <option value="suisse">Suisse / Switzerland</option>
+                                <option value="allemagne">Allemagne / Germany</option>
+                                <option value="espagne">Espagne / Spain</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="business" class="lang-fr">Domaine d'activité</label>
+                        <label for="business" class="lang-en">Business field</label>
+                        <input type="text" id="business" name="business" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="needs" class="lang-fr">Vos besoins spécifiques</label>
+                        <label for="needs" class="lang-en">Your specific needs</label>
+                        <textarea id="needs" name="needs" required></textarea>
+                    </div>
+                    <div class="form-submit">
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">
+                            <span class="lang-fr">Envoyer ma candidature</span>
+                            <span class="lang-en">Submit application</span>
+                            <span>→</span>
+                        </button>
+                    </div>
+                </form>
+                <div class="form-success" id="form-success">
+                    <span class="lang-fr">✅ Merci ! Nous vous contacterons bientôt.</span>
+                    <span class="lang-en">✅ Thank you! We'll contact you soon.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <div class="container">
+            <div class="footer-logo">
+                <svg class="logo-svg" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="#ff6200"/>
+                    <text x="50" y="65" text-anchor="middle" fill="white" font-size="50" font-weight="900">V</text>
+                </svg>
+                <div class="logo-text">Velmo</div>
+            </div>
+            <p style="margin: 24px 0; color: var(--text-secondary);">
+                <a href="#promesse" style="margin: 0 12px;"><span class="lang-fr">Promesse</span><span class="lang-en">Promise</span></a> •
+                <a href="#features" style="margin: 0 12px;"><span class="lang-fr">Fonctions</span><span class="lang-en">Features</span></a> •
+                <a href="#beta" style="margin: 0 12px;">Beta</a> •
+                <a href="mailto:contact@velmo.app" style="margin: 0 12px;">Support</a>
+            </p>
+            <div class="social-icons">
+                <a href="https://wa.me/224622000000" class="social-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.966-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c0-5.4 4.41-9.75 9.845-9.75 2.654 0 5.14 1.03 7.004 2.9 1.864 1.87 2.899 4.36 2.899 7.01 0 5.43-4.41 9.75-9.85 9.75m8.306-18.193c-2.29-2.3-5.3-3.563-8.527-3.563-6.635 0-12.025 5.39-12.025 12.01 0 2.11.54 4.16 1.565 5.97l-1.65 6.02 6.175-1.62a11.95 11.95 0 005.935 1.59c6.635 0 12.025-5.39 12.025-12.01 0-3.2-1.24-6.21-3.523-8.47"/>
+                    </svg>
+                </a>
+                <a href="https://facebook.com/velmo" class="social-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M22.675 0h-21.35C.597 0 0 .597 0 1.325v21.351C0 23.403.597 24 1.325 24h11.495v-9.294H9.691v-3.622h3.129V7.41c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.794.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.31h3.59l-.467 3.622h-3.123V24h6.116c.73 0 1.325-.597 1.325-1.324V1.325C24 .597 23.403 0 22.675 0z"/>
+                    </svg>
+                </a>
+                <a href="https://x.com/velmo" class="social-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                </a>
+                <a href="https://instagram.com/velmo" class="social-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.332.014 7.052.072 2.95.272.16 3.062 0 7.164.014 8.444 0 8.853 0 12c0 3.147.014 3.556.072 4.836.2 4.102 2.99 6.892 7.092 7.092 1.28.058 1.689.072 4.836.072 3.147 0 3.556-.014 4.836-.072 4.102-.2 6.892-2.99 7.092-7.092.058-1.28.072-1.689.072-4.836 0-3.147-.014-3.556-.072-4.836C23.728 2.962 20.938.172 16.836-.028 15.556-.086 15.147-.1 12-.1zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a3.999 3.999 0 110-7.998 3.999 3.999 0 010 7.998zm6.406-11.845a1.44 1.44 0 11-2.88 0 1.44 1.44 0 012.88 0z"/>
+                    </svg>
+                </a>
+            </div>
+            <p style="margin-top: 32px; font-size: 14px; color: var(--text-tertiary);">
+                Velmo © 2025
+            </p>
+        </div>
+    </footer>
+    <a href="https://wa.me/224622000000" target="_blank" class="whatsapp-float">
+        <svg viewBox="0 0 32 32">
+            <path d="M16 0c-8.837 0-16 7.163-16 16 0 2.825 0.737 5.607 2.137 8.048l-2.137 7.952 7.933-2.127c2.42 1.37 5.173 2.127 8.067 2.127 8.837 0 16-7.163 16-16s-7.163-16-16-16zM16 29.467c-2.482 0-4.908-0.646-7.07-1.87l-0.507-0.292-5.253 1.408 1.413-5.248-0.325-0.527c-1.331-2.183-2.037-4.706-2.037-7.293 0-7.658 6.23-13.888 13.778-13.888s13.778 6.23 13.778 13.888-6.23 13.822-13.778 13.822zM23.54 19.938c-0.397-0.199-2.348-1.158-2.713-1.29-0.366-0.132-0.632-0.199-0.897 0.199s-1.031 1.29-1.264 1.556c-0.232 0.266-0.464 0.298-0.861 0.099s-1.68-0.619-3.199-1.973c-1.182-1.053-1.981-2.354-2.213-2.752s-0.025-0.612 0.174-0.811c0.179-0.178 0.397-0.464 0.595-0.696s0.265-0.397 0.397-0.662c0.132-0.265 0.066-0.497-0.033-0.696s-0.897-2.162-1.229-2.96c-0.324-0.778-0.652-0.672-0.897-0.685-0.232-0.012-0.497-0.015-0.762-0.015s-0.695 0.099-1.060 0.497c-0.365 0.397-1.394 1.362-1.394 3.323s1.427 3.854 1.625 4.119c0.199 0.265 2.807 4.283 6.802 6.005 0.95 0.411 1.691 0.657 2.269 0.841 0.956 0.303 1.825 0.26 2.513 0.158 0.767-0.114 2.348-0.96 2.68-1.888s0.332-1.723 0.232-1.888c-0.099-0.165-0.365-0.265-0.762-0.464z"/>
         </svg>
-        <div class="logo-text">Velmo</div>
-      </div>
-
-      <p style="margin: 24px 0; color: var(--text-secondary);">
-        <a href="#promesse" style="margin: 0 12px;"><span class="lang-fr">Promesse</span><span class="lang-en">Promise</span></a> •
-        <a href="#features" style="margin: 0 12px;"><span class="lang-fr">Fonctions</span><span class="lang-en">Features</span></a> •
-        <a href="#beta" style="margin: 0 12px;">Beta</a> •
-        <a href="mailto:contact@velmo.app" style="margin: 0 12px;">Support</a>
-      </p>
-
-      <div class="social-icons">
-        <a href="https://wa.me/224622000000" class="social-icon">
-          <svg viewBox="0 0 24 24">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.966-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c0-5.4 4.41-9.75 9.845-9.75 2.654 0 5.14 1.03 7.004 2.9 1.864 1.87 2.899 4.36 2.899 7.01 0 5.43-4.41 9.75-9.85 9.75m8.306-18.193c-2.29-2.3-5.3-3.563-8.527-3.563-6.635 0-12.025 5.39-12.025 12.01 0 2.11.54 4.16 1.565 5.97l-1.65 6.02 6.175-1.62a11.95 11.95 0 005.935 1.59c6.635 0 12.025-5.39 12.025-12.01 0-3.2-1.24-6.21-3.523-8.47"/>
-          </svg>
-        </a>
-        <a href="https://facebook.com/velmo" class="social-icon">
-          <svg viewBox="0 0 24 24">
-            <path d="M22.675 0h-21.35C.597 0 0 .597 0 1.325v21.351C0 23.403.597 24 1.325 24h11.495v-9.294H9.691v-3.622h3.129V7.41c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.794.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.31h3.59l-.467 3.622h-3.123V24h6.116c.73 0 1.325-.597 1.325-1.324V1.325C24 .597 23.403 0 22.675 0z"/>
-          </svg>
-        </a>
-        <a href="https://x.com/velmo" class="social-icon">
-          <svg viewBox="0 0 24 24">
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-          </svg>
-        </a>
-        <a href="https://instagram.com/velmo" class="social-icon">
-          <svg viewBox="0 0 24 24">
-            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.332.014 7.052.072 2.95.272.16 3.062 0 7.164.014 8.444 0 8.853 0 12c0 3.147.014 3.556.072 4.836.2 4.102 2.99 6.892 7.092 7.092 1.28.058 1.689.072 4.836.072 3.147 0 3.556-.014 4.836-.072 4.102-.2 6.892-2.99 7.092-7.092.058-1.28.072-1.689.072-4.836 0-3.147-.014-3.556-.072-4.836C23.728 2.962 20.938.172 16.836-.028 15.556-.086 15.147-.1 12-.1zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a3.999 3.999 0 110-7.998 3.999 3.999 0 010 7.998zm6.406-11.845a1.44 1.44 0 11-2.88 0 1.44 1.44 0 012.88 0z"/>
-          </svg>
-        </a>
-      </div>
-
-      <p style="margin-top: 32px; font-size: 14px; color: var(--text-tertiary);">
-        Velmo © 2025
-      </p>
-    </div>
-  </footer>
-
-  <a href="https://wa.me/224622000000" target="_blank" class="whatsapp-float">
-    <svg viewBox="0 0 32 32">
-      <path d="M16 0c-8.837 0-16 7.163-16 16 0 2.825 0.737 5.607 2.137 8.048l-2.137 7.952 7.933-2.127c2.42 1.37 5.173 2.127 8.067 2.127 8.837 0 16-7.163 16-16s-7.163-16-16-16zM16 29.467c-2.482 0-4.908-0.646-7.07-1.87l-0.507-0.292-5.253 1.408 1.413-5.248-0.325-0.527c-1.331-2.183-2.037-4.706-2.037-7.293 0-7.658 6.23-13.888 13.778-13.888s13.778 6.23 13.778 13.888-6.23 13.822-13.778 13.822zM23.54 19.938c-0.397-0.199-2.348-1.158-2.713-1.29-0.366-0.132-0.632-0.199-0.897 0.199s-1.031 1.29-1.264 1.556c-0.232 0.266-0.464 0.298-0.861 0.099s-1.68-0.619-3.199-1.973c-1.182-1.053-1.981-2.354-2.213-2.752s-0.025-0.612 0.174-0.811c0.179-0.178 0.397-0.464 0.595-0.696s0.265-0.397 0.397-0.662c0.132-0.265 0.066-0.497-0.033-0.696s-0.897-2.162-1.229-2.96c-0.324-0.778-0.652-0.672-0.897-0.685-0.232-0.012-0.497-0.015-0.762-0.015s-0.695 0.099-1.060 0.497c-0.365 0.397-1.394 1.362-1.394 3.323s1.427 3.854 1.625 4.119c0.199 0.265 2.807 4.283 6.802 6.005 0.95 0.411 1.691 0.657 2.269 0.841 0.956 0.303 1.825 0.26 2.513 0.158 0.767-0.114 2.348-0.96 2.68-1.888s0.332-1.723 0.232-1.888c-0.099-0.165-0.365-0.265-0.762-0.464z"/>
-    </svg>
-  </a>
-
-  <script>
-    // DETECTION MOBILE AGGRESSIVE AU DEBUT
-    function detectMobile() {
-      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-      const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile|samsung|galaxy/i.test(userAgent.toLowerCase());
-      const isSmallScreen = window.innerWidth <= 768;
-      
-      if (isMobile || isSmallScreen) {
-        document.body.classList.add('mobile-detected');
-        console.log('📱 MOBILE DETECTE !');
-      }
-      
-      return isMobile || isSmallScreen;
-    }
-
-    // EXECUTER DETECTION AU DEBUT
-    const isMobileDevice = detectMobile();
-
-    const header = document.getElementById('header');
-    const menuToggle = document.getElementById('menu-toggle');
-    const nav = document.getElementById('nav');
-    const themeToggle = document.getElementById('theme-toggle');
-    const langToggle = document.getElementById('lang-toggle');
-    const html = document.documentElement;
-    const betaForm = document.getElementById('beta-form');
-    const formSuccess = document.getElementById('form-success');
-
-    let isDark = false;
-    let isEnglish = false;
-
-    // FORCER AFFICHAGE HAMBURGER SUR MOBILE
-    if (isMobileDevice) {
-      menuToggle.style.display = 'flex';
-      console.log('🍔 Hamburger forcé visible');
-    }
-
-    window.addEventListener('load', () => {
-      const browserLang = navigator.language || navigator.userLanguage;
-      isEnglish = browserLang.startsWith('en');
-      html.setAttribute('lang', isEnglish ? 'en' : 'fr');
-      langToggle.textContent = isEnglish ? '🇬🇧' : '🇫🇷';
-      localStorage.setItem('velmo-lang', isEnglish ? 'en' : 'fr');
-      updatePhoneContent();
-      
-      // RE-DETECTER AU CHARGEMENT
-      if (detectMobile()) {
-        menuToggle.style.display = 'flex';
-      }
-    });
-
-    // RE-DETECTER AU RESIZE
-    window.addEventListener('resize', () => {
-      if (detectMobile()) {
-        menuToggle.style.display = 'flex';
-      } else {
-        menuToggle.style.display = 'none';
-        nav.classList.remove('active');
-      }
-    });
-
-    window.addEventListener('scroll', () => {
-      header.classList.toggle('scrolled', window.scrollY > 50);
-    });
-
-    menuToggle.addEventListener('click', (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-      nav.classList.toggle('active');
-      menuToggle.classList.toggle('active');
-      document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
-      console.log('🍔 Menu toggled:', nav.classList.contains('active'));
-    });
-
-    nav.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        nav.classList.remove('active');
-        menuToggle.classList.remove('active');
-        document.body.style.overflow = '';
-      });
-    });
-
-    document.addEventListener('click', (e) => {
-      if (nav.classList.contains('active') && 
-          !nav.contains(e.target) && 
-          !menuToggle.contains(e.target)) {
-        nav.classList.remove('active');
-        menuToggle.classList.remove('active');
-        document.body.style.overflow = '';
-      }
-    });
-
-    themeToggle.addEventListener('click', () => {
-      isDark = !isDark;
-      html.setAttribute('data-theme', isDark ? 'dark' : 'light');
-      themeToggle.textContent = isDark ? '☀️' : '🌙';
-      localStorage.setItem('velmo-theme', isDark ? 'dark' : 'light');
-    });
-
-    const savedTheme = localStorage.getItem('velmo-theme');
-    if (savedTheme === 'dark') {
-      isDark = true;
-      html.setAttribute('data-theme', 'dark');
-      themeToggle.textContent = '☀️';
-    }
-
-    langToggle.addEventListener('click', () => {
-      isEnglish = !isEnglish;
-      html.setAttribute('lang', isEnglish ? 'en' : 'fr');
-      langToggle.textContent = isEnglish ? '🇬🇧' : '🇫🇷';
-      localStorage.setItem('velmo-lang', isEnglish ? 'en' : 'fr');
-      updatePhoneContent();
-    });
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, { threshold: 0.1, rootMargin: '0px 0px -100px 0px' });
-
-    document.querySelectorAll('section:not(.hero)').forEach(el => observer.observe(el));
-
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', e => {
-        e.preventDefault();
-        const target = document.querySelector(anchor.getAttribute('href'));
-        if (target) {
-          const headerHeight = 70;
-          const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - headerHeight;
-          window.scrollTo({
-            top: targetPosition,
-            behavior: 'smooth'
-          });
-        }
-      });
-    });
-
-    betaForm.addEventListener('submit', e => {
-      e.preventDefault();
-      betaForm.style.display = 'none';
-      formSuccess.classList.add('show');
-      setTimeout(() => {
-        betaForm.reset();
-        betaForm.style.display = 'block';
-        formSuccess.classList.remove('show');
-      }, 5000);
-    });
-
-    function updatePhoneContent() {
-      const views = getPhoneViews();
-      const phoneContent = document.getElementById('hero-phone-content');
-      if (phoneContent) {
-        phoneContent.innerHTML = views.dashboard;
-      }
-    }
-
-    function getPhoneViews() {
-      return {
-        dashboard: `
-          <div class="content-card-phone">
-            <div class="card-title">
-              <span>📊</span>
-              <span>${isEnglish ? "Today's Sales" : "Ventes du jour"}</span>
-            </div>
-            <div class="card-value">1,250,000 GNF</div>
-            <div class="card-subtitle">
-              <span>↗</span>
-              <span>+15% vs ${isEnglish ? "yesterday" : "hier"}</span>
-            </div>
-          </div>
-
-          <div class="stats-grid">
-            <div class="stat-item">
-              <div class="stat-label">${isEnglish ? "Transactions" : "Transactions"}</div>
-              <div class="stat-value">45</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">${isEnglish ? "Customers" : "Clients"}</div>
-              <div class="stat-value">28</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">${isEnglish ? "Average" : "Moyenne"}</div>
-              <div class="stat-value">27k</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">${isEnglish ? "Products" : "Produits"}</div>
-              <div class="stat-value">156</div>
-            </div>
-          </div>
-
-          <div class="success-badge">
-            <span>✓</span>
-            <span class="success-text">${isEnglish ? "All systems operational" : "Tous les systèmes opérationnels"}</span>
-          </div>
-
-          <div class="product-item">
-            <div class="product-icon">🍚</div>
-            <div class="product-info">
-              <div class="product-name">${isEnglish ? "Rice 5kg - Best seller" : "Riz 5kg - Meilleure vente"}</div>
-              <div class="product-stock">350,000 GNF</div>
-            </div>
-            <span class="stock-badge stock-ok">✓ ${isEnglish ? "In stock" : "En stock"}</span>
-          </div>
-
-          <div class="product-item">
-            <div class="product-icon">🥤</div>
-            <div class="product-info">
-              <div class="product-name">${isEnglish ? "Soda Pack" : "Pack Soda"}</div>
-              <div class="product-stock">200,000 GNF</div>
-            </div>
-            <span class="stock-badge stock-ok">✓ ${isEnglish ? "Available" : "Disponible"}</span>
-          </div>
-
-          <div class="product-item">
-            <div class="product-icon">🍞</div>
-            <div class="product-info">
-              <div class="product-name">${isEnglish ? "Bread" : "Pain"}</div>
-              <div class="product-stock">150,000 GNF</div>
-            </div>
-            <span class="stock-badge stock-ok">✓ OK</span>
-          </div>
-        `,
-
-        stock: `
-          <div class="content-card-phone">
-            <div class="card-title">
-              <span>📦</span>
-              <span>${isEnglish ? "Inventory Management" : "Gestion Stock"}</span>
-            </div>
-          </div>
-
-          <div class="alert-badge">
-            <div class="alert-text">⚠ ${isEnglish ? "3 products low in stock" : "3 produits en rupture"}</div>
-          </div>
-
-          <div class="product-item">
-            <div class="product-icon">💧</div>
-            <div class="product-info">
-              <div class="product-name">${isEnglish ? "Water 1.5L" : "Eau 1.5L"}</div>
-              <div class="product-stock">${isEnglish ? "Stock: 124 units" : "Stock: 124 unités"}</div>
-            </div>
-            <span class="stock-badge stock-ok">✓ OK</span>
-          </div>
-
-          <div class="product-item">
-            <div class="product-icon">🍚</div>
-            <div class="product-info">
-              <div class="product-name">${isEnglish ? "Rice 5kg" : "Riz 5kg"}</div>
-              <div class="product-stock">${isEnglish ? "Stock: 5 units" : "Stock: 5 unités"}</div>
-            </div>
-            <span class="stock-badge stock-low">⚠ ${isEnglish ? "Low" : "Bas"}</span>
-          </div>
-
-          <div class="product-item">
-            <div class="product-icon">🛢️</div>
-            <div class="product-info">
-              <div class="product-name">${isEnglish ? "Oil 2L" : "Huile 2L"}</div>
-              <div class="product-stock">${isEnglish ? "Stock: 0 units" : "Stock: 0 unités"}</div>
-            </div>
-            <span class="stock-badge stock-out">✗ ${isEnglish ? "Out" : "Vide"}</span>
-          </div>
-
-          <div class="product-item">
-            <div class="product-icon">🍬</div>
-            <div class="product-info">
-              <div class="product-name">${isEnglish ? "Sugar 1kg" : "Sucre 1kg"}</div>
-              <div class="product-stock">${isEnglish ? "Stock: 2 units" : "Stock: 2 unités"}</div>
-            </div>
-            <span class="stock-badge stock-low">⚠ ${isEnglish ? "Low" : "Bas"}</span>
-          </div>
-
-          <div class="product-item">
-            <div class="product-icon">🥤</div>
-            <div class="product-info">
-              <div class="product-name">${isEnglish ? "Soda Pack" : "Pack Soda"}</div>
-              <div class="product-stock">${isEnglish ? "Stock: 89 units" : "Stock: 89 unités"}</div>
-            </div>
-            <span class="stock-badge stock-ok">✓ OK</span>
-          </div>
-
-          <div class="product-item">
-            <div class="product-icon">🍞</div>
-            <div class="product-info">
-              <div class="product-name">${isEnglish ? "Bread" : "Pain"}</div>
-              <div class="product-stock">${isEnglish ? "Stock: 45 units" : "Stock: 45 unités"}</div>
-            </div>
-            <span class="stock-badge stock-ok">✓ OK</span>
-          </div>
-        `,
-
-        analytics: `
-          <div class="content-card-phone">
-            <div class="card-title">
-              <span>📈</span>
-              <span>${isEnglish ? "Weekly Analytics" : "Analytics Hebdo"}</span>
-            </div>
-          </div>
-
-          <div class="chart-container">
-            <div style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">
-              ${isEnglish ? "Sales last 7 days" : "Ventes 7 derniers jours"}
-            </div>
-            <div class="chart-bars">
-              <div class="chart-bar" style="height: 45%; animation-delay: 0s;"></div>
-              <div class="chart-bar" style="height: 65%; animation-delay: 0.1s;"></div>
-              <div class="chart-bar" style="height: 75%; animation-delay: 0.2s;"></div>
-              <div class="chart-bar" style="height: 55%; animation-delay: 0.3s;"></div>
-              <div class="chart-bar" style="height: 85%; animation-delay: 0.4s;"></div>
-              <div class="chart-bar" style="height: 90%; animation-delay: 0.5s;"></div>
-              <div class="chart-bar" style="height: 100%; animation-delay: 0.6s;"></div>
-            </div>
-            <div class="chart-labels">
-              <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
-            </div>
-          </div>
-
-          <div class="stats-grid">
-            <div class="stat-item">
-              <div class="stat-label">${isEnglish ? "Growth" : "Croissance"}</div>
-              <div class="stat-value" style="color: var(--success);">+24%</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">${isEnglish ? "Best day" : "Meilleur jour"}</div>
-              <div class="stat-value">${isEnglish ? "Sun" : "Dim"}</div>
-            </div>
-          </div>
-
-          <div class="content-card-phone">
-            <div style="font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 12px;">
-              📊 ${isEnglish ? "Top Products" : "Top Produits"}
-            </div>
-            <div class="product-item" style="margin-bottom: 8px;">
-              <div class="product-icon">🍚</div>
-              <div class="product-info">
-                <div class="product-name">${isEnglish ? "Rice 5kg" : "Riz 5kg"}</div>
-                <div class="product-stock">147 ${isEnglish ? "sales" : "ventes"}</div>
-              </div>
-            </div>
-            <div class="product-item" style="margin-bottom: 8px;">
-              <div class="product-icon">💧</div>
-              <div class="product-info">
-                <div class="product-name">${isEnglish ? "Water 1.5L" : "Eau 1.5L"}</div>
-                <div class="product-stock">98 ${isEnglish ? "sales" : "ventes"}</div>
-              </div>
-            </div>
-            <div class="product-item" style="margin-bottom: 0;">
-              <div class="product-icon">🥤</div>
-              <div class="product-info">
-                <div class="product-name">${isEnglish ? "Soda Pack" : "Pack Soda"}</div>
-                <div class="product-stock">76 ${isEnglish ? "sales" : "ventes"}</div>
-              </div>
-            </div>
-          </div>
-        `,
-
-        offline: `
-          <div class="content-card-phone" style="text-align: center; padding: 40px 20px;">
-            <div style="font-size: 64px; margin-bottom: 20px;">📴</div>
-            <div style="font-size: 18px; font-weight: 700; color: var(--primary); margin-bottom: 12px;">
-              ${isEnglish ? "Offline Mode" : "Mode Hors-ligne"}
-            </div>
-            <div style="font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 24px;">
-              ${isEnglish 
-                ? "Keep working without internet. Everything syncs automatically when you're back online." 
-                : "Continuez à travailler sans internet. Tout se synchronise automatiquement quand vous êtes en ligne."}
-            </div>
-          </div>
-
-          <div class="success-badge">
-            <span>✓</span>
-            <span class="success-text">${isEnglish ? "Local data saved" : "Données locales sauvegardées"}</span>
-          </div>
-
-          <div class="stats-grid">
-            <div class="stat-item">
-              <div class="stat-label">${isEnglish ? "Sync Status" : "Statut Sync"}</div>
-              <div class="stat-value">✓</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">${isEnglish ? "Last sync" : "Dernière sync"}</div>
-              <div class="stat-value" style="font-size: 14px;">2m</div>
-            </div>
-          </div>
-
-          <div class="content-card-phone">
-            <div style="font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 12px;">
-              💡 ${isEnglish ? "Features Available Offline" : "Fonctions Hors-ligne"}
-            </div>
-            <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.8;">
-              • ${isEnglish ? "Record sales" : "Enregistrer ventes"}<br>
-              • ${isEnglish ? "Check inventory" : "Vérifier stock"}<br>
-              • ${isEnglish ? "View history" : "Voir historique"}<br>
-              • ${isEnglish ? "Manage debts" : "Gérer dettes"}<br>
-              • ${isEnglish ? "Add products" : "Ajouter produits"}
-            </div>
-          </div>
-
-          <div class="product-item">
-            <div class="product-icon">🔄</div>
-            <div class="product-info">
-              <div class="product-name">${isEnglish ? "Auto-sync enabled" : "Sync auto activée"}</div>
-              <div class="product-stock">${isEnglish ? "Waiting for connection" : "En attente connexion"}</div>
-            </div>
-            <span class="stock-badge stock-ok">✓ ON</span>
-          </div>
-        `
-      };
-    }
-
-    const navDots = document.querySelectorAll('.nav-dot');
-    navDots.forEach(dot => {
-      dot.addEventListener('click', () => {
-        const view = dot.getAttribute('data-view');
-        const phoneContent = document.getElementById('hero-phone-content');
-        const views = getPhoneViews();
+    </a>
+    <script>
+        // DETECTION MOBILE AGGRESSIVE AU DEBUT
+        function detectMobile() {
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile|samsung|galaxy/i.test(userAgent.toLowerCase());
+            const isSmallScreen = window.innerWidth <= 768;
         
-        navDots.forEach(d => {
-          d.classList.remove('active');
+            if (isMobile || isSmallScreen) {
+                document.body.classList.add('mobile-detected');
+                console.log('📱 MOBILE DETECTE !');
+            }
+        
+            return isMobile || isSmallScreen;
+        }
+        // EXECUTER DETECTION AU DEBUT
+        const isMobileDevice = detectMobile();
+        const header = document.getElementById('header');
+        const menuToggle = document.getElementById('menu-toggle');
+        const nav = document.getElementById('nav');
+        const themeToggle = document.getElementById('theme-toggle');
+        const langToggle = document.getElementById('lang-toggle');
+        const html = document.documentElement;
+        const betaForm = document.getElementById('beta-form');
+        const formSuccess = document.getElementById('form-success');
+        let isDark = false;
+        let isEnglish = false;
+        // FORCER AFFICHAGE HAMBURGER SUR MOBILE
+        if (isMobileDevice) {
+            menuToggle.style.display = 'flex';
+            console.log('🍔 Hamburger forcé visible');
+        }
+        window.addEventListener('load', () => {
+            const browserLang = navigator.language || navigator.userLanguage;
+            isEnglish = browserLang.startsWith('en');
+            html.setAttribute('lang', isEnglish ? 'en' : 'fr');
+            langToggle.textContent = isEnglish ? '🇬🇧' : '🇫🇷';
+            localStorage.setItem('velmo-lang', isEnglish ? 'en' : 'fr');
+            updatePhoneContent();
+        
+            // RE-DETECTER AU CHARGEMENT
+            if (detectMobile()) {
+                menuToggle.style.display = 'flex';
+            }
         });
+        // RE-DETECTER AU RESIZE
+        window.addEventListener('resize', () => {
+            if (detectMobile()) {
+                menuToggle.style.display = 'flex';
+            } else {
+                menuToggle.style.display = 'none';
+                nav.classList.remove('active');
+            }
+        });
+        window.addEventListener('scroll', () => {
+            header.classList.toggle('scrolled', window.scrollY > 50);
+        });
+        menuToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            nav.classList.toggle('active');
+            menuToggle.classList.toggle('active');
+            document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
+            console.log('🍔 Menu toggled:', nav.classList.contains('active'));
+        });
+        nav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                nav.classList.remove('active');
+                menuToggle.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        });
+        document.addEventListener('click', (e) => {
+            if (nav.classList.contains('active') && 
+                !nav.contains(e.target) && 
+                !menuToggle.contains(e.target)) {
+                nav.classList.remove('active');
+                menuToggle.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+        themeToggle.addEventListener('click', () => {
+            isDark = !isDark;
+            html.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            themeToggle.textContent = isDark ? '☀️' : '🌙';
+            localStorage.setItem('velmo-theme', isDark ? 'dark' : 'light');
+        });
+        const savedTheme = localStorage.getItem('velmo-theme');
+        if (savedTheme === 'dark') {
+            isDark = true;
+            html.setAttribute('data-theme', 'dark');
+            themeToggle.textContent = '☀️';
+        }
+        langToggle.addEventListener('click', () => {
+            isEnglish = !isEnglish;
+            html.setAttribute('lang', isEnglish ? 'en' : 'fr');
+            langToggle.textContent = isEnglish ? '🇬🇧' : '🇫🇷';
+            localStorage.setItem('velmo-lang', isEnglish ? 'en' : 'fr');
+            updatePhoneContent();
+        });
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -100px 0px' });
+        document.querySelectorAll('section:not(.hero)').forEach(el => observer.observe(el));
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', e => {
+                e.preventDefault();
+                const target = document.querySelector(anchor.getAttribute('href'));
+                if (target) {
+                    const headerHeight = 70;
+                    const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - headerHeight;
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        betaForm.addEventListener('submit', e => {
+            e.preventDefault();
+            betaForm.style.display = 'none';
+            formSuccess.classList.add('show');
+            setTimeout(() => {
+                betaForm.reset();
+                betaForm.style.display = 'block';
+                formSuccess.classList.remove('show');
+            }, 5000);
+        });
+        function updatePhoneContent() {
+            const views = getPhoneViews();
+            const phoneContent = document.getElementById('hero-phone-content');
+            if (phoneContent) {
+                phoneContent.innerHTML = views.dashboard;
+            }
+        }
+        function getPhoneViews() {
+            return {
+                dashboard: `
+                    <div class="content-card-phone">
+                        <div class="card-title">
+                            <span>📊</span>
+                            <span>${isEnglish ? "Today's Sales" : "Ventes du jour"}</span>
+                        </div>
+                        <div class="card-value">1,250,000 GNF</div>
+                        <div class="card-subtitle">
+                            <span>↗</span>
+                            <span>+15% vs ${isEnglish ? "yesterday" : "hier"}</span>
+                        </div>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-label">${isEnglish ? "Transactions" : "Transactions"}</div>
+                            <div class="stat-value">45</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">${isEnglish ? "Customers" : "Clients"}</div>
+                            <div class="stat-value">28</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">${isEnglish ? "Average" : "Moyenne"}</div>
+                            <div class="stat-value">27k</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">${isEnglish ? "Products" : "Produits"}</div>
+                            <div class="stat-value">156</div>
+                        </div>
+                    </div>
+                    <div class="success-badge">
+                        <span>✓</span>
+                        <span class="success-text">${isEnglish ? "All systems operational" : "Tous les systèmes opérationnels"}</span>
+                    </div>
+                    <div class="product-item">
+                        <div class="product-icon">🍚</div>
+                        <div class="product-info">
+                            <div class="product-name">${isEnglish ? "Rice 5kg - Best seller" : "Riz 5kg - Meilleure vente"}</div>
+                            <div class="product-stock">350,000 GNF</div>
+                        </div>
+                        <span class="stock-badge stock-ok">✓ ${isEnglish ? "In stock" : "En stock"}</span>
+                    </div>
+                    <div class="product-item">
+                        <div class="product-icon">🥤</div>
+                        <div class="product-info">
+                            <div class="product-name">${isEnglish ? "Soda Pack" : "Pack Soda"}</div>
+                            <div class="product-stock">200,000 GNF</div>
+                        </div>
+                        <span class="stock-badge stock-ok">✓ ${isEnglish ? "Available" : "Disponible"}</span>
+                    </div>
+                    <div class="product-item">
+                        <div class="product-icon">🍞</div>
+                        <div class="product-info">
+                            <div class="product-name">${isEnglish ? "Bread" : "Pain"}</div>
+                            <div class="product-stock">150,000 GNF</div>
+                        </div>
+                        <span class="stock-badge stock-ok">✓ OK</span>
+                    </div>
+                `,
+                stock: `
+                    <div class="content-card-phone">
+                        <div class="card-title">
+                            <span>📦</span>
+                            <span>${isEnglish ? "Inventory Management" : "Gestion Stock"}</span>
+                        </div>
+                    </div>
+                    <div class="alert-badge">
+                        <div class="alert-text">⚠ ${isEnglish ? "3 products low in stock" : "3 produits en rupture"}</div>
+                    </div>
+                    <div class="product-item">
+                        <div class="product-icon">💧</div>
+                        <div class="product-info">
+                            <div class="product-name">${isEnglish ? "Water 1.5L" : "Eau 1.5L"}</div>
+                            <div class="product-stock">${isEnglish ? "Stock: 124 units" : "Stock: 124 unités"}</div>
+                        </div>
+                        <span class="stock-badge stock-ok">✓ OK</span>
+                    </div>
+                    <div class="product-item">
+                        <div class="product-icon">🍚</div>
+                        <div class="product-info">
+                            <div class="product-name">${isEnglish ? "Rice 5kg" : "Riz 5kg"}</div>
+                            <div class="product-stock">${isEnglish ? "Stock: 5 units" : "Stock: 5 unités"}</div>
+                        </div>
+                        <span class="stock-badge stock-low">⚠ ${isEnglish ? "Low" : "Bas"}</span>
+                    </div>
+                    <div class="product-item">
+                        <div class="product-icon">🛢️</div>
+                        <div class="product-info">
+                            <div class="product-name">${isEnglish ? "Oil 2L" : "Huile 2L"}</div>
+                            <div class="product-stock">${isEnglish ? "Stock: 0 units" : "Stock: 0 unités"}</div>
+                        </div>
+                        <span class="stock-badge stock-out">✗ ${isEnglish ? "Out" : "Vide"}</span>
+                    </div>
+                    <div class="product-item">
+                        <div class="product-icon">🍬</div>
+                        <div class="product-info">
+                            <div class="product-name">${isEnglish ? "Sugar 1kg" : "Sucre 1kg"}</div>
+                            <div class="product-stock">${isEnglish ? "Stock: 2 units" : "Stock: 2 unités"}</div>
+                        </div>
+                        <span class="stock-badge stock-low">⚠ ${isEnglish ? "Low" : "Bas"}</span>
+                    </div>
+                    <div class="product-item">
+                        <div class="product-icon">🥤</div>
+                        <div class="product-info">
+                            <div class="product-name">${isEnglish ? "Soda Pack" : "Pack Soda"}</div>
+                            <div class="product-stock">${isEnglish ? "Stock: 89 units" : "Stock: 89 unités"}</div>
+                        </div>
+                        <span class="stock-badge stock-ok">✓ OK</span>
+                    </div>
+                    <div class="product-item">
+                        <div class="product-icon">🍞</div>
+                        <div class="product-info">
+                            <div class="product-name">${isEnglish ? "Bread" : "Pain"}</div>
+                            <div class="product-stock">${isEnglish ? "Stock: 45 units" : "Stock: 45 unités"}</div>
+                        </div>
+                        <span class="stock-badge stock-ok">✓ OK</span>
+                    </div>
+                `,
+                analytics: `
+                    <div class="content-card-phone">
+                        <div class="card-title">
+                            <span>📈</span>
+                            <span>${isEnglish ? "Weekly Analytics" : "Analytics Hebdo"}</span>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <div style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">
+                            ${isEnglish ? "Sales last 7 days" : "Ventes 7 derniers jours"}
+                        </div>
+                        <div class="chart-bars">
+                            <div class="chart-bar" style="height: 45%; animation-delay: 0s;"></div>
+                            <div class="chart-bar" style="height: 65%; animation-delay: 0.1s;"></div>
+                            <div class="chart-bar" style="height: 75%; animation-delay: 0.2s;"></div>
+                            <div class="chart-bar" style="height: 55%; animation-delay: 0.3s;"></div>
+                            <div class="chart-bar" style="height: 85%; animation-delay: 0.4s;"></div>
+                            <div class="chart-bar" style="height: 90%; animation-delay: 0.5s;"></div>
+                            <div class="chart-bar" style="height: 100%; animation-delay: 0.6s;"></div>
+                        </div>
+                        <div class="chart-labels">
+                            <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
+                        </div>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-label">${isEnglish ? "Growth" : "Croissance"}</div>
+                            <div class="stat-value" style="color: var(--success);">+24%</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">${isEnglish ? "Best day" : "Meilleur jour"}</div>
+                            <div class="stat-value">${isEnglish ? "Sun" : "Dim"}</div>
+                        </div>
+                    </div>
+                    <div class="content-card-phone">
+                        <div style="font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 12px;">
+                            📊 ${isEnglish ? "Top Products" : "Top Produits"}
+                        </div>
+                        <div class="product-item" style="margin-bottom: 8px;">
+                            <div class="product-icon">🍚</div>
+                            <div class="product-info">
+                                <div class="product-name">${isEnglish ? "Rice 5kg" : "Riz 5kg"}</div>
+                                <div class="product-stock">147 ${isEnglish ? "sales" : "ventes"}</div>
+                            </div>
+                        </div>
+                        <div class="product-item" style="margin-bottom: 8px;">
+                            <div class="product-icon">💧</div>
+                            <div class="product-info">
+                                <div class="product-name">${isEnglish ? "Water 1.5L" : "Eau 1.5L"}</div>
+                                <div class="product-stock">98 ${isEnglish ? "sales" : "ventes"}</div>
+                            </div>
+                        </div>
+                        <div class="product-item" style="margin-bottom: 0;">
+                            <div class="product-icon">🥤</div>
+                            <div class="product-info">
+                                <div class="product-name">${isEnglish ? "Soda Pack" : "Pack Soda"}</div>
+                                <div class="product-stock">76 ${isEnglish ? "sales" : "ventes"}</div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                offline: `
+                    <div class="content-card-phone" style="text-align: center; padding: 40px 20px;">
+                        <div style="font-size: 64px; margin-bottom: 20px;">📴</div>
+                        <div style="font-size: 18px; font-weight: 700; color: var(--primary); margin-bottom: 12px;">
+                            ${isEnglish ? "Offline Mode" : "Mode Hors-ligne"}
+                        </div>
+                        <div style="font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 24px;">
+                            ${isEnglish 
+                                ? "Keep working without internet. Everything syncs automatically when you're back online." 
+                                : "Continuez à travailler sans internet. Tout se synchronise automatiquement quand vous êtes en ligne."}
+                        </div>
+                    </div>
+                    <div class="success-badge">
+                        <span>✓</span>
+                        <span class="success-text">${isEnglish ? "Local data saved" : "Données locales sauvegardées"}</span>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-label">${isEnglish ? "Sync Status" : "Statut Sync"}</div>
+                            <div class="stat-value">✓</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">${isEnglish ? "Last sync" : "Dernière sync"}</div>
+                            <div class="stat-value" style="font-size: 14px;">2m</div>
+                        </div>
+                    </div>
+                    <div class="content-card-phone">
+                        <div style="font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 12px;">
+                            💡 ${isEnglish ? "Features Available Offline" : "Fonctions Hors-ligne"}
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.8;">
+                            • ${isEnglish ? "Record sales" : "Enregistrer ventes"}<br>
+                            • ${isEnglish ? "Check inventory" : "Vérifier stock"}<br>
+                            • ${isEnglish ? "View history" : "Voir historique"}<br>
+                            • ${isEnglish ? "Manage debts" : "Gérer dettes"}<br>
+                            • ${isEnglish ? "Add products" : "Ajouter produits"}
+                        </div>
+                    </div>
+                    <div class="product-item">
+                        <div class="product-icon">🔄</div>
+                        <div class="product-info">
+                            <div class="product-name">${isEnglish ? "Auto-sync enabled" : "Sync auto activée"}</div>
+                            <div class="product-stock">${isEnglish ? "Waiting for connection" : "En attente connexion"}</div>
+                        </div>
+                        <span class="stock-badge stock-ok">✓ ON</span>
+                    </div>
+                `
+            };
+        }
+        const navDots = document.querySelectorAll('.nav-dot');
+        navDots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const view = dot.getAttribute('data-view');
+                const phoneContent = document.getElementById('hero-phone-content');
+                const views = getPhoneViews();
         
-        dot.classList.add('active');
+                navDots.forEach(d => {
+                    d.classList.remove('active');
+                });
         
-        phoneContent.style.transition = 'all 0.3s ease';
-        phoneContent.style.opacity = '0';
-        phoneContent.style.transform = 'translateY(10px)';
+                dot.classList.add('active');
         
-        setTimeout(() => {
-          phoneContent.innerHTML = views[view];
-          phoneContent.style.opacity = '1';
-          phoneContent.style.transform = 'translateY(0)';
-        }, 300);
-      });
-    });
-
-    let currentViewIndex = 0;
-    const viewKeys = ['dashboard', 'stock', 'analytics', 'offline'];
-    setInterval(() => {
-      currentViewIndex = (currentViewIndex + 1) % viewKeys.length;
-      const targetDot = document.querySelector(`[data-view="${viewKeys[currentViewIndex]}"]`);
-      if (targetDot) {
-        targetDot.click();
-      }
-    }, 6000);
-
-    window.addEventListener('scroll', () => {
-      const hero = document.querySelector('.hero');
-      if (hero && window.pageYOffset < 800) {
-        hero.style.transform = `translateY(${window.pageYOffset * 0.2}px)`;
-      }
-    });
-
-    document.addEventListener('keydown', e => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        themeToggle.click();
-      }
-      if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
-        e.preventDefault();
-        langToggle.click();
-      }
-    });
-
-    window.addEventListener('DOMContentLoaded', () => {
-      updatePhoneContent();
-    });
-
-    console.log('%c⚡ Velmo - Mobile Optimized', 'font-size: 20px; font-weight: bold; color: #ff6200;');
-    console.log('%c✨ Responsive design parfait pour mobile', 'font-size: 12px; color: #475569;');
-    console.log('%c📱 Menu hamburger fonctionnel', 'font-size: 12px; color: #10b981;');
-    console.log('%c🚀 Prêt pour Samsung Galaxy A16 et tous mobiles', 'font-size: 12px; color: #10b981;');
-  </script>
+                phoneContent.style.transition = 'all 0.3s ease';
+                phoneContent.style.opacity = '0';
+                phoneContent.style.transform = 'translateY(10px)';
+        
+                setTimeout(() => {
+                    phoneContent.innerHTML = views[view];
+                    phoneContent.style.opacity = '1';
+                    phoneContent.style.transform = 'translateY(0)';
+                }, 300);
+            });
+        });
+        let currentViewIndex = 0;
+        const viewKeys = ['dashboard', 'stock', 'analytics', 'offline'];
+        setInterval(() => {
+            currentViewIndex = (currentViewIndex + 1) % viewKeys.length;
+            const targetDot = document.querySelector(`[data-view="${viewKeys[currentViewIndex]}"]`);
+            if (targetDot) {
+                targetDot.click();
+            }
+        }, 6000);
+        window.addEventListener('scroll', () => {
+            const hero = document.querySelector('.hero');
+            if (hero && window.pageYOffset < 800) {
+                hero.style.transform = `translateY(${window.pageYOffset * 0.2}px)`;
+            }
+        });
+        document.addEventListener('keydown', e => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                themeToggle.click();
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
+                e.preventDefault();
+                langToggle.click();
+            }
+        });
+        window.addEventListener('DOMContentLoaded', () => {
+            updatePhoneContent();
+        });
+        console.log('%c⚡ Velmo - Mobile Optimized', 'font-size: 20px; font-weight: bold; color: #ff6200;');
+        console.log('%c✨ Responsive design parfait pour mobile', 'font-size: 12px; color: #475569;');
+        console.log('%c📱 Menu hamburger fonctionnel', 'font-size: 12px; color: #10b981;');
+        console.log('%c🚀 Prêt pour Samsung Galaxy A16 et tous mobiles', 'font-size: 12px; color: #10b981;');
+    </script>
 </body>
 </html>
