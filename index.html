@@ -174,13 +174,13 @@
         
         /* 
          * HEADER-CONTAINER : Conteneur flex pour logo, nav et actions.
-         * z-index supprimé comme indiqué pour éviter les problèmes de superposition.
+         * Augmenté le padding pour rendre le header plus grand.
          */
         .header-container {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 16px 40px;
+            padding: 20px 40px; /* Augmenté pour plus d'espace */
             max-width: 1440px;
             margin: 0 auto;
             position: relative;
@@ -350,6 +350,8 @@
          * - Mobile (max 768px) : Affiche menu-toggle, cache nav par défaut, montre nav.active.
          * - Tablette (max 1024px min 769px) : Affiche menu-toggle.
          * z-index sur nav.active pour le menu mobile (en dessous du header et bouton).
+         * Nav sans scroll (overflow: hidden), pleine hauteur.
+         * Header plus grand sur mobile.
          */
         /* DETECTION MOBILE AGGRESSIVE */
         @media (max-width: 768px) {
@@ -368,6 +370,9 @@
             nav.active {
                 display: flex !important;
                 z-index: 1000; /* z-index essentiel pour nav.active, en dessous du bouton et header */
+            }
+            .header-container {
+                padding: 16px 20px; /* Augmenté pour plus d'espace sur mobile */
             }
         }
         /* DETECTION TABLETTE */
@@ -1222,7 +1227,7 @@
                 padding: 60px 0;
             }
             .header-container {
-                padding: 14px 20px;
+                padding: 16px 20px;
             }
             .logo-svg {
                 width: 36px;
@@ -1249,7 +1254,7 @@
                 transform: translateX(100%);
                 opacity: 0;
                 transition: all 0.4s ease;
-                overflow-y: auto;
+                overflow: hidden; /* Pas de scroll dans le menu */
             }
             nav.active {
                 transform: translateX(0);
@@ -1481,7 +1486,7 @@
             </div>
         </div>
     </header>
-    <!-- Overlay -->
+    <!-- Overlay non utilisé, mais gardé si besoin -->
     <div class="overlay" id="overlay"></div>
     <section class="hero">
         <div class="container">
@@ -2073,7 +2078,7 @@
                 e.preventDefault();
                 const target = document.querySelector(anchor.getAttribute('href'));
                 if (target) {
-                    const headerHeight = 70;
+                    const headerHeight = header.offsetHeight; // Utilise la hauteur dynamique du header
                     const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - headerHeight;
                     window.scrollTo({
                         top: targetPosition,
