@@ -385,7 +385,9 @@
                 display: flex !important;
             }
             /* Amélioration : Les boutons icon-btn (thème et langue) restent visibles sur mobile pour "rester constante" */
-            /* .header-actions .icon-btn { display: flex !important; } */  /* Activé si besoin, mais pour éviter surcharge, on ajuste gap */
+            .header-actions .icon-btn {
+                display: flex !important;
+            }
             .header-actions {
                 gap: 8px;  /* Réduction d'espacement pour fit sur mobile */
             }
@@ -571,6 +573,7 @@
             padding: 12px;
             box-shadow: var(--shadow-2xl);
             border: 3px solid rgba(255, 98, 0, 0.3);
+            transition: all 0.5s ease;  /* Amélioration : Transition fluide pour le mockup */
         }
         .phone-screen {
             width: 100%;
@@ -579,6 +582,7 @@
             border-radius: 32px;
             overflow: hidden;
             position: relative;
+            transition: opacity 0.3s ease;  /* Amélioration : Pour fluidité lors des changements */
         }
         .phone-notch {
             position: absolute;
@@ -599,6 +603,7 @@
             font-size: 12px;
             font-weight: 600;
             color: #0f172a;
+            transition: all 0.3s ease;  /* Amélioration : Fluidité */
         }
         .phone-content {
             padding: 20px;
@@ -606,6 +611,10 @@
             overflow-y: auto;
             scrollbar-width: thin;
             scrollbar-color: var(--primary) #f1f5f9;
+            transition: opacity 0.5s ease-in-out;  /* Amélioration : Transition fluide pour le contenu */
+        }
+        .phone-content.fade {
+            opacity: 0;  /* Classe pour fade out/in */
         }
         .phone-content::-webkit-scrollbar {
             width: 4px;
@@ -621,6 +630,10 @@
             margin-bottom: 16px;
             border: 1px solid rgba(255, 98, 0, 0.1);
             animation: slideInUp 0.5s ease-out;
+            transition: transform 0.3s ease;  /* Amélioration : Hover fluide */
+        }
+        .content-card-phone:hover {
+            transform: scale(1.02);  /* Amélioration : Interaction */
         }
         @keyframes slideInUp {
             from {
@@ -704,6 +717,7 @@
             border-radius: 24px;
             z-index: 5;
             box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;  /* Amélioration : Fluidité */
         }
         .nav-dot {
             width: 36px;
@@ -741,6 +755,10 @@
             margin-bottom: 12px;
             border: 1px solid rgba(255, 98, 0, 0.1);
             box-shadow: var(--shadow-sm);
+            transition: transform 0.3s ease;  /* Amélioration : Hover fluide */
+        }
+        .product-item:hover {
+            transform: scale(1.02);
         }
         .product-icon {
             width: 40px;
@@ -835,6 +853,7 @@
             padding: 12px;
             border-radius: 8px;
             margin-bottom: 16px;
+            transition: all 0.3s ease;  /* Amélioration : Fluidité */
         }
         .alert-text {
             font-size: 12px;
@@ -850,6 +869,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            transition: all 0.3s ease;  /* Amélioration : Fluidité */
         }
         .success-text {
             font-size: 12px;
@@ -2046,29 +2066,39 @@
                     <div class="card-title">💰 <span class="lang-fr">Ventes du jour</span><span class="lang-en">Today's sales</span></div>
                     <div class="card-value">1 250 000 GNF</div>
                     <div class="card-subtitle">↑ 12% <span class="lang-fr">vs hier</span><span class="lang-en">vs yesterday</span></div>
+                    <p class="lang-fr">Détails des ventes : 20 transactions, produit le plus vendu : Riz.</p>
+                    <p class="lang-en">Sales details: 20 transactions, best-selling product: Rice.</p>
                 </div>
                 <div class="stats-grid">
                     <div class="stat-item">
                         <div class="stat-label lang-fr">Clients</div>
                         <div class="stat-label lang-en">Customers</div>
                         <div class="stat-value">48</div>
+                        <p class="lang-fr">Dont 15 nouveaux</p>
+                        <p class="lang-en">Including 15 new</p>
                     </div>
                     <div class="stat-item">
                         <div class="stat-label lang-fr">Produits</div>
                         <div class="stat-label lang-en">Products</div>
                         <div class="stat-value">127</div>
+                        <p class="lang-fr">En stock total</p>
+                        <p class="lang-en">Total in stock</p>
                     </div>
                 </div>
             `,
             stock: `
                 <div class="content-card-phone">
                     <div class="card-title">📦 <span class="lang-fr">Stock critique</span><span class="lang-en">Critical stock</span></div>
+                    <p class="lang-fr">Liste complète des produits bas en stock.</p>
+                    <p class="lang-en">Full list of low stock products.</p>
                 </div>
                 <div class="product-item">
                     <div class="product-icon">🥚</div>
                     <div class="product-info">
                         <div class="product-name">Œufs (carton)</div>
                         <div class="product-stock">3 unités restantes</div>
+                        <p class="lang-fr">Prix : 50 000 GNF</p>
+                        <p class="lang-en">Price: 50 000 GNF</p>
                     </div>
                     <div class="stock-badge stock-low">LOW</div>
                 </div>
@@ -2077,17 +2107,31 @@
                     <div class="product-info">
                         <div class="product-name">Riz (sac 25kg)</div>
                         <div class="product-stock">7 unités</div>
+                        <p class="lang-fr">Prix : 200 000 GNF</p>
+                        <p class="lang-en">Price: 200 000 GNF</p>
                     </div>
                     <div class="stock-badge stock-low">LOW</div>
                 </div>
+                <div class="product-item">
+                    <div class="product-icon">🛢️</div>
+                    <div class="product-info">
+                        <div class="product-name">Huile (bidon 5L)</div>
+                        <div class="product-stock">2 unités</div>
+                        <p class="lang-fr">Prix : 100 000 GNF</p>
+                        <p class="lang-en">Price: 100 000 GNF</p>
+                    </div>
+                    <div class="stock-badge stock-out">OUT</div>
+                </div>
                 <div class="alert-badge">
-                    <div class="alert-text lang-fr">2 produits en rupture imminente</div>
-                    <div class="alert-text lang-en">2 products running out</div>
+                    <div class="alert-text lang-fr">3 produits en rupture imminente</div>
+                    <div class="alert-text lang-en">3 products running out</div>
                 </div>
             `,
             analytics: `
                 <div class="content-card-phone">
                     <div class="card-title">📊 <span class="lang-fr">Performance semaine</span><span class="lang-en">Weekly performance</span></div>
+                    <p class="lang-fr">Analyse détaillée des ventes.</p>
+                    <p class="lang-en">Detailed sales analysis.</p>
                 </div>
                 <div class="chart-container">
                     <div class="chart-bars">
@@ -2105,29 +2149,45 @@
                 </div>
                 <div class="success-badge">
                     <span>✅</span>
-                    <div class="success-text lang-fr">Meilleure journée : Vendredi</div>
-                    <div class="success-text lang-en">Best day: Friday</div>
+                    <div class="success-text lang-fr">Meilleure journée : Vendredi avec 300 000 GNF</div>
+                    <div class="success-text lang-en">Best day: Friday with 300 000 GNF</div>
+                </div>
+                <div class="content-card-phone">
+                    <div class="card-title">📈 <span class="lang-fr">Tendances</span><span class="lang-en">Trends</span></div>
+                    <p class="lang-fr">Augmentation de 15% des ventes ce mois-ci.</p>
+                    <p class="lang-en">15% sales increase this month.</p>
                 </div>
             `,
             offline: `
                 <div class="content-card-phone">
                     <div class="card-title">📴 <span class="lang-fr">Mode hors-ligne</span><span class="lang-en">Offline mode</span></div>
                     <div class="card-value">ACTIF</div>
-                    <div class="card-subtitle lang-fr">12 ventes enregistrées</div>
-                    <div class="card-subtitle lang-en">12 sales recorded</div>
+                    <div class="card-subtitle lang-fr">12 ventes enregistrées, 5 mises à jour stock</div>
+                    <div class="card-subtitle lang-en">12 sales recorded, 5 stock updates</div>
+                    <p class="lang-fr">Détails : Dernière synchro il y a 2 heures.</p>
+                    <p class="lang-en">Details: Last sync 2 hours ago.</p>
                 </div>
                 <div class="alert-badge" style="background: rgba(16, 185, 129, 0.1); border-left-color: var(--success);">
                     <div class="alert-text" style="color: var(--success);">
-                        <span class="lang-fr">Synchronisation automatique dès connexion</span>
-                        <span class="lang-en">Auto-sync when online</span>
+                        <span class="lang-fr">Synchronisation automatique dès connexion. Données sécurisées localement.</span>
+                        <span class="lang-en">Auto-sync when online. Data secured locally.</span>
                     </div>
+                </div>
+                <div class="content-card-phone">
+                    <div class="card-title">🔄 <span class="lang-fr">Actions en attente</span><span class="lang-en">Pending actions</span></div>
+                    <p class="lang-fr">3 ventes à synchroniser, 2 alertes stock.</p>
+                    <p class="lang-en">3 sales to sync, 2 stock alerts.</p>
                 </div>
             `
         };
        
-        // Fonction pour afficher une vue.
+        // Fonction pour afficher une vue avec transition fluide.
         function showView(view) {
-            phoneContent.innerHTML = views[view] || views.dashboard;
+            phoneContent.classList.add('fade');
+            setTimeout(() => {
+                phoneContent.innerHTML = views[view] || views.dashboard;
+                phoneContent.classList.remove('fade');
+            }, 500);  // Délai pour fade out/in
             navDots.forEach(dot => dot.classList.remove('active'));
             document.querySelector(`[data-view="${view}"]`).classList.add('active');
         }
