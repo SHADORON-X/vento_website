@@ -374,7 +374,9 @@
                 display: flex !important;
             }
             /* Amélioration : Les boutons icon-btn (thème et langue) restent visibles sur mobile pour "rester constante" */
-            /* .header-actions .icon-btn { display: flex !important; } */  /* Activé si besoin, mais pour éviter surcharge, on ajuste gap */
+            .header-actions .icon-btn {
+                display: flex !important;
+            }
             .header-actions {
                 gap: 8px;  /* Réduction d'espacement pour fit sur mobile */
             }
@@ -560,6 +562,7 @@
             padding: 12px;
             box-shadow: var(--shadow-2xl);
             border: 3px solid rgba(255, 98, 0, 0.3);
+            transition: all 0.5s ease;  /* Amélioration : Transition fluide pour le mockup */
         }
         .phone-screen {
             width: 100%;
@@ -568,6 +571,7 @@
             border-radius: 32px;
             overflow: hidden;
             position: relative;
+            transition: opacity 0.3s ease;  /* Amélioration : Pour fluidité lors des changements */
         }
         .phone-notch {
             position: absolute;
@@ -588,6 +592,7 @@
             font-size: 12px;
             font-weight: 600;
             color: #0f172a;
+            transition: all 0.3s ease;  /* Amélioration : Fluidité */
         }
         .phone-content {
             padding: 20px;
@@ -595,6 +600,10 @@
             overflow-y: auto;
             scrollbar-width: thin;
             scrollbar-color: var(--primary) #f1f5f9;
+            transition: opacity 0.5s ease-in-out;  /* Amélioration : Transition fluide pour le contenu */
+        }
+        .phone-content.fade {
+            opacity: 0;  /* Classe pour fade out/in */
         }
         .phone-content::-webkit-scrollbar {
             width: 4px;
@@ -610,6 +619,10 @@
             margin-bottom: 16px;
             border: 1px solid rgba(255, 98, 0, 0.1);
             animation: slideInUp 0.5s ease-out;
+            transition: transform 0.3s ease;  /* Amélioration : Hover fluide */
+        }
+        .content-card-phone:hover {
+            transform: scale(1.02);  /* Amélioration : Interaction */
         }
         @keyframes slideInUp {
             from {
@@ -693,6 +706,7 @@
             border-radius: 24px;
             z-index: 5;
             box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;  /* Amélioration : Fluidité */
         }
         .nav-dot {
             width: 36px;
@@ -730,6 +744,10 @@
             margin-bottom: 12px;
             border: 1px solid rgba(255, 98, 0, 0.1);
             box-shadow: var(--shadow-sm);
+            transition: transform 0.3s ease;  /* Amélioration : Hover fluide */
+        }
+        .product-item:hover {
+            transform: scale(1.02);
         }
         .product-icon {
             width: 40px;
@@ -824,6 +842,7 @@
             padding: 12px;
             border-radius: 8px;
             margin-bottom: 16px;
+            transition: all 0.3s ease;  /* Amélioration : Fluidité */
         }
         .alert-text {
             font-size: 12px;
@@ -839,6 +858,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            transition: all 0.3s ease;  /* Amélioration : Fluidité */
         }
         .success-text {
             font-size: 12px;
