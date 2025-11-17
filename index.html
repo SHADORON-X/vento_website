@@ -9,75 +9,117 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
+        /*
+         * VARIABLES RACINE : 
+         * Ces variables définissent les couleurs principales, les arrière-plans, les ombres et les espacements.
+         * Elles sont utilisées partout dans le CSS pour garder le design cohérent et facile à modifier.
+         * Pour un débutant : Changez une variable ici, et tout le site se met à jour automatiquement !
+         */
         :root {
-            --primary: #ff6200;
-            --primary-dark: #e55a00;
-            --primary-light: #ff8c42;
-            --secondary: #ff4500;
-            --accent: #ffa500;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --bg-main: #ffffff;
-            --bg-alt: #fff8f5;
-            --bg-subtle: #fff0e6;
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
-            --text-tertiary: #94a3b8;
-            --border: #ffe4d1;
-            --shadow-sm: 0 1px 2px 0 rgba(255, 98, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(255, 98, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(255, 98, 0, 0.1);
-            --shadow-xl: 0 20px 25px -5px rgba(255, 98, 0, 0.1);
-            --shadow-2xl: 0 25px 50px -12px rgba(255, 98, 0, 0.25);
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --radius-xl: 24px;
-            --spacing-xs: 8px;
-            --spacing-sm: 16px;
-            --spacing-md: 24px;
-            --spacing-lg: 32px;
-            --spacing-xl: 48px;
-            --spacing-2xl: 64px;
-            --spacing-3xl: 96px;
+            --primary: #ff6200;         /* Couleur principale (orange vif) */
+            --primary-dark: #e55a00;    /* Variante plus foncée pour les hovers */
+            --primary-light: #ff8c42;   /* Variante plus claire */
+            --secondary: #ff4500;       /* Couleur secondaire (orange rougeâtre) */
+            --accent: #ffa500;          /* Accent pour les éléments importants */
+            --success: #10b981;         /* Vert pour les succès */
+            --warning: #f59e0b;         /* Jaune pour les avertissements */
+            --danger: #ef4444;          /* Rouge pour les erreurs */
+
+            --bg-main: #ffffff;         /* Arrière-plan principal (blanc en mode clair) */
+            --bg-alt: #fff8f5;          /* Arrière-plan alternatif (léger orange pâle) */
+            --bg-subtle: #fff0e6;       /* Arrière-plan subtil */
+            --text-primary: #0f172a;    /* Texte principal (noir foncé) */
+            --text-secondary: #475569;  /* Texte secondaire (gris) */
+            --text-tertiary: #94a3b8;   /* Texte tertiaire (gris clair) */
+            --border: #ffe4d1;          /* Bordures (orange clair) */
+            --shadow-sm: 0 1px 2px 0 rgba(255, 98, 0, 0.05);  /* Ombre légère */
+            --shadow-md: 0 4px 6px -1px rgba(255, 98, 0, 0.1); /* Ombre moyenne */
+            --shadow-lg: 0 10px 15px -3px rgba(255, 98, 0, 0.1); /* Ombre large */
+            --shadow-xl: 0 20px 25px -5px rgba(255, 98, 0, 0.1); /* Ombre extra large */
+            --shadow-2xl: 0 25px 50px -12px rgba(255, 98, 0, 0.25); /* Ombre très large */
+
+            --radius-sm: 8px;           /* Rayon de bordure petit */
+            --radius-md: 12px;          /* Rayon moyen */
+            --radius-lg: 16px;          /* Rayon large */
+            --radius-xl: 24px;          /* Rayon extra large */
+
+            --spacing-xs: 8px;          /* Espacement extra petit */
+            --spacing-sm: 16px;         /* Petit */
+            --spacing-md: 24px;         /* Moyen */
+            --spacing-lg: 32px;         /* Large */
+            --spacing-xl: 48px;         /* Extra large */
+            --spacing-2xl: 64px;        /* Très large */
+            --spacing-3xl: 96px;        /* Encore plus large */
         }
+
+        /*
+         * MODE SOMBRE : 
+         * Redéfinit les variables pour le thème sombre.
+         * Appliqué quand l'attribut data-theme="dark" est sur l'élément <html>.
+         * Pour un débutant : Cela permet de switcher entre clair et sombre sans changer tout le code.
+         */
         [data-theme="dark"] {
-            --bg-main: #0f172a;
-            --bg-alt: #1e293b;
-            --bg-subtle: #334155;
-            --text-primary: #f1f5f9;
-            --text-secondary: #cbd5e1;
-            --text-tertiary: #64748b;
-            --border: #334155;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+            --bg-main: #0f172a;         /* Arrière-plan principal sombre */
+            --bg-alt: #1e293b;          /* Alternatif sombre */
+            --bg-subtle: #334155;       /* Subtil sombre */
+            --text-primary: #f1f5f9;    /* Texte clair */
+            --text-secondary: #cbd5e1;  /* Texte secondaire clair */
+            --text-tertiary: #64748b;   /* Texte tertiaire clair */
+            --border: #334155;          /* Bordures sombres */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);  /* Ombres adaptées au sombre */
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
         }
+
+        /*
+         * RÉINITIALISATION GLOBALE : 
+         * Enlève les marges et paddings par défaut de tous les éléments.
+         * Utilise border-box pour que les largeurs incluent les bordures et paddings.
+         * Pour un débutant : Cela évite les surprises avec les tailles des éléments.
+         */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
+        /*
+         * HTML ET BODY : 
+         * Active le défilement doux pour les ancres.
+         * Définit la police, l'arrière-plan et la couleur du texte avec des variables.
+         * Ajoute une transition pour changer de thème sans à-coups.
+         */
         html {
             scroll-behavior: smooth;
-            font-size: 16px;
+            font-size: 16px;  /* Taille de base pour les rem/em */
         }
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: var(--bg-main);
             color: var(--text-primary);
             line-height: 1.6;
-            overflow-x: hidden;
+            overflow-x: hidden;  /* Empêche le défilement horizontal */
             transition: background 0.3s ease, color 0.3s ease;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            -webkit-font-smoothing: antialiased;  /* Améliore le rendu des polices sur WebKit */
+            -moz-osx-font-smoothing: grayscale;   /* Améliore sur Firefox macOS */
         }
+
+        /*
+         * CONTAINER : 
+         * Limite la largeur max du contenu et ajoute un padding responsive.
+         * Pour un débutant : Cela centre le contenu et l'adapte aux écrans.
+         */
         .container {
             max-width: 1280px;
             margin: 0 auto;
-            padding: 0 clamp(20px, 5vw, 40px);
+            padding: 0 clamp(20px, 5vw, 40px);  /* Padding adaptatif */
         }
+
+        /*
+         * SECTIONS : 
+         * Styles de base pour les sections avec animation d'apparition au scroll.
+         * La classe .visible active l'animation quand la section entre en vue.
+         */
         section {
             padding: var(--spacing-3xl) 0;
             opacity: 0;
@@ -88,6 +130,12 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        /*
+         * TITRES ET PARAGRAPHES : 
+         * Styles pour les headings (h1-h6) et paragraphes.
+         * Utilise clamp() pour des tailles responsives (adaptées à l'écran).
+         */
         h1, h2, h3, h4, h5, h6 {
             font-weight: 800;
             line-height: 1.2;
@@ -105,33 +153,14 @@
             text-decoration: none;
             color: inherit;
         }
-        #page-container {
-            position: relative;
-            z-index: 1;
-            background: var(--bg-main);
-            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 280px;
-            height: 100%;
-            background: var(--bg-alt);
-            z-index: 0;
-            display: flex;
-            flex-direction: column;
-            padding: 60px 30px;
-            gap: 15px;
-            overflow-y: auto;
-        }
-        body.menu-open #page-container {
-            transform: translateX(280px);
-            box-shadow: 0 0 20px rgba(0,0,0,0.2);
-        }
-        body.menu-open {
-            overflow: hidden;
-        }
+
+        /*
+         * HEADER : 
+         * Barre de navigation fixe en haut de la page avec effet de flou (backdrop-filter).
+         * Ajoute une bordure et une ombre quand on scroll (classe .scrolled).
+         * z-index élevé pour être toujours au-dessus du contenu.
+         * Amélioration : Rendu plus moderne avec saturation pour un effet verre dépoli.
+         */
         header {
             position: fixed;
             top: 0;
@@ -149,6 +178,12 @@
         header.scrolled {
             box-shadow: var(--shadow-md);
         }
+
+        /*
+         * HEADER-CONTAINER : 
+         * Conteneur flex pour aligner logo, nav et actions.
+         * Padding ajusté pour un bon espacement.
+         */
         .header-container {
             display: flex;
             align-items: center;
@@ -158,6 +193,12 @@
             margin: 0 auto;
             position: relative;
         }
+
+        /*
+         * LOGO-WRAPPER : 
+         * Conteneur pour le logo SVG et le texte.
+         * Ajoute un hover avec animation pour plus d'interactivité.
+         */
         .logo-wrapper {
             display: flex;
             align-items: center;
@@ -199,6 +240,12 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
+
+        /*
+         * HEADER-ACTIONS : 
+         * Groupe les boutons (thème, langue, menu hamburger).
+         * Amélioration : Espacement constant, et les boutons restent visibles sur mobile pour "rester constante".
+         */
         .header-actions {
             display: flex;
             gap: 12px;
@@ -224,6 +271,13 @@
             border-color: var(--primary);
             background: var(--primary);
         }
+
+        /*
+         * MENU-TOGGLE (HAMBURGER) : 
+         * Bouton hamburger pour ouvrir le menu off-canvas sur mobile/tablette.
+         * Amélioration : Style plus moderne avec bordure arrondie, animation fluide des barres.
+         * Ajout d'une ombre légère pour le faire ressortir.
+         */
         .menu-toggle {
             display: none;
             flex-direction: column;
@@ -235,6 +289,7 @@
             border-radius: 8px;
             border: 2px solid var(--primary-dark);
             position: relative;
+            box-shadow: var(--shadow-sm);  /* Amélioration : Ombre pour profondeur */
         }
         .menu-toggle span {
             width: 25px;
@@ -253,86 +308,105 @@
         .menu-toggle.active span:nth-child(3) {
             transform: rotate(-45deg) translate(7px, -7px);
         }
-        @media (min-width: 769px) {
-            nav {
-                position: static;
-                width: auto;
-                height: auto;
-                background: none;
-                padding: 0;
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                gap: 32px;
-            }
-            nav a {
-                font-size: 15px;
-                font-weight: 500;
-                color: var(--text-secondary);
-                transition: all 0.2s ease;
-                position: relative;
-            }
-            nav a:hover {
-                color: var(--primary);
-            }
-            nav a::after {
-                content: '';
-                position: absolute;
-                bottom: -4px;
-                left: 0;
-                width: 0;
-                height: 2px;
-                background: var(--primary);
-                transition: width 0.3s ease;
-            }
-            nav a:hover::after {
-                width: 100%;
-            }
-            .nav-cta {
-                background: linear-gradient(135deg, var(--primary), var(--secondary));
-                color: white !important;
-                padding: 10px 24px;
-                border-radius: 100px;
-                font-weight: 600;
-                box-shadow: var(--shadow-md);
-                transition: all 0.3s ease;
-            }
-            .nav-cta:hover {
-                transform: translateY(-2px);
-                box-shadow: var(--shadow-lg);
-            }
-            .nav-cta::after {
-                display: none;
-            }
+        .menu-toggle:hover {
+            background: var(--primary-dark);  /* Amélioration : Hover pour feedback */
+            transform: scale(1.05);
         }
+
+        /* ==================== OFF-CANVAS MENU ==================== */
+        /*
+         * OFF-CANVAS MENU : 
+         * Menu latéral fixe qui slide depuis la gauche.
+         * #page-container se déplace pour révéler le menu.
+         * Pour un débutant : C'est comme un tiroir qui s'ouvre.
+         */
+        #page-container {
+            position: relative;
+            z-index: 1;
+            background: var(--bg-main);
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100%;
+            background: var(--bg-alt);
+            z-index: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 60px 30px;
+            gap: 15px;
+            overflow-y: auto;
+        }
+        body.menu-open #page-container {
+            transform: translateX(280px);
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+        body.menu-open {
+            overflow: hidden;
+        }
+        /* Styles des liens dans le menu */
+        nav a {
+            display: block;
+            padding: 18px 24px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 12px;
+            background: var(--bg-main);
+            border: 2px solid var(--border);
+            margin: 0;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        nav a:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .nav-cta {
+            background: var(--primary) !important;
+            color: white !important;
+            border: none !important;
+            margin-top: 8px;
+        }
+
+        /*
+         * MEDIA QUERIES POUR RESPONSIVE : 
+         * Adaptations pour différents tailles d'écrans.
+         * Amélioration : Sur mobile, les boutons thème et langue restent visibles (plus de display:none).
+         * Hamburger s'affiche sur mobile et tablette.
+         * Ajustements pour espacement réduit sur petits écrans.
+         */
         @media (max-width: 768px) {
             .menu-toggle {
                 display: flex !important;
             }
-            .header-actions .icon-btn {
-                display: none !important;
+            /* Amélioration : Les boutons icon-btn (thème et langue) restent visibles sur mobile pour "rester constante" */
+            /* .header-actions .icon-btn { display: flex !important; } */  /* Activé si besoin, mais pour éviter surcharge, on ajuste gap */
+            .header-actions {
+                gap: 8px;  /* Réduction d'espacement pour fit sur mobile */
             }
-            nav a {
-                width: 100%;
-                padding: 18px 24px;
-                text-align: center;
-                font-size: 18px;
-                font-weight: 600;
-                border-radius: 12px;
-                background: var(--bg-main);
-                border: 2px solid var(--border);
-                margin: 0;
+            .icon-btn {
+                width: 36px;  /* Plus petit sur mobile */
+                height: 36px;
+                font-size: 16px;
             }
-            nav a:hover {
-                background: var(--primary);
-                color: white;
-                border-color: var(--primary);
+            .header-container {
+                padding: 14px 20px;
             }
-            .nav-cta {
-                background: var(--primary) !important;
-                color: white !important;
-                border: none !important;
-                margin-top: 8px;
+            .logo-svg {
+                width: 36px;
+                height: 36px;
+            }
+            .logo-text {
+                font-size: 20px;
+            }
+            nav {
+                padding: 80px 24px 32px;
+                gap: 16px;
             }
         }
         @media (max-width: 1024px) and (min-width: 769px) {
@@ -343,9 +417,13 @@
         .mobile-detected .menu-toggle {
             display: flex !important;
         }
-        .mobile-detected .header-actions .icon-btn {
-            display: none !important;
-        }
+        /* Note : Si mobile détecté via JS, on force l'affichage du hamburger */
+
+        /*
+         * HERO SECTION : 
+         * Section d'accueil avec grille responsive et animations.
+         * Fond avec gradient radial animé pour dynamisme.
+         */
         .hero {
             min-height: 100vh;
             display: flex;
@@ -385,8 +463,14 @@
             animation: fadeInUp 0.8s ease-out;
         }
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         .hero-badge {
             display: inline-flex;
@@ -458,8 +542,14 @@
             animation: fadeInRight 0.8s ease-out 0.6s both;
         }
         @keyframes fadeInRight {
-            from { opacity: 0; transform: translateX(30px); }
-            to { opacity: 1; transform: translateX(0); }
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
         .hero-phone {
             width: 100%;
@@ -533,8 +623,14 @@
             animation: slideInUp 0.5s ease-out;
         }
         @keyframes slideInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         .card-title {
             font-size: 14px;
@@ -712,8 +808,14 @@
             animation: barGrow 0.8s ease-out backwards;
         }
         @keyframes barGrow {
-            from { height: 0; opacity: 0; }
-            to { height: 100%; opacity: 1; }
+            from {
+                height: 0;
+                opacity: 0;
+            }
+            to {
+                height: 100%;
+                opacity: 1;
+            }
         }
         .chart-bar:hover {
             opacity: 0.8;
@@ -754,6 +856,12 @@
             color: var(--success);
             font-weight: 600;
         }
+
+        /*
+         * AUTRES SECTIONS : 
+         * Styles pour les sections alternatives, headers de section, promesses, features, etc.
+         * Utilise des grids pour des layouts responsives.
+         */
         .section-alt {
             background: var(--bg-alt);
         }
@@ -1104,6 +1212,12 @@
             height: 32px;
             fill: white;
         }
+
+        /*
+         * MEDIA QUERIES RESPONSIVE SUPPLÉMENTAIRES : 
+         * Ajustements pour tablettes et mobiles.
+         * Réduit les tailles et paddings pour un meilleur fit.
+         */
         @media (max-width: 1024px) {
             .hero-container {
                 grid-template-columns: 1fr;
@@ -1137,16 +1251,6 @@
             }
             section {
                 padding: 60px 0;
-            }
-            .header-container {
-                padding: 14px 20px;
-            }
-            .logo-svg {
-                width: 36px;
-                height: 36px;
-            }
-            .logo-text {
-                font-size: 20px;
             }
             .hero {
                 min-height: auto;
@@ -1309,7 +1413,15 @@
     </style>
 </head>
 <body>
+    <!-- 
+     * PAGE CONTAINER : 
+     * Contient tout le contenu principal. Se déplace pour le menu off-canvas.
+     -->
     <div id="page-container">
+        <!-- 
+         * HEADER : 
+         * Barre fixe avec logo et actions. Amélioré pour visibilité constante sur mobile.
+         -->
         <header id="header">
             <div class="header-container">
                 <div class="logo-wrapper">
@@ -1330,6 +1442,10 @@
                 </div>
             </div>
         </header>
+        <!-- 
+         * HERO SECTION : 
+         * Section d'accueil avec contenu et mockup téléphone.
+         -->
         <section class="hero">
             <div class="container">
                 <div class="hero-container">
@@ -1398,6 +1514,10 @@
                 </div>
             </div>
         </section>
+        <!-- 
+         * PROMESSE SECTION : 
+         * Grille de cartes pour les promesses du produit.
+         -->
         <section class="section-alt" id="promesse">
             <div class="container">
                 <div class="section-header">
@@ -1483,6 +1603,10 @@
                 </div>
             </div>
         </section>
+        <!-- 
+         * MISSION SECTION : 
+         * Texte centré sur la mission du produit.
+         -->
         <section>
             <div class="container">
                 <div class="section-header">
@@ -1512,6 +1636,10 @@
                 </div>
             </div>
         </section>
+        <!-- 
+         * FEATURES SECTION : 
+         * Grille de fonctionnalités.
+         -->
         <section class="section-alt" id="features">
             <div class="container">
                 <div class="section-header">
@@ -1569,6 +1697,10 @@
                 </div>
             </div>
         </section>
+        <!-- 
+         * TESTIMONIALS SECTION : 
+         * Grille de témoignages.
+         -->
         <section id="testimonials">
             <div class="container">
                 <div class="section-header">
@@ -1635,6 +1767,10 @@
                 </div>
             </div>
         </section>
+        <!-- 
+         * BETA SECTION : 
+         * Formulaire pour rejoindre la beta.
+         -->
         <section class="section-alt beta-section" id="beta">
             <div class="container">
                 <div class="section-header">
@@ -1671,6 +1807,7 @@
                             <select id="country" name="country" required>
                                 <option value="" class="lang-fr">Sélectionnez votre pays</option>
                                 <option value="" class="lang-en">Select your country</option>
+                                
                                 <optgroup label="🌍 Afrique / Africa">
                                     <option value="algerie">Algérie / Algeria</option>
                                     <option value="benin">Bénin / Benin</option>
@@ -1731,6 +1868,10 @@
                 </div>
             </div>
         </section>
+        <!-- 
+         * FOOTER : 
+         * Pied de page avec logo, liens et sociaux.
+         -->
         <footer>
             <div class="container">
                 <div class="footer-logo">
@@ -1764,373 +1905,315 @@
                     </a>
                     <a href="https://instagram.com/velmo" class="social-icon">
                         <svg viewBox="0 0 24 24">
-                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.332.014 7.052.072 2.95.272.16 3.062 0 7.164.014 8.444 0 8.853 0 12c0 3.147.014 3.556.072 4.836.2 4.102 2.99 6.892 7.092 7.092 1.28.058 1.689.072 4.836.072 3.147 0 3.556-.014 4.836-.072 4.102-.2 6.892-2.99 7.092-7.092.058-1.28.072-1.689.072-4.836 0-3.147-.014-3.556-.072-4.836C23.728 2.962 20.938.172 16.836-.028 15.556-.086 15556 .086 15.247 0 12 0zm0 2.163c-2.663 0-3.02 .009-4.07 .058-2.64 .124-3.95 1.395-4.07 4.07-.049 1.05-.058 1.407-.058 4.07 0 2.663 .009 3.02 .058 4.07 .124 2.64 1.395 3.95 4.07 4.07 1.05 .049 1.407 .058 4.07 .058 2.663 0 3.02-.009 4.07-.058 2.64-.124 3.95-1.395 4.07-4.07 .049-1.05 .058-1.407 .058-4.07 0-2.663-.009-3.02-.058-4.07-.124-2.64-1.395-3.95-4.07-4.07-1.05-.049-1.407-.058-4.07-.058zM12 5.838c3.403 0 6.162 2.759 6.162 6.162 0 3.403-2.759 6.162-6.162 6.162-3.403 0-6.162-2.759-6.162-6.162 0-3.403 2.759-6.162 6.162-6.162zm0 10.324c2.296 0 4.162-1.866 4.162-4.162 0-2.296-1.866-4.162-4.162-4.162-2.296 0-4.162 1.866-4.162 4.162 0 2.296 1.866 4.162 4.162 4.162zm6.406-11.845c-.796 0-1.441 .645-1.441 1.441 0 .796 .645 1.441 1.441 1.441 .796 0 1.441-.645 1.441-1.441 0-.796-.645-1.441-1.441-1.441z"/>
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.069-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100-2.88 1.44 1.44 0 000 2.88z"/>
                         </svg>
                     </a>
                 </div>
-                <p style="margin-top: 24px; font-size: 14px; color: var(--text-tertiary);">
+                <p style="margin-top: 32px; font-size: 14px; color: var(--text-tertiary);">
                     © 2025 Velmo. <span class="lang-fr">Tous droits réservés.</span><span class="lang-en">All rights reserved.</span>
                 </p>
             </div>
         </footer>
-        <a href="https://wa.me/224622000000" class="whatsapp-float" target="_blank">
-            <svg viewBox="0 0 24 24">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.966-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c0-5.4 4.41-9.75 9.845-9.75 2.654 0 5.14 1.03 7.004 2.9 1.864 1.87 2.899 4.36 2.899 7.01 0 5.43-4.41 9.75-9.85 9.75m8.306-18.193c-2.29-2.3-5.3-3.563-8.527-3.563-6.635 0-12.025 5.39-12.025 12.01 0 2.11 .54 4.16 1.565 5.97l-1.65 6.02 6.175-1.62a11.95 11.95 0 005.935 1.59c6.635 0 12.025-5.39 12.025-12.01 0-3.2-1.24-6.21-3.523-8.47"/>
-            </svg>
-        </a>
     </div>
-    <nav id="nav">
-        <a href="#promesse" class="lang-fr">Promesse</a>
-        <a href="#promesse" class="lang-en">Promise</a>
-        <a href="#features" class="lang-fr">Fonctions</a>
-        <a href="#features" class="lang-en">Features</a>
-        <a href="#testimonials" class="lang-fr">Témoignages</a>
-        <a href="#testimonials" class="lang-en">Testimonials</a>
-        <a href="#beta" class="nav-cta">
-            <span class="lang-fr">Rejoindre Beta</span>
-            <span class="lang-en">Join Beta</span>
-        </a>
+    <!-- 
+     * OFF-CANVAS MENU : 
+     * Menu latéral avec liens de navigation.
+     -->
+    <nav id="offcanvas-menu">
+        <a href="#promesse"><span class="lang-fr">Promesse</span><span class="lang-en">Promise</span></a>
+        <a href="#features"><span class="lang-fr">Fonctionnalités</span><span class="lang-en">Features</span></a>
+        <a href="#testimonials"><span class="lang-fr">Témoignages</span><span class="lang-en">Testimonials</span></a>
+        <a href="#beta"><span class="lang-fr">Rejoindre la Beta</span><span class="lang-en">Join Beta</span></a>
+        <a href="mailto:contact@velmo.app" class="nav-cta"><span class="lang-fr">Contact</span><span class="lang-en">Contact</span></a>
     </nav>
-
+    <!-- 
+     * WHATSAPP FLOAT : 
+     * Bouton flottant pour contact WhatsApp.
+     -->
+    <a href="https://wa.me/224622000000" class="whatsapp-float" target="_blank">
+        <svg viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.966-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c0-5.4 4.41-9.75 9.845-9.75 2.654 0 5.14 1.03 7.004 2.9 1.864 1.87 2.899 4.36 2.899 7.01 0 5.43-4.41 9.75-9.85 9.75m8.306-18.193c-2.29-2.3-5.3-3.563-8.527-3.563-6.635 0-12.025 5.39-12.025 12.01 0 2.11.54 4.16 1.565 5.97l-1.65 6.02 6.175-1.62a11.95 11.95 0 005.935 1.59c6.635 0 12.025-5.39 12.025-12.01 0-3.2-1.24-6.21-3.523-8.47"/>
+        </svg>
+    </a>
+    <!-- 
+     * SCRIPT JS : 
+     * Gère le thème, la langue, le menu, le scroll, les animations, le mockup téléphone et le formulaire.
+     * Bien commenté pour un débutant.
+     -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const html = document.documentElement;
-            const body = document.body;
-            const header = document.getElementById('header');
-            const menuToggle = document.getElementById('menu-toggle');
-            const pageContainer = document.getElementById('page-container');
-            const nav = document.getElementById('nav');
-            const themeToggle = document.getElementById('theme-toggle');
-            const langToggle = document.getElementById('lang-toggle');
-            const heroPhoneContent = document.getElementById('hero-phone-content');
-            const navDots = document.querySelectorAll('.nav-dot');
-            const betaForm = document.getElementById('beta-form');
-            const formSuccess = document.getElementById('form-success');
-            const sections = document.querySelectorAll('section');
-
-            let currentLang = 'fr';
-            let currentTheme = localStorage.getItem('theme') || 'light';
-            let currentView = 'dashboard';
-            let scrollTimeout;
-
-            function init() {
-                setTheme(currentTheme);
-                setLanguage(currentLang);
-                renderPhoneView(currentView);
-                setupIntersectionObserver();
-                setupScrollHandler();
-                setupEventListeners();
-                checkMobile();
+        // === DÉTECTION MOBILE & INITIALISATION ===
+        // Vérifie si l'utilisateur est sur mobile via userAgent.
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        if (isMobile) {
+            document.body.classList.add('mobile-detected');
+        }
+        // === THÈME (LIGHT / DARK) ===
+        // Sélectionne le bouton toggle et l'élément HTML.
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+       
+        // Fonction pour définir le thème et le sauvegarder en localStorage.
+        function setTheme(theme) {
+            html.setAttribute('data-theme', theme);
+            localStorage.setItem('velmo-theme', theme);
+            themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
+       
+        // Charge le thème sauvegardé ou détecte la préférence système.
+        const savedTheme = localStorage.getItem('velmo-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        setTheme(savedTheme);
+       
+        // Événement click pour switcher le thème.
+        themeToggle.addEventListener('click', () => {
+            const newTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            setTheme(newTheme);
+        });
+        // === LANGUE (FR / EN) ===
+        // Sélectionne le bouton et initialise la langue.
+        const langToggle = document.getElementById('lang-toggle');
+        let currentLang = localStorage.getItem('velmo-lang') || 'fr';
+       
+        // Fonction pour définir la langue et la sauvegarder.
+        function setLang(lang) {
+            html.setAttribute('lang', lang);
+            localStorage.setItem('velmo-lang', lang);
+            langToggle.textContent = lang === 'fr' ? '🇬🇧' : '🇫🇷';
+            currentLang = lang;
+        }
+       
+        setLang(currentLang);
+       
+        // Événement click pour switcher la langue.
+        langToggle.addEventListener('click', () => {
+            const newLang = currentLang === 'fr' ? 'en' : 'fr';
+            setLang(newLang);
+        });
+        // === MENU OFF-CANVAS ===
+        // Sélectionne les éléments pour le menu.
+        const menuToggle = document.getElementById('menu-toggle');
+        const pageContainer = document.getElementById('page-container');
+        const body = document.body;
+       
+        // Toggle le menu au click.
+        menuToggle.addEventListener('click', () => {
+            body.classList.toggle('menu-open');
+            menuToggle.classList.toggle('active');
+        });
+       
+        // Ferme le menu si click dehors.
+        pageContainer.addEventListener('click', (e) => {
+            if (body.classList.contains('menu-open') && !menuToggle.contains(e.target)) {
+                body.classList.remove('menu-open');
+                menuToggle.classList.remove('active');
             }
-
-            function setTheme(theme) {
-                html.dataset.theme = theme;
-                currentTheme = theme;
-                localStorage.setItem('theme', theme);
-                themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+        });
+        // === SCROLL HEADER ===
+        // Ajoute classe scrolled quand on descend.
+        const header = document.getElementById('header');
+        let lastScroll = 0;
+       
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+           
+            if (currentScroll > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
             }
-
-            function toggleTheme() {
-                setTheme(currentTheme === 'light' ? 'dark' : 'light');
-            }
-
-            function setLanguage(lang) {
-                html.lang = lang;
-                currentLang = lang;
-                langToggle.textContent = lang === 'fr' ? '🇬🇧' : '🇫🇷';
-            }
-
-            function toggleLanguage() {
-                setLanguage(currentLang === 'fr' ? 'en' : 'fr');
-            }
-
-            function checkMobile() {
-                if (window.innerWidth <= 768 || /Mobi|Android/i.test(navigator.userAgent)) {
-                    body.classList.add('mobile-detected');
-                } else {
-                    body.classList.remove('mobile-detected');
+           
+            lastScroll = currentScroll;
+        });
+        // === OBSERVER POUR ANIMATIONS AU SCROLL ===
+        // Observe les sections pour ajouter .visible au viewport.
+        const sections = document.querySelectorAll('section');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
                 }
+            });
+        }, { threshold: 0.1 });
+       
+        sections.forEach(section => observer.observe(section));
+        // === MOCKUP TÉLÉPHONE - CONTENU DYNAMIQUE ===
+        // Contenu du téléphone change avec les dots.
+        const phoneContent = document.getElementById('hero-phone-content');
+        const navDots = document.querySelectorAll('.nav-dot');
+       
+        const views = {
+            dashboard: `
+                <div class="content-card-phone">
+                    <div class="card-title">💰 <span class="lang-fr">Ventes du jour</span><span class="lang-en">Today's sales</span></div>
+                    <div class="card-value">1 250 000 GNF</div>
+                    <div class="card-subtitle">↑ 12% <span class="lang-fr">vs hier</span><span class="lang-en">vs yesterday</span></div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label lang-fr">Clients</div>
+                        <div class="stat-label lang-en">Customers</div>
+                        <div class="stat-value">48</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label lang-fr">Produits</div>
+                        <div class="stat-label lang-en">Products</div>
+                        <div class="stat-value">127</div>
+                    </div>
+                </div>
+            `,
+            stock: `
+                <div class="content-card-phone">
+                    <div class="card-title">📦 <span class="lang-fr">Stock critique</span><span class="lang-en">Critical stock</span></div>
+                </div>
+                <div class="product-item">
+                    <div class="product-icon">🥚</div>
+                    <div class="product-info">
+                        <div class="product-name">Œufs (carton)</div>
+                        <div class="product-stock">3 unités restantes</div>
+                    </div>
+                    <div class="stock-badge stock-low">LOW</div>
+                </div>
+                <div class="product-item">
+                    <div class="product-icon">🍚</div>
+                    <div class="product-info">
+                        <div class="product-name">Riz (sac 25kg)</div>
+                        <div class="product-stock">7 unités</div>
+                    </div>
+                    <div class="stock-badge stock-low">LOW</div>
+                </div>
+                <div class="alert-badge">
+                    <div class="alert-text lang-fr">2 produits en rupture imminente</div>
+                    <div class="alert-text lang-en">2 products running out</div>
+                </div>
+            `,
+            analytics: `
+                <div class="content-card-phone">
+                    <div class="card-title">📊 <span class="lang-fr">Performance semaine</span><span class="lang-en">Weekly performance</span></div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-bars">
+                        <div class="chart-bar" style="height: 60%;"></div>
+                        <div class="chart-bar" style="height: 80%;"></div>
+                        <div class="chart-bar" style="height: 45%;"></div>
+                        <div class="chart-bar" style="height: 90%;"></div>
+                        <div class="chart-bar" style="height: 70%;"></div>
+                        <div class="chart-bar" style="height: 85%;"></div>
+                        <div class="chart-bar" style="height: 95%;"></div>
+                    </div>
+                    <div class="chart-labels">
+                        <span>Lun</span><span>Mar</span><span>Mer</span><span>Jeu</span><span>Ven</span><span>Sam</span><span>Dim</span>
+                    </div>
+                </div>
+                <div class="success-badge">
+                    <span>✅</span>
+                    <div class="success-text lang-fr">Meilleure journée : Vendredi</div>
+                    <div class="success-text lang-en">Best day: Friday</div>
+                </div>
+            `,
+            offline: `
+                <div class="content-card-phone">
+                    <div class="card-title">📴 <span class="lang-fr">Mode hors-ligne</span><span class="lang-en">Offline mode</span></div>
+                    <div class="card-value">ACTIF</div>
+                    <div class="card-subtitle lang-fr">12 ventes enregistrées</div>
+                    <div class="card-subtitle lang-en">12 sales recorded</div>
+                </div>
+                <div class="alert-badge" style="background: rgba(16, 185, 129, 0.1); border-left-color: var(--success);">
+                    <div class="alert-text" style="color: var(--success);">
+                        <span class="lang-fr">Synchronisation automatique dès connexion</span>
+                        <span class="lang-en">Auto-sync when online</span>
+                    </div>
+                </div>
+            `
+        };
+       
+        // Fonction pour afficher une vue.
+        function showView(view) {
+            phoneContent.innerHTML = views[view] || views.dashboard;
+            navDots.forEach(dot => dot.classList.remove('active'));
+            document.querySelector(`[data-view="${view}"]`).classList.add('active');
+        }
+       
+        // Événements sur les dots.
+        navDots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const view = dot.getAttribute('data-view');
+                showView(view);
+            });
+        });
+       
+        // Initialiser avec dashboard.
+        showView('dashboard');
+       
+        // Rotation automatique des vues toutes les 4 secondes.
+        let currentViewIndex = 0;
+        const viewKeys = Object.keys(views);
+        setInterval(() => {
+            currentViewIndex = (currentViewIndex + 1) % viewKeys.length;
+            showView(viewKeys[currentViewIndex]);
+        }, 4000);
+        // === FORMULAIRE BETA ===
+        // Gère la soumission du formulaire (simulation pour l'instant).
+        const betaForm = document.getElementById('beta-form');
+        const formSuccess = document.getElementById('form-success');
+       
+        betaForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+           
+            const formData = new FormData(betaForm);
+            const data = Object.fromEntries(formData);
+           
+            // Simulation d'envoi (remplacez par votre API réelle).
+            try {
+                // await fetch('https://api.velmo.app/beta', { method: 'POST', body: JSON.stringify(data) });
+                console.log('Beta submission:', data);
+               
+                betaForm.style.display = 'none';
+                formSuccess.classList.add('show');
+               
+                setTimeout(() => {
+                    betaForm.style.display = 'block';
+                    formSuccess.classList.remove('show');
+                    betaForm.reset();
+                }, 5000);
+            } catch (err) {
+                alert('Erreur. Veuillez réessayer.');
             }
-
-            function setupEventListeners() {
-                themeToggle.addEventListener('click', toggleTheme);
-                langToggle.addEventListener('click', toggleLanguage);
-                menuToggle.addEventListener('click', toggleMenu);
-                window.addEventListener('resize', checkMobile);
-
-                navDots.forEach(dot => {
-                    dot.addEventListener('click', () => {
-                        currentView = dot.dataset.view;
-                        renderPhoneView(currentView);
-                        updateActiveDot(dot);
-                    });
-                });
-
-                betaForm.addEventListener('submit', handleBetaSubmit);
-
-                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                    anchor.addEventListener('click', smoothScroll);
-                });
-            }
-
-            function toggleMenu() {
-                body.classList.toggle('menu-open');
-                menuToggle.classList.toggle('active');
-            }
-
-            function smoothScroll(e) {
+        });
+        // === SMOOTH SCROLL POUR ANCRES ===
+        // Fait défiler doucement vers les sections.
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href === '#') return;
+               
                 e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
+                const target = document.querySelector(href);
                 if (target) {
+                    const offset = header.offsetHeight;
+                    const top = target.offsetTop - offset;
+                   
                     window.scrollTo({
-                        top: target.offsetTop - 100,
+                        top,
                         behavior: 'smooth'
                     });
+                   
+                    // Ferme le menu mobile si ouvert.
                     if (body.classList.contains('menu-open')) {
-                        toggleMenu();
+                        body.classList.remove('menu-open');
+                        menuToggle.classList.remove('active');
                     }
                 }
+            });
+        });
+        // === ACCESSIBILITÉ : FOCUS VISIBLE ===
+        // Affiche les focus pour navigation clavier.
+        document.body.addEventListener('keydown', (e) => {
+            if (e.key === 'Tab') {
+                document.body.classList.add('show-focus');
             }
-
-            function setupScrollHandler() {
-                window.addEventListener('scroll', () => {
-                    clearTimeout(scrollTimeout);
-                    header.classList.add('scrolled');
-
-                    scrollTimeout = setTimeout(() => {
-                        if (window.scrollY === 0) {
-                            header.classList.remove('scrolled');
-                        }
-                    }, 100);
-                });
-            }
-
-            function setupIntersectionObserver() {
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.add('visible');
-                        }
-                    });
-                }, { threshold: 0.1 });
-
-                sections.forEach(section => {
-                    observer.observe(section);
-                });
-            }
-
-            function updateActiveDot(activeDot) {
-                navDots.forEach(dot => dot.classList.remove('active'));
-                activeDot.classList.add('active');
-            }
-
-            function renderPhoneView(view) {
-                const views = {
-                    dashboard: `
-                        <div class="content-card-phone">
-                            <div class="card-title">
-                                <span>💰</span>
-                                <span class="lang-fr">Ventes du jour</span>
-                                <span class="lang-en">Today's sales</span>
-                            </div>
-                            <div class="card-value">1,250,000 GNF</div>
-                            <div class="card-subtitle">
-                                <span>📈</span>
-                                <span class="lang-fr">+12% vs hier</span>
-                                <span class="lang-en">+12% vs yesterday</span>
-                            </div>
-                        </div>
-                        <div class="stats-grid">
-                            <div class="stat-item">
-                                <div class="stat-label lang-fr">Clients</div>
-                                <div class="stat-label lang-en">Customers</div>
-                                <div class="stat-value">48</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-label lang-fr">Produits</div>
-                                <div class="stat-label lang-en">Products</div>
-                                <div class="stat-value">127</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-label lang-fr">Dettes</div>
-                                <div class="stat-label lang-en">Debts</div>
-                                <div class="stat-value">320k</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-label lang-fr">Bénéfice</div>
-                                <div class="stat-label lang-en">Profit</div>
-                                <div class="stat-value">680k</div>
-                            </div>
-                        </div>
-                    `,
-                    stock: `
-                        <div class="content-card-phone">
-                            <div class="card-title">
-                                <span>📦</span>
-                                <span class="lang-fr">Alertes stock</span>
-                                <span class="lang-en">Stock alerts</span>
-                            </div>
-                        </div>
-                        <div class="alert-badge">
-                            <div class="alert-text lang-fr">3 produits en rupture !</div>
-                            <div class="alert-text lang-en">3 products out of stock!</div>
-                        </div>
-                        <div class="product-item">
-                            <div class="product-icon">🥫</div>
-                            <div class="product-info">
-                                <div class="product-name">Huile de palme</div>
-                                <div class="product-stock">
-                                    <span class="stock-badge stock-out lang-fr">Rupture</span>
-                                    <span class="stock-badge stock-out lang-en">Out</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="product-item">
-                            <div class="product-icon">🍚</div>
-                            <div class="product-info">
-                                <div class="product-name">Riz local</div>
-                                <div class="product-stock">
-                                    <span class="stock-badge stock-low lang-fr">Faible</span>
-                                    <span class="stock-badge stock-low lang-en">Low</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="product-item">
-                            <div class="product-icon">🧂</div>
-                            <div class="product-info">
-                                <div class="product-name">Sel fin</div>
-                                <div class="product-stock">
-                                    <span class="stock-badge stock-ok lang-fr">OK</span>
-                                    <span class="stock-badge stock-ok lang-en">OK</span>
-                                </div>
-                            </div>
-                        </div>
-                    `,
-                    analytics: `
-                        <div class="content-card-phone">
-                            <div class="card-title">
-                                <span>📊</span>
-                                <span class="lang-fr">Performance 7 jours</span>
-                                <span class="lang-en">7-day performance</span>
-                            </div>
-                        </div>
-                        <div class="chart-container">
-                            <div class="chart-bars">
-                                <div class="chart-bar" style="height: 60%"></div>
-                                <div class="chart-bar" style="height: 80%"></div>
-                                <div class="chart-bar" style="height: 45%"></div>
-                                <div class="chart-bar" style="height: 90%"></div>
-                                <div class="chart-bar" style="height: 70%"></div>
-                                <div class="chart-bar" style="height: 85%"></div>
-                                <div class="chart-bar" style="height: 95%"></div>
-                            </div>
-                            <div class="chart-labels">
-                                <span>Lun</span>
-                                <span>Mar</span>
-                                <span>Mer</span>
-                                <span>Jeu</span>
-                                <span>Ven</span>
-                                <span>Sam</span>
-                                <span>Dim</span>
-                            </div>
-                        </div>
-                        <div class="success-badge">
-                            <span>🎉</span>
-                            <div class="success-text lang-fr">Meilleure journée : Samedi</div>
-                            <div class="success-text lang-en">Best day: Saturday</div>
-                        </div>
-                    `,
-                    offline: `
-                        <div class="content-card-phone">
-                            <div class="card-title">
-                                <span>📴</span>
-                                <span class="lang-fr">Mode hors-ligne</span>
-                                <span class="lang-en">Offline mode</span>
-                            </div>
-                            <div class="card-value lang-fr">Actif</div>
-                            <div class="card-value lang-en">Active</div>
-                        </div>
-                        <div style="text-align: center; padding: 20px;">
-                            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;" class="lang-fr">
-                                Vous pouvez continuer à vendre même sans connexion internet.
-                            </p>
-                            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;" class="lang-en">
-                                You can continue selling even without internet connection.
-                            </p>
-                            <div style="background: rgba(16, 185, 129, 0.1); padding: 12px; border-radius: 12px; display: inline-block;">
-                                <span style="color: var(--success); font-weight: 600; font-size: 13px;">
-                                    <span class="lang-fr">Tout est synchronisé automatiquement</span>
-                                    <span class="lang-en">Everything syncs automatically</span>
-                                </span>
-                            </div>
-                        </div>
-                    `
-                };
-
-                heroPhoneContent.innerHTML = views[view] || views.dashboard;
-                
-                setTimeout(() => {
-                    heroPhoneContent.querySelectorAll('.content-card-phone, .chart-bar').forEach((el, i) => {
-                        el.style.animationDelay = `${i * 0.1}s`;
-                    });
-                }, 100);
-            }
-
-            async function handleBetaSubmit(e) {
-                e.preventDefault();
-                
-                const formData = new FormData(betaForm);
-                const data = Object.fromEntries(formData);
-                
-                try {
-                    // Simulation d'envoi
-                    await new Promise(resolve => setTimeout(resolve, 1500));
-                    
-                    betaForm.style.display = 'none';
-                    formSuccess.classList.add('show');
-                    
-                    // Reset form
-                    setTimeout(() => {
-                        betaForm.reset();
-                        betaForm.style.display = 'block';
-                        formSuccess.classList.remove('show');
-                    }, 5000);
-                } catch (error) {
-                    alert(currentLang === 'fr' ? 'Erreur lors de l\'envoi. Veuillez réessayer.' : 'Submission error. Please try again.');
-                }
-            }
-
-            // Animation des barres de graphique
-            function animateChartBars() {
-                const bars = document.querySelectorAll('.chart-bar');
-                bars.forEach((bar, i) => {
-                    setTimeout(() => {
-                        bar.style.height = bar.style.height || '0%';
-                    }, i * 100);
-                });
-            }
-
-            // Initialisation
-            init();
-            
-            // Animation au chargement
-            setTimeout(() => {
-                document.querySelectorAll('section').forEach((section, i) => {
-                    section.style.transitionDelay = `${i * 0.1}s`;
-                });
-            }, 100);
-
-            // Animation périodique du téléphone
-            setInterval(() => {
-                const views = ['dashboard', 'stock', 'analytics', 'offline'];
-                const randomView = views[Math.floor(Math.random() * views.length)];
-                const dot = document.querySelector(`[data-view="${randomView}"]`);
-                if (dot && !dot.classList.contains('active')) {
-                    currentView = randomView;
-                    renderPhoneView(currentView);
-                    updateActiveDot(dot);
-                }
-            }, 8000);
+        });
+       
+        document.body.addEventListener('mousedown', () => {
+            document.body.classList.remove('show-focus');
         });
     </script>
 </body>
