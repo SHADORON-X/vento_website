@@ -35,28 +35,73 @@ import {
     Phone,
     Globe,
     Sun,
-    Moon
+    Moon,
+    ChevronDown,
+    HelpCircle
 } from 'lucide-react';
 
 // Translations
 const translations = {
     fr: {
         nav: { works: "Fonctionnement", features: "Fonctionnalités", testimonials: "Témoignages", login: "Connexion", start: "Commencer" },
-        hero: { badge: "Simple, rapide, efficace", title: "Gérez votre boutique.", titleHighlight: "Suivez vos ventes.", desc: "L'application tout-en-un pour les commerçants du quotidien. Ventes, stocks, dettes — tout est là.", startFree: "Commencer gratuitement", demo: "Démo", trust: "Plus de 2,400 commerçants satisfaits" },
+        hero: { badge: "Simple, rapide, efficace", title: "Gérez votre boutique.", titleHighlight: "Suivez vos ventes.", desc: "L'application tout-en-un pour les commerçants du quotidien. Ventes, stocks, dettes — tout est là.", startFree: "Commencer gratuitement", demo: "Démo", trust: "De nombreux commerçants nous font confiance" },
         preview: { badge: "💻 Interface Pro", title: "Gérez tout depuis votre ordinateur" },
         steps: { header: "5 minutes pour démarrer", subheader: "Simple comme bonjour.", s1t: "Téléchargez", s1d: "Sur Android ou Web", s2t: "Inscrivez-vous", s2d: "Avec votre numéro", s3t: "Ajoutez produits", s3d: "Créez votre stock", s4t: "Vendez", s4d: "Encaissez facilement", s5t: "Analysez", s5d: "Suivez vos gains" },
         features: { header: "Fonctionnalités complètes", f1: "Mode Hors-Ligne", f1d: "Continuez à vendre même sans internet. Synchronisation auto.", f2: "WhatsApp Intégré", f2d: "Envoyez des factures et rappels de dettes par WhatsApp.", f3: "Sécurisé", f3d: "Vos données sont chiffrées et sauvegardées en lieu sûr.", f4: "Multi-Utilisateurs", f4d: "Donnez un accès limité à vos employés.", f5: "Rapports Détaillés", f5d: "Sachez exactement ce que vous gagnez chaque jour.", f6: "Site Vitrine", f6d: "Vos produits visibles sur internet pour vos clients." },
         testimonials: { header: "Ils nous font confiance", t1: "Depuis que j'utilise Velmo, je ne perds plus une seule vente. C'est magique.", t1a: "Moussa S.", t1r: "Marchand de tissus", t2: "La gestion des crédits est devenue un jeu d'enfant. Mes clients me remboursent plus vite.", t2a: "Fatou C.", t2r: "Epicerie fine", t3: "J'ai tout mon stock dans ma poche. Je peux voyager tranquille.", t3a: "Ibrahim D.", t3r: "Grossiste" },
-        footer: { copyright: "© 2026 Velmo. Fait avec ❤️ pour le commerce africain." }
+        faq: {
+            header: "Questions Fréquentes",
+            subheader: "Tout ce que vous devez savoir sur Velmo.",
+            q1: "Comment commencer avec Velmo ?",
+            a1: "C'est très simple ! Téléchargez l'application, créez un compte avec votre numéro de téléphone et commencez à ajouter vos produits. En moins de 5 minutes, votre boutique est prête.",
+            q2: "Est-ce que l'application fonctionne sans internet ?",
+            a2: "Oui ! Velmo est conçu pour fonctionner hors-ligne. Vous pouvez enregistrer vos ventes même sans connexion. Les données seront automatiquement synchronisées dès que vous retrouverez internet.",
+            q3: "Mes données sont-elles en sécurité ?",
+            a3: "Absolument. Vos données sont chiffrées et sauvegardées quotidiennement sur nos serveurs sécurisés. Même si vous perdez votre téléphone, vous retrouvez tout en vous reconnectant.",
+            q4: "Puis-je gérer plusieurs boutiques ?",
+            a4: "Oui, avec l'abonnement Pro, vous pouvez gérer plusieurs points de vente et basculer entre eux instantanément avec le même compte.",
+            q5: "Combien ça coûte ?",
+            a5: "Velmo propose une version gratuite pour tous les commerçants. Contactez-nous pour en savoir plus sur nos prochaines fonctionnalités avancées."
+        },
+        pricing: {
+            header: "Nos Tarifs",
+            subheader: "Choisissez le plan qui vous correspond.",
+            free: { name: "Gratuit", desc: "Pour débuter", price: "0" },
+            pro: { name: "Pro", desc: "Pour grandir", price: "150,000" },
+            business: { name: "Business", desc: "Pour les experts", price: "300,000" },
+            features: ["Gestion de stock", "Ventes illimitées", "Mode Hors-ligne", "WhatsApp Direct", "Statistiques", "Multi-boutique"]
+        }
     },
     en: {
         nav: { works: "How it works", features: "Features", testimonials: "Testimonials", login: "Login", start: "Get Started" },
-        hero: { badge: "Simple, fast, effective", title: "Manage your shop.", titleHighlight: "Track your sales.", desc: "The all-in-one app for daily merchants. Sales, stock, debts — it's all here.", startFree: "Start for free", demo: "Demo", trust: "Over 2,400 satisfied merchants" },
+        hero: { badge: "Simple, fast, effective", title: "Manage your shop.", titleHighlight: "Track your sales.", desc: "The all-in-one app for daily merchants. Sales, stock, debts — it's all here.", startFree: "Start for free", demo: "Demo", trust: "Many merchants trust us" },
         preview: { badge: "💻 Pro Interface", title: "Manage everything from your computer" },
         steps: { header: "5 minutes to start", subheader: "Easy as pie.", s1t: "Download", s1d: "On Android or Web", s2t: "Sign Up", s2d: "With your number", s3t: "Add Products", s3d: "Create your stock", s4t: "Sell", s4d: "Cash in easily", s5t: "Analyze", s5d: "Track your earnings" },
         features: { header: "Complete Features", f1: "Offline Mode", f1d: "Keep selling even without internet. Auto sync.", f2: "WhatsApp Integrated", f2d: "Send invoices and debt reminders via WhatsApp.", f3: "Secure", f3d: "Your data is encrypted and saved securely.", f4: "Multi-User", f4d: "Give limited access to your employees.", f5: "Detailed Reports", f5d: "Know exactly what you earn every day.", f6: "Showcase Site", f6d: "Your products visible online for your clients." },
         testimonials: { header: "They trust us", t1: "Since I use Velmo, I don't lose a single sale anymore. It's magic.", t1a: "Moussa S.", t1r: "Fabric Merchant", t2: "Credit management has become child's play. My clients pay me back faster.", t2a: "Fatou C.", t2r: "Fine Grocery", t3: "I have all my stock in my pocket. I can travel with peace of mind.", t3a: "Ibrahim D.", t3r: "Wholesaler" },
-        footer: { copyright: "© 2026 Velmo. Made with ❤️ for African commerce." }
+        footer: { copyright: "© 2026 Velmo. Made with ❤️ for African commerce." },
+        faq: {
+            header: "Frequently Asked Questions",
+            subheader: "Everything you need to know about Velmo.",
+            q1: "How do I start with Velmo?",
+            a1: "It's very simple! Download the app, create an account with your phone number and start adding your products. In less than 5 minutes, your shop is ready.",
+            q2: "Does the app work without internet?",
+            a2: "Yes! Velmo is designed to work offline. You can record your sales even without a connection. Data will be automatically synced as soon as you have internet again.",
+            q3: "Is my data secure?",
+            a3: "Absolutely. Your data is encrypted and backed up daily on our secure servers. Even if you lose your phone, you find everything by logging back in.",
+            q4: "Can I manage multiple shops?",
+            a4: "Yes, with the Pro subscription, you can manage multiple points of sale and switch between them instantly with the same account.",
+            q5: "How much does it cost?",
+            a5: "Velmo offers a full free version for small merchants. For advanced features and multiple shops, we have subscriptions adapted to your growth."
+        },
+        pricing: {
+            header: "Our Pricing",
+            subheader: "Choose the plan that fits you best.",
+            free: { name: "Free", desc: "To start", price: "0" },
+            pro: { name: "Pro", desc: "To grow", price: "150,000" },
+            business: { name: "Business", desc: "For experts", price: "300,000" },
+            features: ["Stock Management", "Unlimited Sales", "Offline Mode", "WhatsApp Direct", "Statistics", "Multi-shop"]
+        }
     }
 };
 
@@ -795,6 +840,157 @@ const Testimonials = ({ t }) => (
         </div>
     </section>
 );
+// FAQ Component
+const FAQ = ({ t }) => {
+    const [openIndex, setOpenIndex] = useState(null);
+
+    const questions = [
+        { q: t('faq.q1'), a: t('faq.a1') },
+        { q: t('faq.q2'), a: t('faq.a2') },
+        { q: t('faq.q3'), a: t('faq.a3') },
+        { q: t('faq.q4'), a: t('faq.a4') },
+        { q: t('faq.q5'), a: t('faq.a5') },
+    ];
+
+    return (
+        <section id="faq" className="section-alt">
+            <div className="container">
+                <motion.div
+                    className="section-header"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                >
+                    <div className="badge"><HelpCircle size={16} /> FAQ</div>
+                    <h2>{t('faq.header')}</h2>
+                    <p>{t('faq.subheader')}</p>
+                </motion.div>
+
+                <div className="faq-list" style={{ maxWidth: '800px', margin: '0 auto' }}>
+                    {questions.map((item, i) => (
+                        <motion.div
+                            key={i}
+                            className={`faq-item ${openIndex === i ? 'active' : ''}`}
+                            initial={{ opacity: 0, y: 10 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: i * 0.1 }}
+                            style={{
+                                marginBottom: '16px',
+                                background: 'var(--card-bg)',
+                                borderRadius: '16px',
+                                border: '1px solid var(--border)',
+                                overflow: 'hidden',
+                                transition: 'all 0.3s ease'
+                            }}
+                        >
+                            <button
+                                onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                                style={{
+                                    width: '100%',
+                                    padding: '24px',
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    background: 'none',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    textAlign: 'left',
+                                    color: 'var(--text-primary)',
+                                    fontWeight: 700,
+                                    fontSize: '1.1rem'
+                                }}
+                            >
+                                <span>{item.q}</span>
+                                <motion.div
+                                    animate={{ rotate: openIndex === i ? 180 : 0 }}
+                                    transition={{ duration: 0.3 }}
+                                >
+                                    <ChevronDown size={20} color="var(--primary)" />
+                                </motion.div>
+                            </button>
+                            <AnimatePresence>
+                                {openIndex === i && (
+                                    <motion.div
+                                        initial={{ height: 0, opacity: 0 }}
+                                        animate={{ height: 'auto', opacity: 1 }}
+                                        exit={{ height: 0, opacity: 0 }}
+                                        transition={{ duration: 0.3 }}
+                                    >
+                                        <div style={{ padding: '0 24px 24px', color: 'var(--text-secondary)', lineHeight: 1.8 }}>
+                                            {item.a}
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </motion.div>
+                    ))}
+                </div>
+            </div>
+        </section >
+    );
+};
+
+// Pricing Component
+const Pricing = ({ t, lang }) => (
+    <section id="tarifs">
+        <div className="container">
+            <motion.div
+                className="section-header"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+            >
+                <div className="badge"><CreditCard size={16} /> Tarifs</div>
+                <h2>{t('pricing.header')}</h2>
+                <p>{t('pricing.subheader')}</p>
+            </motion.div>
+
+            <div className="pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px' }}>
+                {['free', 'pro', 'business'].map((tier, i) => (
+                    <motion.div
+                        key={tier}
+                        className={`pricing-card ${tier === 'pro' ? 'featured' : ''}`}
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: i * 0.1 }}
+                        style={{
+                            padding: '48px 32px',
+                            background: i === 1 ? 'var(--bg-dark)' : 'var(--card-bg)',
+                            borderRadius: '32px',
+                            border: i === 1 ? '1px solid var(--primary)' : '1px solid var(--border)',
+                            position: 'relative',
+                            textAlign: 'center',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            boxShadow: i === 1 ? 'var(--shadow-glow)' : 'var(--shadow-md)'
+                        }}
+                    >
+                        {i === 1 && <div style={{ position: 'absolute', top: 20, right: 20, background: 'var(--primary)', color: 'white', padding: '4px 12px', borderRadius: '100px', fontSize: '0.75rem', fontWeight: 800 }}>POPULAIRE</div>}
+                        <h3 style={{ color: i === 1 ? 'white' : 'var(--text-primary)', marginBottom: '8px' }}>{t(`pricing.${tier}.name`)}</h3>
+                        <p style={{ color: i === 1 ? 'var(--text-tertiary)' : 'var(--text-secondary)', marginBottom: '32px' }}>{t(`pricing.${tier}.desc`)}</p>
+                        <div style={{ marginBottom: '32px' }}>
+                            <span style={{ fontSize: '2.5rem', fontWeight: 900, color: i === 1 ? 'white' : 'var(--text-primary)' }}>{t(`pricing.${tier}.price`)}</span>
+                            <span style={{ color: 'var(--text-tertiary)' }}> GNF/mois</span>
+                        </div>
+                        <div style={{ textAlign: 'left', marginBottom: '40px', flex: 1 }}>
+                            {t('pricing.features').map((f, idx) => (
+                                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px', color: i === 1 ? 'var(--text-secondary)' : 'var(--text-secondary)', opacity: (tier === 'free' && idx > 3) ? 0.3 : 1 }}>
+                                    <Check size={18} color={(tier === 'free' && idx > 3) ? '#64748b' : 'var(--success)'} />
+                                    <span style={{ fontSize: '0.95rem' }}>{f}</span>
+                                </div>
+                            ))}
+                        </div>
+                        <button className={`btn ${i === 1 ? 'btn-primary' : 'btn-secondary'}`} style={{ width: '100%' }}>
+                            {lang === 'fr' ? 'Choisir ce plan' : 'Select Plan'}
+                        </button>
+                    </motion.div>
+                ))}
+            </div>
+        </div>
+    </section>
+);
 
 // Footer
 const Footer = ({ t }) => (
@@ -803,7 +999,6 @@ const Footer = ({ t }) => (
             <div className="footer-links">
                 <a href="#">{t('nav.works')}</a><span>•</span>
                 <a href="#">{t('nav.features')}</a><span>•</span>
-                <a href="#">Tarifs</a><span>•</span>
                 <a href="#">Contact</a>
             </div>
             <div className="footer-social">
@@ -828,6 +1023,7 @@ const LandingPage = ({ t, lang, setLang, theme, toggleTheme }) => {
             <Steps t={t} />
             <Features t={t} />
             <Testimonials t={t} />
+            <FAQ t={t} />
             <Footer t={t} />
             <WhatsAppFAB />
 
