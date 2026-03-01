@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --primary: #ff6200;
   --primary-dark: #e55a00;
@@ -95,8 +99,26 @@ body {
 }
 
 section {
-  padding: clamp(60px, 10vw, 120px) 0;
+  padding: clamp(40px, 6vw, 80px) 0;
   position: relative;
+}
+
+/* ===== LAYOUT & STICKY FOOTER ===== */
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+footer {
+  margin-top: auto;
 }
 
 /* ===== TYPOGRAPHY ===== */
@@ -141,16 +163,17 @@ p {
   left: 0;
   right: 0;
   z-index: 1000;
-  padding: 16px 0;
-  background: var(--nav-bg);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  padding: 8px 0;
+  background: transparent;
   border-bottom: 1px solid transparent;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .navbar.scrolled {
-  padding: 12px 0;
+  padding: 6px 0;
+  background: var(--nav-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   border-bottom: 1px solid var(--border);
   box-shadow: var(--shadow-md);
 }
@@ -1215,9 +1238,12 @@ p {
 
 /* ===== FOOTER ===== */
 footer {
-  background: #0f172a;
-  color: white;
+  background: var(--bg-alt);
+  color: var(--text-primary);
   padding: 80px 0 32px;
+  margin-top: auto;
+  /* Sticky footer */
+  border-top: 1px solid var(--border);
 }
 
 .footer-content {
@@ -1236,13 +1262,14 @@ footer {
 }
 
 .footer-links a {
-  color: #94a3b8;
+  color: var(--text-secondary);
   text-decoration: none;
   transition: color 0.2s;
+  font-weight: 500;
 }
 
 .footer-links a:hover {
-  color: white;
+  color: var(--primary);
 }
 
 .footer-social {
@@ -1253,30 +1280,33 @@ footer {
 .social-link {
   width: 44px;
   height: 44px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--bg-subtle);
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--text-secondary);
   transition: all 0.3s ease;
+  border: 1px solid var(--border);
 }
 
 .social-link:hover {
   background: var(--primary);
+  color: white;
+  border-color: var(--primary);
   transform: translateY(-4px);
 }
 
 .footer-bottom {
   margin-top: 40px;
   padding-top: 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--border);
   width: 100%;
   text-align: center;
 }
 
 .footer-bottom p {
-  color: #64748b;
+  color: var(--text-tertiary);
   font-size: 0.9rem;
 }
 
@@ -1455,3 +1485,289 @@ footer {
     display: none;
   }
 }
+
+/* ===== GLOBAL SEARCH ===== */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.search-result-row:hover {
+  background: var(--bg-subtle) !important;
+}
+
+.global-search-bar input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.global-search-wrapper ::-webkit-scrollbar {
+  width: 4px;
+}
+
+.global-search-wrapper ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.global-search-wrapper ::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+/* ===== VELMO DARK THEME CLASSES ===== */
+
+/* Ticker — scrolling announcement bar */
+.velmo-ticker {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  z-index: 60;
+}
+
+.velmo-ticker-inner {
+  display: inline-flex;
+  animation: velmo-ticker-scroll 30s linear infinite;
+}
+
+@keyframes velmo-ticker-scroll {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Glassmorphism dark panel */
+.velmo-glass {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+}
+
+/* Orange gradient text — statique */
+.velmo-gradient-text {
+  background: linear-gradient(135deg, #f97316 0%, #fb923c 50%, #fbbf24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Orange gradient text — version animée (shimmer) */
+.velmo-gradient-text-animated {
+  background: linear-gradient(90deg, #f97316 0%, #fbbf24 30%, #f97316 60%, #fb923c 100%);
+  background-size: 250% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: velmo-text-shimmer 5s linear infinite;
+}
+
+@keyframes velmo-text-shimmer {
+  0% {
+    background-position: 0% center;
+  }
+
+  100% {
+    background-position: 250% center;
+  }
+}
+
+/* Dark mesh background with subtle noise */
+.velmo-mesh-bg {
+  background-color: #08090d;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(249, 115, 22, 0.06), transparent),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(251, 146, 60, 0.04), transparent);
+}
+
+/* Subtle dot grid overlay */
+.velmo-grid-pattern {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Primary CTA button — orange gradient */
+.velmo-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: #ffffff;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  text-decoration: none;
+}
+
+.velmo-btn-primary:hover {
+  background: linear-gradient(135deg, #fb923c, #f97316);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px -4px rgba(249, 115, 22, 0.45);
+}
+
+.velmo-btn-primary:active {
+  transform: translateY(0);
+}
+
+/* Ghost button — dark transparent */
+.velmo-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  color: #94a3b8;
+  font-weight: 800;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.velmo-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Card with subtle glow on hover */
+.velmo-card-glow {
+  transition: all 0.25s ease;
+}
+
+.velmo-card-glow:hover {
+  box-shadow: 0 0 0 1px rgba(249, 115, 22, 0.25), 0 20px 40px -12px rgba(249, 115, 22, 0.15);
+  transform: translateY(-4px);
+}
+
+/* Card enterprise — niveau grosse boîte tech */
+.velmo-card-enterprise {
+  transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.velmo-card-enterprise:hover {
+  box-shadow:
+    0 0 0 1px rgba(249, 115, 22, 0.2),
+    0 24px 48px -12px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Skeleton shimmer */
+.velmo-shimmer-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.velmo-shimmer-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.04) 40%,
+      rgba(255, 255, 255, 0.07) 50%,
+      rgba(255, 255, 255, 0.04) 60%,
+      transparent 100%);
+  background-size: 200% 100%;
+  animation: velmo-skeleton-shimmer 1.8s ease infinite;
+}
+
+@keyframes velmo-skeleton-shimmer {
+  0% {
+    background-position: -200% center;
+  }
+
+  100% {
+    background-position: 200% center;
+  }
+}
+
+/* Step badge — orange gradient square */
+.velmo-step-badge {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+}
+
+/* Floating animation for hero mockup */
+.velmo-float {
+  animation: velmo-float 4s ease-in-out infinite;
+}
+
+@keyframes velmo-float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Navbar glass — dark sticky nav */
+.velmo-nav {
+  background: rgba(8, 9, 13, 0.5);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.velmo-nav.scrolled {
+  background: rgba(8, 9, 13, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* ===== LIGHT MODE OVERRIDES ===== */
+html:not(.dark) .velmo-nav {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+html:not(.dark) .velmo-nav.scrolled {
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+html:not(.dark) .velmo-btn-ghost {
+  background: rgba(0, 0, 0, 0.05);
+  color: #475569;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+html:not(.dark) .velmo-btn-ghost:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: #0f172a;
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+html:not(.dark) .velmo-card-enterprise:hover {
+  box-shadow:
+    0 0 0 1px rgba(249, 115, 22, 0.2),
+    0 12px 32px -8px rgba(0, 0, 0, 0.12);
+}
+
+html:not(.dark) .velmo-shimmer-card::after {
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(0, 0, 0, 0.03) 40%,
+      rgba(0, 0, 0, 0.05) 50%,
+      rgba(0, 0, 0, 0.03) 60%,
+      transparent 100%);
+  background-size: 200% 100%;
+}
+
+html:not(.dark) .velmo-grid-pattern {
+  background-image: radial-gradient(circle, rgba(0, 0, 0, 0.12) 1px, transparent 1px);
+}
+
+/* Note: les utilitaires bg-white/N et border-white/N sont générés
+   automatiquement par Tailwind JIT — pas besoin de les déclarer ici. */
