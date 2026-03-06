@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#FF6B00" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Velmo" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="application-name" content="Velmo Pro" />
+  <meta name="msapplication-TileColor" content="#FF6B00" />
+  <meta name="msapplication-tap-highlight" content="no" />
+
+  <!-- SEO -->
+  <meta name="description"
+    content="Velmo Pro - Application de gestion commerciale tout-en-un. Gérez vos ventes, stocks, dettes et clients facilement." />
+  <meta name="keywords" content="gestion commerciale, POS, point de vente, stock, ventes, comptabilité" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Velmo Pro - Gestion Commerciale" />
+  <meta property="og:description" content="Gérez votre boutique comme un pro avec Velmo" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="/icons/icon-512.png" />
+
+  <!-- Content Security Policy -->
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; connect-src 'self' https: wss: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' data: https: http://localhost:*; media-src 'self' https://assets.mixkit.co https://translate.google.com https://text.pollinations.ai https://gen.pollinations.ai blob: data:;">
+
+  <!-- Favicon & Icons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png" />
+  <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#FF6B00" />
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="./manifest.json" />
+
+  <!-- Preconnect to external resources -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <title>Velmo Pro - Gestion Commerciale</title>
+
+  <!-- Splash Screen Styles (prevents white flash) -->
+  <style>
+    html,
+    body,
+    #root {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: #0F172A;
+      overflow: hidden;
+    }
+
+    /* Loading spinner while app loads */
+    #splash-loader {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      z-index: 9999;
+      transition: opacity 0.3s ease;
+    }
+
+    #splash-loader.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #splash-loader .logo {
+      width: 80px;
+      height: 80px;
+      background: #FF6B00;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      box-shadow: 0 20px 40px rgba(255, 107, 0, 0.3);
+      animation: pulse 2s infinite;
+    }
+
+    #splash-loader .logo svg {
+      width: 40px;
+      height: 40px;
+      color: white;
+    }
+
+    #splash-loader .text {
+      color: white;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    #splash-loader .subtext {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 12px;
+      margin-top: 8px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+    }
+  </style>
+  <script type="module" crossorigin src="./assets/main-C5gb7t-u.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/vendor--OtOxNmh.js">
+  <link rel="modulepreload" crossorigin href="./assets/db-C3PoHTFb.js">
+  <link rel="modulepreload" crossorigin href="./assets/utils-BQIy1SgB.js">
+  <link rel="modulepreload" crossorigin href="./assets/supabase--dVM1wZX.js">
+  <link rel="stylesheet" crossorigin href="./assets/main-PSUs3FLO.css">
+<link rel="manifest" href="./manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="./registerSW.js"></script></head>
+
+<body>
+  <!-- Splash Screen -->
+  <div id="splash-loader">
+    <div class="logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+        stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+      </svg>
+    </div>
+    <div class="text">VELMO</div>
+    <div class="subtext">Chargement...</div>
+  </div>
+
+  <div id="root"></div>
+
+
+  <!-- Hide splash when app loads -->
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      // Give React time to mount
+      setTimeout(() => {
+        const splash = document.getElementById('splash-loader');
+        if (splash) {
+          splash.classList.add('hidden');
+          setTimeout(() => splash.remove(), 300);
+        }
+      }, 500);
+    });
+  </script>
+</body>
+
+</html>
