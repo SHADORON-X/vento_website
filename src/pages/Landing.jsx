@@ -133,23 +133,23 @@ function LiveActivityIndicator() {
   const [activity, setActivity] = useState(null);
   const { lang } = useSite();
 
-  const ACTIVITIES = lang === 'fr' 
+  const ACTIVITIES = lang === 'fr'
     ? [
-        "Un nouveau commerçant vient de rejoindre Velmo",
-        "Vente enregistrée dans une boutique partenaire",
-        "Une boutique vient d'activer sa vitrine web",
-        "Nouvelle commande reçue via le marketplace",
-        "Rapport quotidien envoyé sur WhatsApp à un gérant",
-        "Sync auto terminée : 124 transactions sécurisées",
-      ]
+      "Un nouveau commerçant vient de rejoindre Velmo",
+      "Vente enregistrée dans une boutique partenaire",
+      "Une boutique vient d'activer sa vitrine web",
+      "Nouvelle commande reçue via le marketplace",
+      "Rapport quotidien envoyé sur WhatsApp à un gérant",
+      "Sync auto terminée : 124 transactions sécurisées",
+    ]
     : [
-        "A new merchant just joined Velmo",
-        "Sale recorded in a partner shop",
-        "A shop just activated its web store",
-        "New order received via marketplace",
-        "Daily report sent on WhatsApp to a manager",
-        "Auto-sync completed: 124 transactions secured",
-      ];
+      "A new merchant just joined Velmo",
+      "Sale recorded in a partner shop",
+      "A shop just activated its web store",
+      "New order received via marketplace",
+      "Daily report sent on WhatsApp to a manager",
+      "Auto-sync completed: 124 transactions secured",
+    ];
 
   useEffect(() => {
     const showRandom = () => {
@@ -196,10 +196,10 @@ function TrustedBySection() {
           {lang === 'fr' ? 'La confiance des leaders du marché' : 'Trusted by market leaders'}
         </p>
         <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
-           <div className="text-xl font-bold flex items-center gap-2">🛒 CITY <span className="text-[10px] font-normal opacity-50">STORES</span></div>
-           <div className="text-xl font-bold flex items-center gap-2">📦 GLOBAL <span className="text-[10px] font-normal opacity-50">DISTRIB.</span></div>
-           <div className="text-xl font-bold flex items-center gap-2">💎 UNIFIED <span className="text-[10px] font-normal opacity-50">TECH</span></div>
-           <div className="text-xl font-bold flex items-center gap-2">⚡ ELITE <span className="text-[10px] font-normal opacity-50">SALES</span></div>
+          <div className="text-xl font-bold flex items-center gap-2">🛒 CITY <span className="text-[10px] font-normal opacity-50">STORES</span></div>
+          <div className="text-xl font-bold flex items-center gap-2">📦 GLOBAL <span className="text-[10px] font-normal opacity-50">DISTRIB.</span></div>
+          <div className="text-xl font-bold flex items-center gap-2">💎 UNIFIED <span className="text-[10px] font-normal opacity-50">TECH</span></div>
+          <div className="text-xl font-bold flex items-center gap-2">⚡ ELITE <span className="text-[10px] font-normal opacity-50">SALES</span></div>
         </div>
       </div>
     </div>
@@ -869,7 +869,7 @@ function PricingSection() {
                 </div>
 
                 <a
-                  href="https://app.velmo.pro"
+                  href="/velmomobile/index.html#/signup"
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`w-full py-5 rounded-2xl font-black text-sm uppercase tracking-widest text-center transition-all flex items-center justify-center gap-2 ${key === 'business' ? 'bg-orange-500 text-white shadow-xl shadow-orange-500/20 hover:scale-[1.02]' : 'bg-white/5 text-white border border-white/10 hover:bg-white/10'}`}
@@ -1012,7 +1012,7 @@ function HowItWorks() {
         {/* CTA below steps */}
         <div className="text-center mt-12">
           <a
-            href="https://app.velmo.pro"
+            href="/velmomobile/index.html#/signup"
             target="_blank"
             rel="noopener noreferrer"
             className="velmo-btn-primary inline-flex items-center gap-2.5 px-8 py-4 rounded-2xl text-base font-bold"
@@ -1084,7 +1084,7 @@ function AppSection() {
             </div>
 
             <div className="flex flex-wrap gap-4">
-              <a href="https://app.velmo.pro" target="_blank" rel="noopener noreferrer" className="velmo-btn-primary px-10 py-4 rounded-2xl text-base font-black flex items-center gap-3 shadow-2xl shadow-orange-500/30">
+              <a href="/velmomobile/index.html#/signup" target="_blank" rel="noopener noreferrer" className="velmo-btn-primary px-10 py-4 rounded-2xl text-base font-black flex items-center gap-3 shadow-2xl shadow-orange-500/30">
                 <Zap size={18} />{t.features.tryFree}
               </a>
               <button
@@ -1169,7 +1169,7 @@ function DownloadSection() {
             <div className="flex flex-wrap justify-center gap-4 mb-8">
               {[
                 { emoji: '🪟', sub: t.download.windowsSub, label: t.download.windowsLabel, href: 'https://velmo.org/download/velmo-setup.exe' },
-                { emoji: '🌐', sub: t.download.browserSub, label: t.download.browserLabel, href: 'https://app.velmo.pro' },
+                { emoji: '🌐', sub: t.download.browserSub, label: t.download.browserLabel, href: '/velmomobile/index.html' },
               ].map((opt) => (
                 <a key={opt.label} href={opt.href}
                   className={`flex items-center gap-3 px-6 py-4 rounded-2xl transition-all group border ${isDark
@@ -1185,7 +1185,7 @@ function DownloadSection() {
                   <ArrowRight size={16} className="text-slate-400 group-hover:text-orange-400 group-hover:translate-x-1 transition-all ml-2" />
                 </a>
               ))}
-              <a href="https://app.velmo.pro" target="_blank" rel="noopener noreferrer" className="velmo-btn-primary flex items-center gap-3 px-6 py-4 rounded-2xl">
+              <a href="/velmomobile/index.html#/signup" target="_blank" rel="noopener noreferrer" className="velmo-btn-primary flex items-center gap-3 px-6 py-4 rounded-2xl">
                 <span className="text-3xl">🚀</span>
                 <div className="text-left">
                   <div className="text-white/70 text-xs">{t.download.start}</div>
@@ -1307,7 +1307,7 @@ export default function Landing() {
 
             {/* Main Action Group */}
             <motion.div variants={heroItem} className="flex flex-col sm:flex-row justify-center gap-4 mb-20 w-full px-6">
-              <a href="https://app.velmo.pro" target="_blank" rel="noopener noreferrer" className="velmo-btn-premium group flex items-center justify-center gap-3">
+              <a href="/velmomobile/index.html#/signup" target="_blank" rel="noopener noreferrer" className="velmo-btn-premium group flex items-center justify-center gap-3">
                 <Zap size={22} className="group-hover:rotate-12 transition-transform" />
                 <span>{t.features.tryFree}</span>
               </a>

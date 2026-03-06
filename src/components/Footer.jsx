@@ -25,7 +25,7 @@ export default function Footer() {
       title: t.footer.marketplace,
       links: [
         { label: t.footer.links.allShops, href: '/search' },
-        { label: t.footer.links.createShop, href: 'https://app.velmo.pro' },
+        { label: t.footer.links.createShop, href: '/velmomobile/index.html' },
         { label: t.footer.links.howToSell, id: 'features' },
       ],
     },
@@ -33,7 +33,7 @@ export default function Footer() {
       title: t.footer.support,
       links: [
         { label: t.footer.links.whatsapp, href: 'https://wa.me/224621233847' },
-        { label: t.footer.links.guide, href: 'https://app.velmo.pro' },
+        { label: t.footer.links.guide, href: '/velmomobile/index.html' },
         { label: t.footer.links.contact, href: 'mailto:contact@velmo.org' },
       ],
     },

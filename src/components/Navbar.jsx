@@ -93,7 +93,7 @@ export default function Navbar() {
               </div>
 
               {/* Shop Icon */}
-              <button 
+              <button
                 onClick={() => navigate('/join')}
                 className={`p-2.5 rounded-2xl transition-all ${isDark ? 'bg-white/5 text-orange-500 border border-white/10 hover:bg-white/10' : 'bg-orange-50 text-orange-600 border border-orange-100 hover:bg-orange-100'}`}
               >
@@ -111,7 +111,7 @@ export default function Navbar() {
 
               {/* Create Account Button */}
               <button
-                onClick={() => window.open('https://app.velmo.pro', '_blank')}
+                onClick={() => window.open('/velmomobile/index.html#/signup', '_blank')}
                 className="flex items-center gap-2 px-6 py-3 rounded-full bg-orange-500 text-white text-[13px] font-black shadow-lg shadow-orange-500/20 hover:bg-orange-600 hover:scale-[1.02] active:scale-95 transition-all"
               >
                 <User size={16} />
@@ -192,7 +192,7 @@ export default function Navbar() {
 
               {/* ── Créer un compte ── */}
               <button
-                onClick={() => { setMenuOpen(false); window.open('https://app.velmo.pro', '_blank'); }}
+                onClick={() => { setMenuOpen(false); window.open('/velmomobile/index.html#/signup', '_blank'); }}
                 className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-orange-500 text-white font-black shadow-xl shadow-orange-500/20 hover:bg-orange-600 transition-all"
               >
                 <User size={18} />
