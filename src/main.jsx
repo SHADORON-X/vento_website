@@ -4,16 +4,19 @@ import { BrowserRouter } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import './index.css'
 import './styles/shop.css'
+import { HelmetProvider } from 'react-helmet-async'
 import App from './App.jsx'
 import { SiteProvider } from './context/SiteContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
-      <SiteProvider>
-        <Toaster position="top-center" richColors />
-        <App />
-      </SiteProvider>
-    </BrowserRouter>
+    <HelmetProvider>
+      <BrowserRouter>
+        <SiteProvider>
+          <Toaster position="top-center" richColors />
+          <App />
+        </SiteProvider>
+      </BrowserRouter>
+    </HelmetProvider>
   </StrictMode>,
 )

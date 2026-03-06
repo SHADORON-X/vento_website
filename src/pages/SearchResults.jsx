@@ -8,8 +8,42 @@ import {
 import { searchProducts, searchShops, getAvailableCategories } from '../lib/api';
 import { useGeoSearch } from '../hooks/useGeoSearch';
 import { useSite } from '../context/SiteContext';
+import { Helmet } from 'react-helmet-async';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+
+// ─── UTILS ──────────────────────────────────────────────────────────────
+const getPublicImageUrl = (path) => {
+  if (!path) return null;
+  if (path.startsWith('http')) return path;
+  const bucket = 'velmo-media';
+  const projectUrl = import.meta.env.VITE_SUPABASE_URL;
+  const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+  return `${projectUrl}/storage/v1/object/public/${bucket}/${cleanPath}`;
+};
+
+const getProductPlaceholderStyle = (name) => {
+  const PALETTES = [
+    ['#f97316', '#ea580c'], ['#8b5cf6', '#7c3aed'], ['#06b6d4', '#0891b2'],
+    ['#10b981', '#059669'], ['#ec4899', '#db2777'], ['#f59e0b', '#d97706'],
+    ['#3b82f6', '#2563eb'], ['#ef4444', '#dc2626'],
+  ];
+  const idx = (name?.charCodeAt(0) || 0) % PALETTES.length;
+  const [c1, c2] = PALETTES[idx];
+  return {
+    background: `linear-gradient(135deg, ${c1}, ${c2})`,
+    color: 'white',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    height: '100%',
+    fontWeight: 900,
+    fontSize: '1.25rem'
+  };
+};
+
+const getProductInitials = (name) => name?.slice(0, 2).toUpperCase() || '??';
 
 // ─── Product card ──────────────────────────────────────────────────────────
 function ProductCard({ product, isDark, lang }) {
@@ -22,27 +56,27 @@ function ProductCard({ product, isDark, lang }) {
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -6 }}
-      className={`group rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 border h-full flex flex-col ${isDark
-        ? 'bg-[#121821] border-white/10 hover:border-orange-500/40 shadow-xl'
-        : 'bg-white border-gray-100 hover:border-orange-300 shadow-lg shadow-gray-200/40 hover:shadow-orange-500/10'
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      whileHover={{ y: -8 }}
+      className={`group rounded-3xl overflow-hidden cursor-pointer transition-all duration-500 border h-full flex flex-col ${isDark
+        ? 'bg-[#121821]/80 backdrop-blur-xl border-white/10 hover:border-orange-500/40 shadow-[0_20px_40px_rgba(0,0,0,0.5)]'
+        : 'bg-white border-gray-100 hover:border-orange-300 shadow-xl shadow-gray-200/40 hover:shadow-orange-500/10'
         } ${outOfStock ? 'opacity-60 grayscale-[0.5]' : ''}`}
-      onClick={() => shop?.slug && navigate(`/b/${shop.slug}?p=${product.id}`)}
+      onClick={() => shop?.slug && navigate(`/s/${shop.slug}/p/${product.id}`)}
     >
       <div className={`aspect-square relative overflow-hidden ${isDark ? 'bg-white/[0.04]' : 'bg-gray-50'}`}>
         {product.photo_url ? (
           <img
-            src={product.photo_url}
+            src={getPublicImageUrl(product.photo_url)}
             alt=""
             className="w-full h-full object-cover group-hover:scale-125 transition-transform duration-1000"
             loading="lazy"
             onError={(e) => { e.target.style.display = 'none'; }}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-slate-300">
-            <ShoppingBag size={24} strokeWidth={1} />
+          <div style={getProductPlaceholderStyle(product.name)}>
+            {getProductInitials(product.name)}
           </div>
         )}
         {hasDiscount && (
@@ -64,8 +98,8 @@ function ProductCard({ product, isDark, lang }) {
         </p>
 
         <div className="flex items-center gap-2 mb-3">
-          <div className={`w-4 h-4 rounded-md overflow-hidden flex-shrink-0 ${isDark ? 'bg-white/5' : 'bg-gray-100'}`}>
-            {shop?.logo_url ? <img src={shop.logo_url} alt="" className="w-full h-full object-cover" /> : <Store size={8} className="text-slate-600 m-auto mt-0.5" />}
+          <div className={`w-4 h-4 rounded-md overflow-hidden flex-shrink-0 ${isDark ? 'bg-white/10' : 'bg-gray-100'}`}>
+            {shop?.logo_url ? <img src={getPublicImageUrl(shop.logo_url)} alt="" className="w-full h-full object-cover" /> : <Store size={8} className="text-slate-600 m-auto mt-0.5" />}
           </div>
           <span className="text-slate-500 text-[10px] font-bold truncate flex-1">{shop?.name}</span>
           {shop?.city && (
@@ -78,7 +112,7 @@ function ProductCard({ product, isDark, lang }) {
         <div className="mt-auto flex items-end justify-between gap-2">
           <div className="flex flex-col">
             <span className="text-orange-500 text-sm font-black tracking-tight">
-              {product.price_sale?.toLocaleString()} GNF
+              {product.price_sale?.toLocaleString()} {shop?.currency || 'GNF'}
             </span>
             {hasDiscount && (
               <span className="text-slate-400 text-[9px] line-through decoration-red-500/30">
@@ -249,6 +283,11 @@ export default function SearchResults() {
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${isDark ? 'bg-[#080b10] text-white' : 'bg-[#f8fafc] text-slate-900'}`}>
+      <Helmet>
+        <title>{query ? `${query} - Velmo Marketplace Afrique` : 'Découvrir les boutiques - Velmo Marketplace'}</title>
+        <meta name="description" content={`Trouvez ${query || 'des milliers de produits'} au meilleur prix sur le Marketplace Velmo. Découvrez les meilleures boutiques d'Afrique.`} />
+        {!hasQuery || totalResults === 0 ? <meta name="robots" content="noindex" /> : <meta name="robots" content="index, follow" />}
+      </Helmet>
       <Navbar />
       <div className="pt-20">
 
@@ -259,68 +298,48 @@ export default function SearchResults() {
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={() => navigate('/')}
-              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${isDark ? 'bg-white/5 text-slate-400 hover:text-white' : 'bg-gray-100 text-slate-500 hover:text-slate-900'}`}
+              className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isDark ? 'bg-white/5 text-slate-400 hover:text-white' : 'bg-gray-100 text-slate-500 hover:text-slate-900'}`}
             >
               <ChevronLeft size={20} />
             </motion.button>
 
             {/* Search input */}
             <div className="relative flex-1 group">
-              <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none group-focus-within:text-orange-500 transition-colors" />
+              <Search size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-orange-500 pointer-events-none transition-colors" />
               <input
                 autoFocus
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder={t.search.placeholder}
-                className={`w-full rounded-2xl pl-11 pr-11 py-3 text-sm font-medium focus:outline-none transition-all ${isDark
+                placeholder="Chercher un produit, une boutique..."
+                className={`w-full rounded-2xl pl-12 pr-11 py-3.5 text-base font-bold focus:outline-none transition-all ${isDark
                   ? 'bg-white/5 border border-white/10 text-white placeholder-slate-600 focus:border-orange-500/50 shadow-inner'
                   : 'bg-gray-50 border border-gray-200 text-slate-900 placeholder-slate-400 focus:border-orange-400 shadow-sm'
                   }`}
               />
-              {query && (
-                <button
-                  onClick={() => { setQuery(''); setProducts([]); setShops([]); }}
-                  className={`absolute right-4 top-1/2 -translate-y-1/2 transition-colors ${isDark ? 'text-slate-600 hover:text-white' : 'text-slate-400 hover:text-slate-700'}`}
-                >
-                  <X size={16} />
-                </button>
-              )}
-            </div>
-
-            {/* City filter */}
-            <div className="relative hidden md:flex items-center group">
-              <MapPin size={16} className="absolute left-4 text-slate-500 pointer-events-none group-focus-within:text-orange-500 transition-colors" />
-              <input
-                value={cityFilter}
-                onChange={(e) => setCityFilter(e.target.value)}
-                placeholder={lang === 'en' ? 'City' : 'Ville'}
-                className={`rounded-2xl pl-10 pr-10 py-3 text-sm font-medium focus:outline-none w-44 transition-all ${isDark
-                  ? 'bg-white/5 border border-white/10 text-white placeholder-slate-600 focus:border-orange-500/50 shadow-inner'
-                  : 'bg-gray-50 border border-gray-200 text-slate-900 placeholder-slate-400 focus:border-orange-400 shadow-sm'
-                  }`}
-              />
-              <button
-                onClick={detectCity}
-                disabled={detecting}
-                className="absolute right-3 text-slate-500 hover:text-orange-400 transition-colors"
-                title={lang === 'en' ? 'Detect' : 'Détecter'}
-              >
-                {detecting ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
-              </button>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+                {query && (
+                  <button
+                    onClick={() => { setQuery(''); setProducts([]); setShops([]); }}
+                    className={`p-1.5 rounded-lg transition-colors ${isDark ? 'text-slate-600 hover:text-white' : 'text-slate-400 hover:text-slate-700'}`}
+                  >
+                    <X size={16} />
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Filters toggle */}
             <button
               onClick={() => setShowFilters((v) => !v)}
-              className={`flex items-center gap-2.5 px-5 py-3 rounded-2xl text-sm font-black transition-all border flex-shrink-0 ${showFilters || activeFilters > 0
+              className={`flex items-center gap-2.5 px-6 py-3.5 rounded-2xl text-sm font-black transition-all border flex-shrink-0 ${showFilters || activeFilters > 0
                 ? 'bg-orange-500 border-orange-500 text-white shadow-lg shadow-orange-500/20'
                 : isDark
-                  ? 'bg-white/5 border-white/10 text-slate-400 hover:text-white hover:border-white/20'
-                  : 'bg-white border-gray-200 text-slate-500 hover:text-slate-900 shadow-sm'
+                  ? 'bg-white/5 border-white/10 text-slate-400 hover:border-white/20'
+                  : 'bg-white border-gray-200 text-slate-500 shadow-sm'
                 }`}
             >
               <Filter size={16} />
-              <span className="hidden lg:inline">{lang === 'en' ? 'Filters' : 'Filtres'} {activeFilters > 0 && `(${activeFilters})`}</span>
+              <span className="hidden sm:inline">Filtres {activeFilters > 0 && `(${activeFilters})`}</span>
             </button>
           </div>
         </div>

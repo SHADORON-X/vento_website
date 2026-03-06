@@ -99,7 +99,14 @@ function ShopCard({ shop, products, index }) {
             <div className="grid grid-cols-4 gap-1.5">
               {products.slice(0, 4).map((p) => (
                 <div key={p.id} className={`aspect-square rounded-lg overflow-hidden border ${isDark ? 'border-white/5 bg-white/5' : 'border-gray-50 bg-gray-50'}`}>
-                  <img src={p.photo_url} alt="" className="w-full h-full object-cover" loading="lazy" />
+                  <img
+                    src={p.photo_url}
+                    alt={p.name}
+                    className="w-full h-full object-cover transition-opacity duration-300"
+                    loading="lazy"
+                    onLoad={(e) => e.currentTarget.style.opacity = '1'}
+                    style={{ opacity: 0 }}
+                  />
                 </div>
               ))}
               {Array.from({ length: Math.max(0, 4 - products.length) }).map((_, i) => (

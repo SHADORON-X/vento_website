@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, ShoppingBag, Store, CheckCircle, CheckCircle2, ArrowRight, Star, Download, Globe, User, Menu, Sun, Moon, Sparkles, Zap, Map, Search, X, Loader2, ChevronRight, Apple, Shirt, Smartphone, Pill, Home, Dumbbell, Cpu, WifiOff, Package, TrendingUp, MessageCircle, BarChart3, Shield, Clock, Award, BarChart2, CreditCard, Users } from 'lucide-react';
+import { MapPin, ShoppingBag, Store, CheckCircle, CheckCircle2, ArrowRight, Star, Download, Globe, User, Menu, Sun, Moon, Sparkles, Zap, Map, Search, X, Loader2, ChevronRight, Apple, Shirt, Smartphone, Pill, Home, Dumbbell, Cpu, WifiOff, Package, TrendingUp, MessageCircle, BarChart3, Shield, Clock, Award, BarChart2, CreditCard, Users, Check, Crown, ShieldCheck } from 'lucide-react';
 import {
   searchAll,
   getTopProducts,
@@ -122,6 +123,84 @@ function ProductTicker({ products }) {
             </div>
           );
         })}
+      </div>
+    </div>
+  );
+}
+
+// ─── Live Activity Indicator ──────────────────────────────────────────────────
+function LiveActivityIndicator() {
+  const [activity, setActivity] = useState(null);
+  const { lang } = useSite();
+
+  const ACTIVITIES = lang === 'fr' 
+    ? [
+        "Un nouveau commerçant vient de rejoindre Velmo",
+        "Vente enregistrée dans une boutique partenaire",
+        "Une boutique vient d'activer sa vitrine web",
+        "Nouvelle commande reçue via le marketplace",
+        "Rapport quotidien envoyé sur WhatsApp à un gérant",
+        "Sync auto terminée : 124 transactions sécurisées",
+      ]
+    : [
+        "A new merchant just joined Velmo",
+        "Sale recorded in a partner shop",
+        "A shop just activated its web store",
+        "New order received via marketplace",
+        "Daily report sent on WhatsApp to a manager",
+        "Auto-sync completed: 124 transactions secured",
+      ];
+
+  useEffect(() => {
+    const showRandom = () => {
+      setActivity(ACTIVITIES[Math.floor(Math.random() * ACTIVITIES.length)]);
+      setTimeout(() => setActivity(null), 5000);
+    };
+
+    const timer = setInterval(showRandom, 15000 + Math.random() * 10000);
+    setTimeout(showRandom, 3000); // First one after 3s
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <AnimatePresence>
+      {activity && (
+        <motion.div
+          initial={{ opacity: 0, x: -50, scale: 0.9 }}
+          animate={{ opacity: 1, x: 0, scale: 1 }}
+          exit={{ opacity: 0, x: -20, scale: 0.9, filter: 'blur(10px)' }}
+          className="fixed bottom-6 left-6 z-[100] max-w-[280px] p-4 rounded-2xl bg-[#080b10]/95 border border-orange-500/30 backdrop-blur-xl shadow-2xl flex items-center gap-3"
+        >
+          <div className="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center shrink-0">
+            <Zap size={14} className="text-orange-500" />
+          </div>
+          <div>
+            <p className="text-[10px] text-white/50 font-black uppercase tracking-widest mb-0.5">Velmo Live</p>
+            <p className="text-xs text-white font-medium leading-tight">{activity}</p>
+          </div>
+          <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// ─── Trusted By Section ───────────────────────────────────────────────────────
+function TrustedBySection() {
+  const { theme, lang } = useSite();
+  const isDark = theme === 'dark';
+  return (
+    <div className="py-10 border-y border-white/5 bg-white/[0.01]">
+      <div className="container overflow-hidden">
+        <p className={`text-center text-[10px] font-black uppercase tracking-[0.3em] mb-8 ${isDark ? 'text-white/20' : 'text-slate-300'}`}>
+          {lang === 'fr' ? 'La confiance des leaders du marché' : 'Trusted by market leaders'}
+        </p>
+        <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
+           <div className="text-xl font-bold flex items-center gap-2">🛒 CITY <span className="text-[10px] font-normal opacity-50">STORES</span></div>
+           <div className="text-xl font-bold flex items-center gap-2">📦 GLOBAL <span className="text-[10px] font-normal opacity-50">DISTRIB.</span></div>
+           <div className="text-xl font-bold flex items-center gap-2">💎 UNIFIED <span className="text-[10px] font-normal opacity-50">TECH</span></div>
+           <div className="text-xl font-bold flex items-center gap-2">⚡ ELITE <span className="text-[10px] font-normal opacity-50">SALES</span></div>
+        </div>
       </div>
     </div>
   );
@@ -322,54 +401,50 @@ function CategoriesSection({ categories = [] }) {
 
   return (
     <section className="py-24 relative overflow-hidden">
-      <div className="container relative z-10 mb-16">
+      <div className="container relative z-10 mb-20">
         <div className="text-center">
           <SectionLabel icon={<Sparkles size={12} className="text-orange-400" />} label={lang === 'fr' ? 'Parcourir par secteur' : 'Browse by sector'} />
-          <h2 className={`text-4xl md:text-5xl font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+          <h2 className={`text-4xl md:text-6xl font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
             Cherchez par <span className="velmo-gradient-text-animated">envie</span>.
           </h2>
-          <p className="text-slate-400 text-lg mt-4 font-medium max-w-xl mx-auto">
-            Accédez instantanément aux meilleurs articles de chaque secteur d'activité.
+          <p className="text-slate-500 text-lg md:text-xl mt-6 font-medium max-w-2xl mx-auto leading-relaxed">
+            Accédez instantanément aux meilleurs articles de chaque secteur d'activité à Conakry et au-delà.
           </p>
         </div>
       </div>
 
       {/* Marquee Container */}
-      <div className="relative flex overflow-hidden">
+      <div className="relative flex overflow-hidden py-10">
         <motion.div
           animate={categories.length > 5 ? { x: ['0%', '-50%'] } : {}}
           transition={categories.length > 5 ? {
-            duration: 40,
+            duration: 50,
             repeat: Infinity,
             ease: "linear",
           } : {}}
-          className="flex gap-6 px-6"
+          className="flex gap-8 px-8"
         >
           {items.map((cat, i) => {
             const style = getCatStyle(cat);
             return (
               <motion.button
                 key={`${cat}-${i}`}
-                whileHover={{ y: -10, scale: 1.05 }}
+                whileHover={{ y: -12, scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate(`/search?q=${encodeURIComponent(cat)}`)}
-                className={`group relative flex flex-col items-center gap-4 p-8 rounded-[2.5rem] border transition-all duration-500 overflow-hidden min-w-[180px] ${isDark
-                  ? 'bg-[#121821] border-white/5 hover:border-orange-500/30'
-                  : 'bg-white border-gray-100 hover:border-orange-200 shadow-sm hover:shadow-2xl'
+                className={`group relative flex flex-col items-center gap-6 p-10 rounded-[3rem] border transition-all duration-500 min-w-[220px] shadow-sm hover:shadow-2xl ${isDark ? 'bg-white/[0.02] border-white/5 hover:bg-white/[0.04] hover:border-orange-500/30' : 'bg-white border-slate-100 hover:border-orange-200'
                   }`}
               >
-                <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none"
-                  style={{ background: `radial-gradient(circle at center, ${style.color}, transparent 70%)` }}
-                />
+                {/* Decorative background circle */}
+                <div className="absolute -top-10 -right-10 w-24 h-24 rounded-full blur-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-700" style={{ background: style.color }} />
 
                 <div
-                  className="w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:rotate-12 shadow-lg"
+                  className="w-20 h-20 rounded-[1.8rem] flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:rotate-12 shadow-xl"
                   style={{ background: `${style.color}15`, color: style.color, border: `1px solid ${style.color}25` }}
                 >
                   {style.icon}
                 </div>
-                <span className={`text-xs font-black uppercase tracking-widest text-center transition-colors duration-300 ${isDark ? 'text-slate-500 group-hover:text-white' : 'text-slate-400 group-hover:text-slate-900'}`}>
+                <span className={`text-[11px] font-black uppercase tracking-[0.2em] text-center transition-colors duration-300 ${isDark ? 'text-slate-500 group-hover:text-white' : 'text-slate-400 group-hover:text-slate-900'}`}>
                   {cat}
                 </span>
               </motion.button>
@@ -387,45 +462,44 @@ function StatsSection({ stats }) {
   const isDark = theme === 'dark';
 
   const METRICS = [
-    { icon: <Store size={26} />, value: stats.shopCount || 5000, suffix: '+', label: lang === 'fr' ? 'Boutiques actives' : 'Active shops', color: '#f97316' },
-    { icon: <ShoppingBag size={26} />, value: stats.productCount || 120000, suffix: '+', label: lang === 'fr' ? 'Produits référencés' : 'Listed products', color: '#3b82f6' },
-    { icon: <CheckCircle size={26} />, value: stats.orderCount || 50000, suffix: '+', label: lang === 'fr' ? 'Commandes traitées' : 'Orders processed', color: '#10b981' },
-    { icon: <Star size={26} />, value: 0, suffix: '', label: lang === 'fr' ? 'Note marchands' : 'Merchant rating', color: '#f59e0b', fixed: '4.9★' },
+    { icon: <Store size={26} />, value: stats.shopCount || 5000, suffix: '+', label: lang === 'fr' ? 'Boutiques' : 'Shops', color: '#ff6200' },
+    { icon: <ShoppingBag size={26} />, value: stats.productCount || 120000, suffix: '+', label: lang === 'fr' ? 'Produits' : 'Products', color: '#3b82f6' },
+    { icon: <CheckCircle size={26} />, value: stats.orderCount || 50000, suffix: '+', label: lang === 'fr' ? 'Commandes' : 'Orders', color: '#10b981' },
+    { icon: <Star size={26} />, value: 0, suffix: '', label: lang === 'fr' ? 'Satisfaction' : 'Rating', color: '#f59e0b', fixed: '4.9★' },
   ];
 
   return (
-    <div className={`py-24 relative overflow-hidden border-y ${isDark ? 'border-white/[0.05] bg-white/[0.01]' : 'border-black/[0.05] bg-slate-50/30'}`}>
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-6xl pointer-events-none opacity-50">
-        <div className="absolute top-0 left-0 w-64 h-64 bg-orange-500/5 blur-[100px] rounded-full" />
-        <div className="absolute bottom-0 right-0 w-64 h-64 bg-blue-500/5 blur-[100px] rounded-full" />
-      </div>
-
+    <section className={`py-20 relative overflow-hidden border-y ${isDark ? 'border-white/5 bg-white/[0.01]' : 'border-slate-200 bg-white'}`}>
       <div className="container relative z-10">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-10 md:gap-16">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-12">
           {METRICS.map((m, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 32 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-              className="group text-center"
+              transition={{ delay: i * 0.1, duration: 0.5 }}
+              className={`p-6 md:p-8 rounded-3xl border text-center transition-all duration-500 overflow-hidden relative group ${isDark ? 'bg-white/[0.03] border-white/5 hover:border-white/10' : 'bg-slate-50/50 border-slate-100 hover:border-slate-200'
+                }`}
             >
+              {/* Decorative background circle */}
+              <div className="absolute -top-10 -right-10 w-24 h-24 rounded-full blur-3xl opacity-20 group-hover:scale-150 transition-transform duration-700" style={{ background: m.color }} />
+
               <div
-                className="w-16 h-16 rounded-[2rem] flex items-center justify-center mx-auto mb-6 transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-xl"
+                className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl transition-transform group-hover:scale-110 group-hover:rotate-6"
                 style={{ background: `${m.color}15`, color: m.color, border: `1px solid ${m.color}25` }}
               >
                 {m.icon}
               </div>
-              <div className={`text-4xl md:text-5xl font-black mb-2 tracking-tighter ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              <div className={`text-3xl md:text-5xl font-black mb-1 tracking-tighter ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 {m.fixed ?? <Counter to={m.value} suffix={m.suffix} />}
               </div>
-              <div className="text-slate-500 text-xs font-black uppercase tracking-[0.1em]">{m.label}</div>
+              <div className="text-slate-500 text-[10px] md:text-xs font-black uppercase tracking-widest">{m.label}</div>
             </motion.div>
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -506,7 +580,364 @@ function BestProducts({ products, loading }) {
   );
 }
 
-// ─── How It Works ─────────────────────────────────────────────────────────────
+// ─── Problem Section ──────────────────────────────────────────────────────────
+function ProblemSection() {
+  const { theme, lang, t } = useSite();
+  const isDark = theme === 'dark';
+  const p = t.problem;
+
+  return (
+    <section className="py-24 relative overflow-hidden bg-slate-900/5 dark:bg-black/20 border-y border-slate-200/50 dark:border-white/5">
+      <div className="container relative z-10">
+        <div className="max-w-3xl mx-auto text-center mb-16">
+          <SectionLabel icon={<Shield size={12} className="text-orange-400" />} label={p.badge} />
+          <h2 className={`text-4xl md:text-5xl font-black tracking-tight mb-6 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+            {lang === 'fr' ? 'Le commerce africain ' : 'African commerce '}
+            <span className="text-orange-500">{lang === 'fr' ? 'mérite mieux.' : 'deserves better.'}</span>
+          </h2>
+          <p className="text-slate-500 text-lg font-medium max-w-2xl mx-auto leading-relaxed">
+            {p.subtitle}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {p.items.map((item, i) => (
+            <div key={i} className={`p-8 rounded-[2.5rem] border transition-all duration-300 ${isDark ? 'bg-[#0f141e] border-white/5 shadow-2xl' : 'bg-white border-gray-100 shadow-sm'}`}>
+              <div className="w-12 h-12 rounded-2xl bg-orange-500/10 flex items-center justify-center mb-6 text-orange-500">
+                <X size={20} />
+              </div>
+              <h3 className={`font-black text-lg mb-3 ${isDark ? 'text-white' : 'text-slate-900'}`}>{item.title}</h3>
+              <p className="text-slate-500 text-sm leading-relaxed">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Vision Section ───────────────────────────────────────────────────────────
+function VisionSection() {
+  const { theme, t } = useSite();
+  const isDark = theme === 'dark';
+  const v = t.vision;
+
+  return (
+    <section className="py-32 relative overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 70% 50%, rgba(249,115,22,0.08), transparent)' }} />
+      <div className="container relative">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div>
+            <SectionLabel icon={<TrendingUp size={12} />} label={v.badge} />
+            <h2 className={`text-4xl md:text-6xl font-black mb-6 leading-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              {v.title}
+            </h2>
+            <p className="text-slate-500 text-xl font-medium mb-12 leading-relaxed">
+              {v.subtitle}
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              {v.items.map((item, i) => (
+                <div key={i} className="group">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-2 h-8 bg-orange-500 rounded-full group-hover:h-10 transition-all" />
+                    <h3 className={`font-black uppercase tracking-widest text-xs ${isDark ? 'text-white' : 'text-slate-900'}`}>{item.title}</h3>
+                  </div>
+                  <p className="text-slate-500 text-sm">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="relative">
+            <div className="aspect-square rounded-[3rem] bg-gradient-to-br from-orange-500 to-purple-600 p-1">
+              <div className={`w-full h-full rounded-[2.9rem] overflow-hidden flex items-center justify-center ${isDark ? 'bg-black' : 'bg-slate-50'}`}>
+                {/* Abstract Vision Graphic */}
+                <div className="relative w-full h-full p-12 flex flex-col justify-between">
+                  <div className="flex justify-between items-start">
+                    <div className="p-4 rounded-3xl bg-orange-500 text-white shadow-xl shadow-orange-500/20"><Store size={32} /></div>
+                    <div className="p-4 rounded-3xl bg-blue-500 text-white shadow-xl shadow-blue-500/20"><CreditCard size={32} /></div>
+                  </div>
+                  <div className="flex justify-center">
+                    <div className="w-48 h-48 rounded-full border-2 border-dashed border-slate-700 flex items-center justify-center animate-spin-slow">
+                      <div className="p-6 rounded-full bg-white text-orange-500 shadow-2xl shadow-white/10"><Zap size={40} /></div>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-end">
+                    <div className="p-4 rounded-3xl bg-emerald-500 text-white shadow-xl shadow-emerald-500/20"><Users size={32} /></div>
+                    <div className="p-4 rounded-3xl bg-purple-500 text-white shadow-xl shadow-purple-500/20"><BarChart2 size={32} /></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* Glowing effects */}
+            <div className="absolute -inset-10 bg-orange-500/20 blur-[100px] -z-10 rounded-full" />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
+// ─── Pricing Section ──────────────────────────────────────────────────────────
+function PricingSection() {
+  const { theme, lang } = useSite();
+  const isDark = theme === 'dark';
+  const [duration, setDuration] = useState(1);
+
+  // Urgency Timer
+  const [timeLeft, setTimeLeft] = useState(() => {
+    // Generate a pseudo-random initial time between 3h and 10h to make it look real today
+    const now = new Date();
+    const eod = new Date();
+    eod.setHours(23, 59, 59, 999);
+    return Math.floor((eod.getTime() - now.getTime()) / 1000) || 3600 * 5;
+  });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(prev => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (time) => {
+    const h = Math.floor(time / 3600).toString().padStart(2, '0');
+    const m = Math.floor((time % 3600) / 60).toString().padStart(2, '0');
+    const s = (time % 60).toString().padStart(2, '0');
+    return `${h}h ${m}m ${s}s`;
+  };
+
+  const PLANS = {
+    starter: {
+      name: 'Starter',
+      price: 120000,
+      color: 'from-cyan-500 to-blue-600',
+      tag: lang === 'fr' ? 'La base idéale' : 'Perfect basics',
+      features: lang === 'fr'
+        ? ['Création produits', 'Vente & encaissement', 'Gestion dettes & créances', 'Historique des transactions']
+        : ['Product creation', 'Sales & checkout', 'Debt & credit tracking', 'Transaction history']
+    },
+    business: {
+      name: 'Business',
+      price: 200000,
+      color: 'from-purple-600 to-pink-600',
+      tag: lang === 'fr' ? 'Pour voir grand' : 'Think bigger',
+      popular: true,
+      features: lang === 'fr'
+        ? [
+          'Tout Starter inclus',
+          'Analytics avancés (ABC/RFM)',
+          'Vitrine web (commande en ligne)',
+          'Multi-boutiques & multi-employés',
+          'Gestion dépenses & sortie d\'argent',
+          'Agent IA Tambo connecté à Telegram → rapports quotidiens via chat'
+        ]
+        : [
+          'All Starter features',
+          'Advanced Analytics (ABC/RFM)',
+          'Web storefront (online orders)',
+          'Multi-shop & multi-staff',
+          'Expense & cash out management',
+          'AI Agent Tambo connected to Telegram → daily reports via chat'
+        ]
+    }
+  };
+
+  const calculatePrice = (base, dur) => {
+    if (base === 120000) {
+      if (dur === 1) return 120000;
+      if (dur === 3) return 345000;
+      if (dur === 6) return 600000;
+      if (dur === 12) return 1200000;
+    } else {
+      if (dur === 1) return 200000;
+      if (dur === 3) return 575000;
+      if (dur === 6) return 1000000;
+      if (dur === 12) return 2000000;
+    }
+    return base * dur;
+  };
+
+  const getBonus = (dur) => {
+    if (dur === 3) return lang === 'fr' ? '15 jours offerts' : '15 days free';
+    if (dur === 6) return lang === 'fr' ? '1 mois offert' : '1 month free';
+    if (dur === 12) return lang === 'fr' ? '2 mois offerts' : '2 months free';
+    return null;
+  };
+
+  return (
+    <section id="pricing" className="py-24 relative overflow-hidden bg-white/5 dark:bg-white/[0.01]">
+      <div className="container relative z-10">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <SectionLabel icon={<CreditCard size={12} />} label={lang === 'fr' ? 'Tarifs Transparents' : 'Transparent Pricing'} />
+
+          <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 font-bold text-sm animate-pulse shadow-lg shadow-red-500/10">
+            <Clock size={16} />
+            {lang === 'fr' ? "Offre de lancement : se termine dans" : "Launch offer: ends in"} {formatTime(timeLeft)}
+          </div>
+
+          <h2 className={`text-4xl md:text-5xl font-black mb-6 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+            Le moteur de votre <span className="velmo-gradient-text">croissance</span>.
+          </h2>
+          <p className="text-slate-500 text-lg font-medium">
+            Testez 14 jours gratuitement, sans carte bancaire. Économisez jusqu'à 400 000 GNF en vous engageant sur la durée.
+          </p>
+
+          {/* Duration Selector */}
+          <div className="mt-10 inline-flex p-1.5 rounded-2xl bg-slate-900/50 border border-white/10 relative">
+            {[1, 3, 6, 12].map(d => (
+              <button
+                key={d}
+                onClick={() => setDuration(d)}
+                className={`relative px-6 py-2 rounded-xl text-xs font-black uppercase transition-all ${duration === d ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20' : 'text-slate-500 hover:text-white'}`}
+              >
+                {d} {d === 1 ? 'Mois' : 'Mois'}
+                {d === 12 && duration !== 12 && (
+                  <span className="absolute -top-3 -right-2 bg-green-500 text-white text-[9px] px-2 py-0.5 rounded-full border border-green-600 shadow-lg animate-bounce">
+                    -17%
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto text-left">
+          {Object.entries(PLANS).map(([key, p]) => {
+            const currentPrice = calculatePrice(p.price, duration);
+            const monthlyPrice = Math.round(currentPrice / duration);
+            const bonus = getBonus(duration);
+
+            return (
+              <motion.div
+                key={key}
+                whileHover={{ y: -5 }}
+                className={`relative p-10 rounded-[2.5rem] border overflow-hidden flex flex-col ${isDark ? 'bg-[#121821] border-white/5 shadow-2xl shadow-black/40' : 'bg-white border-gray-100 shadow-xl'}`}
+              >
+                {p.popular && (
+                  <div className="absolute top-8 right-8 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-purple-500/20 animate-pulse">
+                    Le plus choisi
+                  </div>
+                )}
+
+                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${p.color} flex items-center justify-center text-white mb-6 shadow-lg`}>
+                  {key === 'starter' ? <Store size={28} /> : <Crown size={28} />}
+                </div>
+
+                <h3 className={`text-3xl font-black mb-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>{p.name}</h3>
+                <p className="text-orange-500 text-[10px] font-bold uppercase tracking-[0.2em] mb-8">{p.tag}</p>
+
+                <div className="mb-10">
+                  <div className="flex items-baseline gap-2">
+                    <span className={`text-5xl font-black tracking-tighter ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                      {duration === 1 ? p.price.toLocaleString() : monthlyPrice.toLocaleString()}
+                    </span>
+                    <span className="text-slate-500 font-bold uppercase text-xs tracking-widest">GNF / Mois</span>
+                  </div>
+                  {duration > 1 && (
+                    <p className="text-slate-400 text-xs font-medium mt-2">
+                      {duration} mois : <span className="font-bold line-through opacity-50 mr-2">{(p.price * duration).toLocaleString()} GNF</span>
+                      <span className="font-bold text-orange-500">{currentPrice.toLocaleString()} GNF</span>
+                    </p>
+                  )}
+                  {bonus && (
+                    <div className="mt-4 inline-flex items-center gap-1.5 bg-green-500/10 text-green-500 text-xs font-black px-3 py-1.5 rounded-lg border border-green-500/20 uppercase tracking-wider">
+                      <CheckCircle2 size={14} /> {bonus}
+                    </div>
+                  )}
+                  {/* Trial Tag */}
+                  <div className="mt-3 block">
+                    <div className="inline-block bg-blue-500/10 text-blue-500 text-[11px] font-bold px-3 py-1 rounded border border-blue-500/20">
+                      🎁 14 jours d'essai offerts (sans carte)
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4 mb-10 flex-1">
+                  <div className="text-xs font-black uppercase tracking-widest text-slate-400 mb-4">Inclus dans {p.name} :</div>
+                  {p.features.map((f, i) => (
+                    <div key={i} className="flex items-start gap-3">
+                      <div className="w-5 h-5 rounded-full bg-orange-500/10 border border-orange-500/20 flex items-center justify-center flex-shrink-0 text-orange-500 mt-0.5">
+                        {f.includes("Tout Starter") ? <ChevronRight size={12} strokeWidth={4} /> : <Check size={12} strokeWidth={4} />}
+                      </div>
+                      <span className={`text-sm font-bold leading-relaxed ${f.includes("Telegram") ? 'text-blue-500 dark:text-blue-400' : isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                        {f}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <a
+                  href="https://app.velmo.pro"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`w-full py-5 rounded-2xl font-black text-sm uppercase tracking-widest text-center transition-all flex items-center justify-center gap-2 ${key === 'business' ? 'bg-orange-500 text-white shadow-xl shadow-orange-500/20 hover:scale-[1.02]' : 'bg-white/5 text-white border border-white/10 hover:bg-white/10'}`}
+                >
+                  Commencer le trial gratuit
+                  <ArrowRight size={18} />
+                </a>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Testimonials Section ──────────────────────────────────────────────────────
+function TestimonialsSection() {
+  const { theme, t } = useSite();
+  const isDark = theme === 'dark';
+  const ts = t.testimonials;
+
+  return (
+    <section className="py-24 relative overflow-hidden bg-white/5 dark:bg-white/[0.02]">
+      <div className="container relative z-10">
+        <div className="text-center mb-16">
+          <SectionLabel icon={<Award size={12} />} label={ts.badge} />
+          <h2 className={`text-4xl md:text-5xl font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>{ts.title}</h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {ts.items.map((item, i) => (
+            <motion.div
+              key={i}
+              whileHover={{ y: -10 }}
+              className={`p-10 rounded-[2.5rem] border relative ${isDark ? 'bg-[#121821] border-white/5 shadow-2xl shadow-black/40' : 'bg-white border-gray-100 shadow-xl shadow-gray-200/50'}`}
+            >
+              <div className="text-orange-500 mb-6 flex gap-1">
+                <Star size={16} fill="currentColor" />
+                <Star size={16} fill="currentColor" />
+                <Star size={16} fill="currentColor" />
+                <Star size={16} fill="currentColor" />
+                <Star size={16} fill="currentColor" />
+              </div>
+              <p className={`text-lg font-medium italic mb-8 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                "{item.text}"
+              </p>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center text-white font-bold text-lg">
+                  {item.name.charAt(0)}
+                </div>
+                <div>
+                  <h4 className={`font-black text-sm ${isDark ? 'text-white' : 'text-slate-900'}`}>{item.name}</h4>
+                  <p className="text-orange-500 text-[10px] font-bold uppercase tracking-wider">{item.shop}</p>
+                </div>
+              </div>
+              <div className="absolute top-10 right-10 opacity-[0.05] pointer-events-none">
+                <MessageCircle size={80} />
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── App Section ──────────────────────────────────────────────────────────────
 function HowItWorks() {
   const { theme, lang } = useSite();
   const isDark = theme === 'dark';
@@ -668,30 +1099,36 @@ function AppSection() {
         </div>
 
         {/* Feature cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {t.features.items.map((f, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
-              whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              initial={{ opacity: 0, y: 32 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-20px' }}
-              transition={{ delay: i * 0.07, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              whileHover={{ y: -5, scale: 1.02 }}
-              className={`group rounded-2xl p-5 transition-all duration-300 velmo-card-enterprise cursor-default border ${isDark
-                ? 'bg-white/[0.03] border-white/[0.06] hover:border-white/[0.12]'
-                : 'bg-white border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md'
+              transition={{ delay: i * 0.1, duration: 0.6 }}
+              whileHover={{ y: -8 }}
+              className={`group p-8 rounded-[2rem] border transition-all duration-500 overflow-hidden relative ${isDark ? 'bg-white/[0.02] border-white/5 hover:bg-white/[0.04] hover:border-orange-500/30' : 'bg-white border-slate-100 hover:border-orange-200 shadow-sm hover:shadow-xl'
                 }`}
             >
-              <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 duration-300" style={{ background: `${FEATURE_COLORS[i]}18`, color: FEATURE_COLORS[i] }}>
+              {/* Decorative Glow */}
+              <div className="absolute -top-10 -right-10 w-24 h-24 rounded-full blur-3xl opacity-10 transition-transform duration-700 group-hover:scale-150" style={{ background: FEATURE_COLORS[i] }} />
+
+              <div
+                className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-lg transition-transform group-hover:scale-110 group-hover:rotate-6"
+                style={{ background: `${FEATURE_COLORS[i]}15`, color: FEATURE_COLORS[i], border: `1px solid ${FEATURE_COLORS[i]}25` }}
+              >
                 {FEATURE_ICONS[i]}
               </div>
-              <div className="flex items-start justify-between mb-1.5">
-                <h3 className={`font-bold text-sm ${isDark ? 'text-white' : 'text-slate-900'}`}>{f.title}</h3>
-                <span className={`text-[10px] px-1.5 py-0.5 rounded-full ml-2 flex-shrink-0 border ${isDark ? 'bg-white/[0.04] border-white/[0.07] text-slate-600' : 'bg-green-50 border-green-200 text-green-600'}`}>
-                  {t.features.included}
-                </span>
-              </div>
-              <p className="text-slate-500 text-xs leading-relaxed">{f.desc}</p>
+
+              <h3 className={`font-black text-lg mb-3 flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                {f.title}
+                {i < 3 && <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />}
+              </h3>
+
+              <p className="text-slate-500 text-sm leading-relaxed font-medium">
+                {f.desc}
+              </p>
             </motion.div>
           ))}
         </div>
@@ -731,8 +1168,8 @@ function DownloadSection() {
 
             <div className="flex flex-wrap justify-center gap-4 mb-8">
               {[
-                { emoji: '🪟', sub: t.download.windowsSub, label: t.download.windowsLabel, href: '#' },
-                { emoji: '🌐', sub: t.download.browserSub, label: t.download.browserLabel, href: '#' },
+                { emoji: '🪟', sub: t.download.windowsSub, label: t.download.windowsLabel, href: 'https://velmo.org/download/velmo-setup.exe' },
+                { emoji: '🌐', sub: t.download.browserSub, label: t.download.browserLabel, href: 'https://app.velmo.pro' },
               ].map((opt) => (
                 <a key={opt.label} href={opt.href}
                   className={`flex items-center gap-3 px-6 py-4 rounded-2xl transition-all group border ${isDark
@@ -764,6 +1201,15 @@ function DownloadSection() {
   );
 }
 
+const StatsSectionMemo = React.memo(StatsSection);
+const ProblemSectionMemo = React.memo(ProblemSection);
+const HowItWorksMemo = React.memo(HowItWorks);
+const VisionSectionMemo = React.memo(VisionSection);
+const SellersFeedMemo = React.memo(SellersFeed);
+const FAQSectionMemo = React.memo(FAQSection);
+const DownloadSectionMemo = React.memo(DownloadSection);
+const FooterMemo = React.memo(Footer);
+
 // ─── MAIN LANDING ─────────────────────────────────────────────────────────────
 export default function Landing() {
   const navigate = useNavigate();
@@ -776,14 +1222,19 @@ export default function Landing() {
   const [categoriesLoading, setCategoriesLoading] = useState(true);
 
   useEffect(() => {
-    getPlatformStats().then(setStats).catch(() => { });
+    setTopProductsLoading(true);
+    setCategoriesLoading(true);
+
+    getPlatformStats().then(setStats).catch(err => console.error("Stats fail:", err));
+
     getTopProducts({ limit: 18 })
       .then(setTopProducts)
-      .catch(() => { })
+      .catch(err => console.error("Products fail:", err))
       .finally(() => setTopProductsLoading(false));
+
     getAvailableCategories()
       .then(setCategories)
-      .catch(() => { })
+      .catch(err => console.error("Categories fail:", err))
       .finally(() => setCategoriesLoading(false));
   }, []);
 
@@ -792,85 +1243,142 @@ export default function Landing() {
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${isDark ? 'bg-[#080b10] text-white' : 'bg-[#f8fafc] text-slate-900'}`}>
+      <Helmet>
+        {/* SEO */}
+        <title>Velmo — Logiciel de Caisse & Gestion pour Petits Commerces</title>
+        <meta name="description"
+          content="Velmo est le logiciel de caisse #1 pour les commerçants en Afrique. Gérez vos stocks, ventes et dettes sans internet. Vitrine web et rapports WhatsApp." />
+        <meta name="keywords"
+          content="logiciel de caisse afrique, gestion de stock, velmo, gestion boutique, pos mobile, boutique en ligne gratuite, suivi dettes, commerçant" />
+        <meta property="og:title" content="Velmo | Pilotez votre business" />
+        <meta property="og:description" content="Transformez votre boutique avec la caisse intelligente Velmo." />
+        <meta property="og:image" content="https://velmo.org/logo-velmo.png" />
+        <meta property="og:url" content="https://velmo.org" />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Helmet>
       <Navbar />
 
       {/* ════ HERO ════ */}
-      <section className="relative overflow-hidden" style={{ paddingTop: '20px', paddingBottom: '32px' }}>
-        {/* Aurora */}
-        <div className="absolute pointer-events-none" style={{
-          top: '-100px', left: '50%', transform: 'translateX(-50%)',
-          width: '1100px', height: '700px',
-          background: isDark
-            ? 'radial-gradient(ellipse 65% 55% at 50% 18%, rgba(249,115,22,0.22) 0%, rgba(168,85,247,0.09) 50%, transparent 75%)'
-            : 'radial-gradient(ellipse 65% 55% at 50% 18%, rgba(249,115,22,0.12) 0%, rgba(168,85,247,0.04) 50%, transparent 75%)',
-          filter: 'blur(1px)',
-        }} />
-
-        <motion.div className="absolute pointer-events-none" style={{ top: '0', left: '5%', width: '500px', height: '400px', background: 'radial-gradient(ellipse at center, rgba(249,115,22,0.07), transparent 70%)', filter: 'blur(70px)' }}
-          animate={{ x: [0, 60, 0], opacity: [0.5, 0.9, 0.5] }} transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }} />
-        <motion.div className="absolute pointer-events-none" style={{ top: '20px', right: '5%', width: '420px', height: '320px', background: 'radial-gradient(ellipse at center, rgba(139,92,246,0.07), transparent 70%)', filter: 'blur(60px)' }}
-          animate={{ x: [0, -50, 0], opacity: [0.4, 0.8, 0.4] }} transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut', delay: 3 }} />
+      <section className="relative overflow-hidden pt-32 pb-20 md:pt-48 md:pb-32">
+        {/* Aurora Background */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-orange-500/20 blur-[120px] rounded-full opacity-50 dark:opacity-20" />
+          <motion.div
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.3, 0.5, 0.3],
+              x: [-20, 20, -20]
+            }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-0 right-0 w-[500px] h-[500px] bg-purple-500/10 blur-[100px] rounded-full"
+          />
+        </div>
 
         <div className={`absolute inset-0 velmo-grid-pattern pointer-events-none ${isDark ? 'opacity-[0.08]' : 'opacity-[0.03]'}`} />
 
-        <div className="container relative">
+        <div className="container relative z-10">
           <motion.div variants={heroContainer} initial="hidden" animate="show" className="flex flex-col items-center text-center">
             {/* Badge */}
-            <motion.div variants={heroItem} className="mb-3">
-              <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-orange-500/20 bg-gradient-to-r from-orange-500/10 via-orange-400/5 to-purple-500/5 text-orange-400 text-xs font-bold backdrop-blur-sm">
-                <span className="w-1.5 h-1.5 bg-orange-400 rounded-full animate-pulse" />
+            <motion.div variants={heroItem} className="mb-6">
+              <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-orange-500/20 bg-orange-500/5 text-orange-500 text-xs font-black backdrop-blur-md">
+                <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
                 {t.hero.badge}
               </div>
             </motion.div>
 
             {/* Headline */}
-            <motion.div variants={heroItem} className="mb-4">
-              <h1 className="font-black leading-[0.85] tracking-tighter">
-                <span className={`block text-5xl md:text-7xl lg:text-8xl xl:text-[100px] ${isDark ? 'text-white' : 'text-slate-900'}`}>{lang === 'fr' ? 'Vendez' : 'Sell'} <span className="velmo-gradient-text-animated">mieux.</span></span>
-                <span className={`block text-5xl md:text-7xl lg:text-8xl xl:text-[100px] ${isDark ? 'text-white/40' : 'text-slate-300'}`}>{lang === 'fr' ? 'Encaissez' : 'Earn'} <span className="hover:text-orange-500 transition-colors duration-500">direct.</span></span>
+            <motion.div variants={heroItem} className="mb-8 max-w-5xl">
+              <h1 className="font-black leading-[0.9] tracking-tighter">
+                <span className={`block text-5xl sm:text-7xl md:text-8xl lg:text-[110px] ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                  {lang === 'fr' ? 'La Caisse' : 'The POS'} <span className="velmo-gradient-text-animated">{lang === 'fr' ? 'Intégrale.' : 'Full.'}</span>
+                </span>
+                <span className={`block text-4xl sm:text-6xl md:text-7xl lg:text-9xl mt-2 ${isDark ? 'text-white/40' : 'text-slate-300'}`}>
+                  {lang === 'fr' ? 'Pilotez' : 'Pilot'} <span className="hover:text-orange-500 transition-colors duration-500">{lang === 'fr' ? 'votre business.' : 'your business.'}</span>
+                </span>
               </h1>
             </motion.div>
 
             {/* Subtitle */}
-            <motion.p variants={heroItem} className="text-slate-400 text-base md:text-xl max-w-xl mx-auto mb-8 font-medium leading-relaxed">
+            <motion.p variants={heroItem} className="text-slate-500 dark:text-slate-400 text-lg md:text-2xl max-w-2xl mx-auto mb-12 font-medium leading-relaxed px-4">
               {lang === 'fr'
-                ? "La caisse intelligente qui transforme votre boutique guinéenne en une machine de guerre commerciale."
-                : "The smart register that transforms your African shop into a commercial power-house."}
+                ? "L'OS du commerce africain. Gérez votre boutique, vos stocks et vos ventes en une seule application fluide et ultra-rapide."
+                : "The OS for African commerce. Manage your shop, inventory, and sales in one fluid and ultra-fast application."}
             </motion.p>
 
-            {/* Search */}
-            <motion.div variants={heroItem} className="w-full max-w-2xl mt-4 mb-8">
-              <HeroSearch stats={stats} />
+            {/* Main Action Group */}
+            <motion.div variants={heroItem} className="flex flex-col sm:flex-row justify-center gap-4 mb-20 w-full px-6">
+              <a href="https://app.velmo.pro" target="_blank" rel="noopener noreferrer" className="velmo-btn-premium group flex items-center justify-center gap-3">
+                <Zap size={22} className="group-hover:rotate-12 transition-transform" />
+                <span>{t.features.tryFree}</span>
+              </a>
+              <button
+                onClick={() => document.getElementById('problem')?.scrollIntoView({ behavior: 'smooth' })}
+                className={`px-10 py-5 rounded-[1.5rem] text-lg font-black transition-all border flex items-center justify-center gap-2 ${isDark
+                  ? 'bg-white/5 border-white/10 hover:bg-white/10 text-white'
+                  : 'bg-white border-slate-200 hover:border-slate-300 shadow-md text-slate-900'}`}
+              >
+                Découvrir la solution
+                <ArrowRight size={20} />
+              </button>
             </motion.div>
 
-            {/* Access my shop */}
-            <motion.div variants={heroItem} className="mb-12">
-              <AccessMyShop variant="hero" />
-            </motion.div>
-
-            {/* Platform stats */}
-            <motion.div
-              variants={heroItem}
-              className={`flex flex-wrap justify-center gap-8 md:gap-14 pt-8 border-t w-full max-w-xl ${isDark ? 'border-white/[0.07]' : 'border-gray-200'}`}
-            >
-              {[
-                { value: stats.shopCount, suffix: '+', label: t.stats.shops, fallback: '5 000+' },
-                { value: stats.productCount, suffix: '+', label: t.stats.products, fallback: '120 000+' },
-                { value: stats.orderCount, suffix: '+', label: t.stats.orders, fallback: '50 000+' },
-              ].map((s, i) => (
-                <div key={i} className="text-center">
-                  <div className={`text-2xl md:text-3xl font-black mb-0.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                    {s.value > 0
-                      ? <Counter to={s.value} suffix={s.suffix} />
-                      : <span className={isDark ? 'text-slate-300' : 'text-slate-700'}>{s.fallback}</span>}
-                  </div>
-                  <div className="text-slate-500 text-xs">{s.label}</div>
-                </div>
-              ))}
+            {/* Quick Access */}
+            <motion.div variants={heroItem} className="mb-20 px-4 w-full">
+              <div className="max-w-md mx-auto p-1 rounded-2xl bg-white/[0.03] dark:bg-black/20 border border-white/10 backdrop-blur-sm">
+                <AccessMyShop variant="hero" />
+              </div>
             </motion.div>
           </motion.div>
         </div>
       </section>
+
+      {/* ════ TRUSTED BY ════ */}
+      <TrustedBySection />
+
+      {/* ════ STATS BAND ════ */}
+      <StatsSectionMemo stats={stats} />
+
+      {/* ════ PROBLEM ════ */}
+      <div id="problem">
+        <ProblemSectionMemo />
+      </div>
+
+      <LiveActivityIndicator />
+
+      {/* ════ APP SECTION & SOLUTION ════ */}
+      <div>
+        <AppSection />
+      </div>
+
+      {/* ════ PRICING ════ */}
+      <div id="pricing-wrapper">
+        <PricingSection />
+      </div>
+
+      {/* ════ HOW IT WORKS ════ */}
+      <div>
+        <HowItWorksMemo />
+      </div>
+
+      {/* ════ TESTIMONIALS ════ */}
+      <div>
+        <TestimonialsSection />
+      </div>
+
+      {/* ════ MARKETPLACE LABEL (EN CROISSANCE) ════ */}
+      <div className="py-12 border-t border-slate-200/30 dark:border-white/5">
+        <div className="container">
+          <div className="bg-orange-500/5 rounded-3xl p-8 border border-orange-500/10 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="max-w-xl text-center md:text-left">
+              <h3 className={`text-2xl font-black mb-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>Un Marketplace en pleine expansion</h3>
+              <p className="text-slate-500 font-medium">Recherchez vos produits préférés parmi les boutiques qui utilisent déjà Velmo pour leur visibilité en ligne.</p>
+            </div>
+            <div className="w-full max-w-sm">
+              <HeroSearch stats={stats} />
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* ════ TICKER ════ */}
       <div className="relative overflow-hidden" style={{
@@ -881,12 +1389,6 @@ export default function Landing() {
         <div className="absolute left-0 top-0 bottom-0 w-20 md:w-28 z-10 pointer-events-none" style={{ background: `linear-gradient(to right, ${fadeBg}, transparent)` }} />
         <div className="absolute right-0 top-0 bottom-0 w-20 md:w-28 z-10 pointer-events-none" style={{ background: `linear-gradient(to left, ${fadeBg}, transparent)` }} />
         <div className="py-3">
-          <div className="flex items-center gap-3 mb-2.5 container">
-            <span className={`text-[10px] font-bold uppercase tracking-widest whitespace-nowrap flex items-center gap-2 ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
-              <span className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-pulse" />
-              {t.ticker.label}
-            </span>
-          </div>
           <ProductTicker products={topProducts} />
         </div>
       </div>
@@ -896,45 +1398,35 @@ export default function Landing() {
         <CategoriesSection categories={categories} />
       </div>
 
-      {/* ════ FEATURED SHOPS ════ */}
-      <div>
-        <FeaturedShops />
-      </div>
-
-      {/* ════ STATS BAND ════ */}
-      <StatsSection stats={stats} />
-
       {/* ════ BEST PRODUCTS ════ */}
       <div>
         <BestProducts products={topProducts.slice(0, 12)} loading={topProductsLoading} />
       </div>
 
-      {/* ════ APP SECTION ════ */}
-      <div>
-        <AppSection />
+      {/* ════ FEATURED SHOPS ════ */}
+      <div className="pb-24">
+        <FeaturedShops />
       </div>
 
-      {/* ════ HOW IT WORKS ════ */}
-      <div>
-        <HowItWorks />
-      </div>
+      {/* ════ VISION ════ */}
+      <VisionSectionMemo />
 
       {/* ════ SELLERS FEED ════ */}
       <div>
-        <SellersFeed />
+        <SellersFeedMemo />
       </div>
 
       {/* ════ FAQ ════ */}
-      <div>
-        <FAQSection />
+      <div className="bg-slate-50 dark:bg-slate-900/10 py-12">
+        <FAQSectionMemo />
       </div>
 
       {/* ════ DOWNLOAD ════ */}
       <div>
-        <DownloadSection />
+        <DownloadSectionMemo />
       </div>
 
-      <Footer />
+      <FooterMemo />
     </div>
   );
 }

@@ -6,10 +6,11 @@ import {
     ShoppingBag, Plus, Minus, Trash2, X, Check, Store, ShoppingCart,
     Moon, Sun, MapPin, Truck, Search, Clock, Heart, Share2, MessageCircle,
     Shield, CreditCard, Users, Filter, ChevronDown, CheckCircle2, BadgeCheck, Printer, Package,
-    Instagram, Facebook, Twitter, Mail, Globe, ExternalLink, ArrowRight, Phone,
+    Instagram, Facebook, Twitter, Mail, Globe, ExternalLink, ArrowRight, Phone, Smartphone,
     Sparkles, Shirt, Monitor, Utensils, Home, Dumbbell, Coffee, Zap, Palette, Gift
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 
 // ============================================================
 // 🛒 TYPES LOCAUX
@@ -28,7 +29,7 @@ type FilterOption = 'all' | 'available' | 'new';
 // ============================================================
 
 export default function ShopPage() {
-    const { slug } = useParams<{ slug: string }>();
+    const { slug, productId: routeProductId } = useParams<{ slug: string, productId?: string }>();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const [shop, setShop] = useState<Shop | null>(null);
@@ -109,16 +110,16 @@ export default function ShopPage() {
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [modalQuantity, setModalQuantity] = useState(1);
 
-    // 🕵️ Direct product opening
+    // 🕵️ Direct product opening (from Search Param OR Route Param)
     useEffect(() => {
-        const productId = searchParams.get('p');
-        if (productId && products.length > 0) {
-            const found = products.find(p => p.id === productId);
+        const pid = routeProductId || searchParams.get('p');
+        if (pid && products.length > 0) {
+            const found = products.find(p => p.id === pid);
             if (found) {
                 setSelectedProduct(found);
             }
         }
-    }, [searchParams, products]);
+    }, [routeProductId, searchParams, products]);
 
     // ✨ Particules stabilisées (évite recalcul Math.random à chaque render)
     const loadingParticles = useMemo(() =>
@@ -163,9 +164,54 @@ export default function ShopPage() {
     const [sortOption, setSortOption] = useState<SortOption>('default');
     const [filterOption, setFilterOption] = useState<FilterOption>('all');
     const [showFilters, setShowFilters] = useState(false);
+    const [showReferralModal, setShowReferralModal] = useState(false);
 
     // 📦 Smart Pagination State
     const [visibleCount, setVisibleCount] = useState(12);
+    const [searchPlaceholder, setSearchPlaceholder] = useState("Rechercher un produit...");
+
+    useEffect(() => {
+        const placeholders = ["iPhone 15 Pro Max...", "Basket Nike Jordan...", "Sac Louis Vuitton...", "Riz Basmati 5kg...", "Parfum Sauvage..."];
+        let i = 0;
+        const interval = setInterval(() => {
+            setSearchPlaceholder(`Rechercher "${placeholders[i]}"`);
+            i = (i + 1) % placeholders.length;
+        }, 3000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const [liveActivity, setLiveActivity] = useState<{ id: string; text: string } | null>(null);
+
+    // 🚀 LIVE ACTIVITY SIMULATOR (Social Proof)
+    useEffect(() => {
+        if (!shop || loading) return;
+
+        const NAMES = ['Mamadou', 'Aminata', 'Sekou', 'Fatoumata', 'Thierno', 'Abdoulaye', 'Aïssatou', 'Ibrahima', 'Ousmane', 'Mariam'];
+        const CITIES = ['Conakry', 'Bamako', 'Dakar', 'Abidjan', 'Lomé', 'Cotonou', 'Ouaga'];
+        const ACTIONS = ['vient de commander', 'est en train de regarder', 'a ajouté au panier'];
+
+        const showActivity = () => {
+            const name = NAMES[Math.floor(Math.random() * NAMES.length)];
+            const city = CITIES[Math.floor(Math.random() * CITIES.length)];
+            const action = ACTIONS[Math.floor(Math.random() * ACTIONS.length)];
+
+            if (products.length === 0) return;
+            const product = products[Math.floor(Math.random() * products.length)];
+
+            setLiveActivity({
+                id: Math.random().toString(),
+                text: `${name} (${city}) ${action} ${product.name}`
+            });
+
+            setTimeout(() => setLiveActivity(null), 5000);
+        };
+
+        const timer = setInterval(() => {
+            if (Math.random() > 0.7) showActivity();
+        }, 12000);
+
+        return () => clearInterval(timer);
+    }, [shop, loading, products]);
 
     // ✨ Mouse tracking for holographic effect
     useEffect(() => {
@@ -470,9 +516,28 @@ export default function ShopPage() {
 
     const formatPrice = (price: number | null | undefined) => {
         if (price === null || price === undefined) return "Prix sur demande";
-        if (price === 0) return "0 GNF";
-        return `${price.toLocaleString('fr-FR')} GNF`;
+        if (price === 0) return `0 ${shop?.currency || 'GNF'}`;
+        return `${price.toLocaleString('fr-FR')} ${shop?.currency || 'GNF'}`;
     };
+
+    // 🎨 Generates a vibrant gradient from a product's name so no-photo products look premium
+    const getProductPlaceholderStyle = (name: string): React.CSSProperties => {
+        const PALETTES = [
+            ['#f97316', '#ea580c'], // orange
+            ['#8b5cf6', '#7c3aed'], // violet
+            ['#06b6d4', '#0891b2'], // cyan
+            ['#10b981', '#059669'], // emerald
+            ['#ec4899', '#db2777'], // pink
+            ['#f59e0b', '#d97706'], // amber
+            ['#3b82f6', '#2563eb'], // blue
+            ['#ef4444', '#dc2626'], // red
+        ];
+        const idx = (name?.charCodeAt(0) || 0) % PALETTES.length;
+        const [c1, c2] = PALETTES[idx];
+        const initials = name?.slice(0, 2).toUpperCase() || '??';
+        return { background: `linear-gradient(135deg, ${c1}, ${c2})`, color: 'white', fontSize: '1.8rem', fontWeight: 900, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', letterSpacing: '-0.05em' } as React.CSSProperties;
+    };
+    const getProductInitials = (name: string) => name?.slice(0, 2).toUpperCase() || '??';
 
     const getPublicImageUrl = (path: string | null | undefined) => {
         if (!path) return null;
@@ -505,17 +570,17 @@ export default function ShopPage() {
     const getCategoryIcon = (category: string) => {
         const cat = category.toLowerCase();
         if (cat === 'tout') return <ShoppingBag size={24} />;
-        if (cat.includes('mode') || cat.includes('vêtement') || cat.includes('habit') || cat.includes('chaussure')) return <Shirt size={24} />;
-        if (cat.includes('élec') || cat.includes('info') || cat.includes('tech') || cat.includes('téléphone')) return <Monitor size={24} />;
-        if (cat.includes('beauté') || cat.includes('cosmétique') || cat.includes('soin') || cat.includes('douche') || cat.includes('gel')) return <Sparkles size={24} />;
-        if (cat.includes('alim') || cat.includes('food') || cat.includes('nourriture') || cat.includes('chocolat') || cat.includes('bonbon') || cat.includes('sucrerie')) return <Utensils size={24} />;
-        if (cat.includes('maison') || cat.includes('déco') || cat.includes('cuisine') || cat.includes('huile')) return <Home size={24} />;
-        if (cat.includes('sport') || cat.includes('fitness')) return <Dumbbell size={24} />;
-        if (cat.includes('café') || cat.includes('boisson') || cat.includes('thé') || cat.includes('jus')) return <Coffee size={24} />;
-        if (cat.includes('accessoire') || cat.includes('bijoux')) return <Zap size={24} />;
-        if (cat.includes('art') || cat.includes('design')) return <Palette size={24} />;
-        if (cat.includes('cadeau') || cat.includes('plaisir')) return <Gift size={24} />;
-        if (cat.includes('bébé') || cat.includes('enfant') || cat.includes('jouet')) return <Users size={24} />;
+        if (cat.includes('mode') || cat.includes('vêtement') || cat.includes('habit') || cat.includes('chaussure') || cat.includes('sac')) return <Shirt size={24} />;
+        if (cat.includes('élec') || cat.includes('info') || cat.includes('tech') || cat.includes('téléphone') || cat.includes('ordinateur')) return <Monitor size={24} />;
+        if (cat.includes('beauté') || cat.includes('cosmétique') || cat.includes('soin') || cat.includes('douche') || cat.includes('gel') || cat.includes('parfum') || cat.includes('maquillage')) return <Sparkles size={24} />;
+        if (cat.includes('alim') || cat.includes('food') || cat.includes('nourriture') || cat.includes('chocolat') || cat.includes('bonbon') || cat.includes('sucrerie') || cat.includes('épice')) return <Utensils size={24} />;
+        if (cat.includes('maison') || cat.includes('déco') || cat.includes('cuisine') || cat.includes('ménage') || cat.includes('entretien') || cat.includes('lessive') || cat.includes('savon') || cat.includes('dissolvant')) return <Home size={24} />;
+        if (cat.includes('sport') || cat.includes('fitness') || cat.includes('musculation')) return <Dumbbell size={24} />;
+        if (cat.includes('café') || cat.includes('boisson') || cat.includes('thé') || cat.includes('jus') || cat.includes('eau') || cat.includes('vin')) return <Coffee size={24} />;
+        if (cat.includes('accessoire') || cat.includes('bijoux') || cat.includes('montre')) return <Zap size={24} />;
+        if (cat.includes('art') || cat.includes('design') || cat.includes('peinture')) return <Palette size={24} />;
+        if (cat.includes('cadeau') || cat.includes('plaisir') || cat.includes('fête')) return <Gift size={24} />;
+        if (cat.includes('bébé') || cat.includes('enfant') || cat.includes('jouet') || cat.includes('scolaire')) return <Users size={24} />;
         return <Package size={24} />;
     };
 
@@ -611,6 +676,13 @@ export default function ShopPage() {
         }
 
         switch (sortOption) {
+            case 'popular':
+                result.sort((a, b) => {
+                    const viewsA = productViews[a.id] || 0;
+                    const viewsB = productViews[b.id] || 0;
+                    return viewsB - viewsA;
+                });
+                break;
             case 'price-asc':
                 result.sort((a, b) => (a.price_sale || 0) - (b.price_sale || 0));
                 break;
@@ -624,6 +696,12 @@ export default function ShopPage() {
 
         return result;
     }, [products, searchQuery, selectedCategory, sortOption, filterOption, productViews]);
+    const handleCloseProductModal = useCallback(() => {
+        setSelectedProduct(null);
+        if (slug) {
+            navigate(`/s/${slug}`, { replace: true });
+        }
+    }, [slug, navigate]);
 
     // 📊 ULTRA-PREMIUM PRODUCTS GRID
     const productGrid = useMemo(() => {
@@ -660,6 +738,7 @@ export default function ShopPage() {
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: Math.min(index * 0.05, 0.6) }}
                                 onClick={() => {
+                                    navigate(`/s/${shop?.slug}/p/${product.id}`, { replace: true });
                                     setSelectedProduct(product);
                                     setModalQuantity(1);
                                     trackEvent('view_product', product.id, product.category || undefined);
@@ -683,8 +762,8 @@ export default function ShopPage() {
                                             loading="lazy"
                                         />
                                     ) : (
-                                        <div style={{ width: '100%', height: '100%', backgroundColor: 'var(--bg-tertiary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                            <Package size={42} style={{ opacity: 0.2 }} />
+                                        <div style={{ position: 'absolute', inset: 0, ...getProductPlaceholderStyle(product.name) }}>
+                                            {getProductInitials(product.name)}
                                         </div>
                                     )}
 
@@ -708,42 +787,61 @@ export default function ShopPage() {
                                 </div>
 
                                 <div className="card-content">
-                                    {product.category && (
-                                        <span className="product-category">{product.category}</span>
-                                    )}
+                                    <div className="product-meta-row">
+                                        {product.category && (
+                                            <span className="product-category">{product.category}</span>
+                                        )}
+                                        {/* 🏷️ DYNAMIC BADGES */}
+                                        {(productViews[product.id] || 0) > 100 ? (
+                                            <span className="product-badge badge-hot">🔥 Meilleure Vente</span>
+                                        ) : product.created_at && (new Date().getTime() - new Date(product.created_at).getTime() < 7 * 24 * 60 * 60 * 1000) ? (
+                                            <span className="product-badge badge-new">✨ Nouveau</span>
+                                        ) : null}
+                                    </div>
                                     <h3 className="product-title">{product.name}</h3>
 
                                     <div className="product-price-row">
-                                        <span className="product-price">{formatPrice(product.price_sale)}</span>
-                                        {product.price_regular && product.price_regular > product.price_sale && (
-                                            <span className="product-price-old">{formatPrice(product.price_regular)}</span>
-                                        )}
+                                        <div className="price-glass-container">
+                                            <span className="product-price">{formatPrice(product.price_sale)}</span>
+                                            {product.price_regular && product.price_regular > product.price_sale && (
+                                                <span className="product-price-old">{formatPrice(product.price_regular)}</span>
+                                            )}
+                                        </div>
                                     </div>
 
                                     {quantity > 0 ? (
-                                        <div className="btn-add-cart qty-mode" onClick={(e) => e.stopPropagation()}>
-                                            <button className="qty-btn-mini" onClick={() => updateQuantity(product.id, -1)}>
-                                                <Minus size={18} />
+                                        <div className="card-qty-control" onClick={(e) => e.stopPropagation()}>
+                                            <button className="qty-btn" onClick={() => updateQuantity(product.id, -1)}>
+                                                <Minus size={16} />
                                             </button>
-                                            <span className="qty-display">{quantity}</span>
-                                            <button className="qty-btn-mini" onClick={() => updateQuantity(product.id, 1)}>
-                                                <Plus size={18} />
+                                            <span className="qty-val">{quantity}</span>
+                                            <button className="qty-btn" onClick={() => updateQuantity(product.id, 1)}>
+                                                <Plus size={16} />
                                             </button>
                                         </div>
                                     ) : (
-                                        <button
-                                            className={`btn-add-cart ${addedId === product.id ? 'added' : ''}`}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                addToCart(product);
-                                            }}
-                                        >
-                                            {addedId === product.id ? (
-                                                <><Check size={18} /> <span>Ajouté !</span></>
-                                            ) : (
-                                                <><ShoppingCart size={18} /> <span>Ajouter</span></>
-                                            )}
-                                        </button>
+                                        <div className="card-actions-wrapper">
+                                            <button
+                                                className="btn-card-add"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    addToCart(product);
+                                                }}
+                                            >
+                                                <Plus size={18} />
+                                                <span>Ajouter</span>
+                                            </button>
+                                            <button
+                                                className="btn-card-buy"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    addToCart(product);
+                                                    setIsCartOpen(true);
+                                                }}
+                                            >
+                                                Acheter
+                                            </button>
+                                        </div>
                                     )}
 
                                     {(shop?.whatsapp || shop?.phone) && (
@@ -1289,6 +1387,11 @@ export default function ShopPage() {
             // 3. Ouvrir WhatsApp
             openWhatsApp(data?.id);
 
+            // 3.1 Téléchargement automatique du ticket (OPTIONNEL, mais demandé par utilisateur)
+            if (blob) {
+                downloadTicket(blob, data?.short_ref || data?.id?.slice(0, 8));
+            }
+
             // 4. Nettoyage
             setSubmittedOrderId(data?.id || null);
             setSubmittedOrderRef(data?.short_ref || (data?.id ? data.id.slice(0, 8).toUpperCase() : null));
@@ -1414,6 +1517,57 @@ export default function ShopPage() {
 
     return (
         <div className="shop-container">
+            <Helmet>
+                <title>{selectedProduct ? `${selectedProduct.name} | Boutique ${shop.name} Velmo` : `${shop.name} - Boutique en ligne à ${shop.location || 'Conakry'}`}</title>
+                <meta name="description" content={selectedProduct
+                    ? `${selectedProduct.name} - ${selectedProduct.description || ''}. Disponible chez ${shop.name} à ${shop.location || 'Conakry'}. Prix: ${formatPrice(selectedProduct.price_sale)}.`
+                    : `${shop.name}: ${shop.description || `Boutique de ${shop.category || 'qualité'} à ${shop.location || 'Conakry'}`}. Commandez en ligne et faites-vous livrer partout en Guinée.`}
+                />
+                <meta property="og:title" content={selectedProduct ? selectedProduct.name : shop.name} />
+                <meta property="og:description" content={selectedProduct ? (selectedProduct.description || '') : (shop.description || '')} />
+                <meta property="og:image" content={selectedProduct ? getPublicImageUrl(selectedProduct.photo_url) : (getPublicImageUrl(getShopLogo()) || '')} />
+                <meta property="og:type" content="product" />
+                <meta name="keywords" content={`${shop.name}, ${shop.location || 'Conakry'}, Guinée, boutique en ligne, ${categories.join(', ')}, velmo market, ${selectedProduct ? selectedProduct.name : ''}`} />
+                <link rel="canonical" href={`https://velmo.org/s/${shop.slug}${selectedProduct ? `/p/${selectedProduct.id}` : ''}`} />
+
+                {/* 🛡️ STRUCTURED DATA: JSON-LD */}
+                <script type="application/ld+json">
+                    {JSON.stringify(
+                        selectedProduct ? {
+                            "@context": "https://schema.org/",
+                            "@type": "Product",
+                            "name": selectedProduct.name,
+                            "image": getPublicImageUrl(selectedProduct.photo_url),
+                            "description": selectedProduct.description || '',
+                            "brand": {
+                                "@type": "Brand",
+                                "name": shop.name
+                            },
+                            "offers": {
+                                "@type": "Offer",
+                                "priceCurrency": "GNF",
+                                "price": selectedProduct.price_sale,
+                                "availability": selectedProduct.is_active ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+                                "url": `https://velmo.org/s/${shop.slug}/p/${selectedProduct.id}`
+                            }
+                        } : {
+                            "@context": "https://schema.org/",
+                            "@type": "Store",
+                            "name": shop.name,
+                            "description": shop.description || '',
+                            "image": getPublicImageUrl(getShopLogo()),
+                            "telephone": shop.phone || shop.whatsapp,
+                            "address": {
+                                "@type": "PostalAddress",
+                                "streetAddress": shop.address || '',
+                                "addressLocality": shop.location || 'Conakry',
+                                "addressCountry": "GN"
+                            },
+                            "url": `https://velmo.org/s/${shop.slug}`
+                        }
+                    )}
+                </script>
+            </Helmet>
             {/* ✨ Particles Background */}
             <div className="particles-container">
                 {bgParticles.map((p, i) => (
@@ -1444,6 +1598,21 @@ export default function ShopPage() {
                 </div>
 
                 <div className="nav-actions-area">
+                    <Link
+                        to="/search"
+                        className="btn-nav-action marketplace-btn"
+                        title="Explorer le Marketplace"
+                    >
+                        <ShoppingBag size={20} />
+                        <span className="btn-label-desktop">Marketplace</span>
+                    </Link>
+                    <button
+                        onClick={() => setShowReferralModal(true)}
+                        className="btn-nav-action referral-glow"
+                        title="Parrainez & Gagnez"
+                    >
+                        <Gift size={20} className="text-orange-500" />
+                    </button>
                     <button
                         onClick={() => setIsTrackOpen(true)}
                         className="btn-nav-action"
@@ -1592,6 +1761,24 @@ export default function ShopPage() {
                             {shop.description}
                         </motion.p>
                     )}
+
+                    {/* 🎁 PROMINENT REFERRAL BANNER */}
+                    <motion.div
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: 0.9, type: "spring" }}
+                        className="referral-banner-mini"
+                        onClick={() => setShowReferralModal(true)}
+                    >
+                        <div className="banner-gift-icon">
+                            <Gift size={24} />
+                        </div>
+                        <div className="banner-text">
+                            <h4>Parrainez & Gagnez des Cadeaux ! 🎁</h4>
+                            <p>Partagez {shop.name} et recevez des récompenses exclusives.</p>
+                        </div>
+                        <ArrowRight size={20} className="banner-arrow" />
+                    </motion.div>
                 </div>
 
                 {/* 🔍 Premium Integrated Search & Filter Row */}
@@ -1601,15 +1788,29 @@ export default function ShopPage() {
                     transition={{ delay: 0.8 }}
                     className="search-filter-row"
                 >
-                    <div className="search-container" style={{ position: 'relative' }}>
-                        <Search className="search-icon" size={22} />
+                    <div className="search-container">
+                        <motion.div
+                            className="search-icon-wrapper"
+                            animate={{ scale: [1, 1.1, 1] }}
+                            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                        >
+                            <Search size={24} />
+                        </motion.div>
                         <input
                             type="text"
                             className="search-input"
-                            placeholder="Rechercher un produit..."
+                            placeholder={searchPlaceholder}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
+                        {searchQuery && (
+                            <button
+                                className="btn-clear-search"
+                                onClick={() => setSearchQuery('')}
+                            >
+                                <X size={18} />
+                            </button>
+                        )}
                         {/* 🔍 Instant Search Dropdown */}
                         <AnimatePresence>
                             {searchQuery.length > 0 && (
@@ -1618,21 +1819,6 @@ export default function ShopPage() {
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0, scale: 0.95 }}
                                     className="search-dropdown"
-                                    style={{
-                                        position: 'absolute',
-                                        top: 'calc(100% + 12px)',
-                                        left: 0,
-                                        right: 0,
-                                        backgroundColor: 'var(--bg-secondary)',
-                                        borderRadius: '24px',
-                                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-                                        zIndex: 100,
-                                        border: '1px solid var(--border-color)',
-                                        maxHeight: '60vh',
-                                        overflowY: 'auto',
-                                        padding: '0.75rem',
-                                        backdropFilter: 'blur(10px)'
-                                    }}
                                 >
                                     {filteredAndSortedProducts.length > 0 ? (
                                         filteredAndSortedProducts.map(product => (
@@ -1642,39 +1828,40 @@ export default function ShopPage() {
                                                     setSelectedProduct(product);
                                                     setSearchQuery('');
                                                 }}
-                                                style={{
-                                                    display: 'flex',
-                                                    gap: '12px',
-                                                    padding: '12px',
-                                                    borderRadius: '16px',
-                                                    cursor: 'pointer',
-                                                    alignItems: 'center',
-                                                    transition: 'background 0.2s ease'
-                                                }}
                                                 className="search-result-item"
                                             >
-                                                <div style={{ width: '48px', height: '48px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0 }}>
+                                                <div className="search-result-img">
                                                     {product.photo_url ? (
-                                                        <img src={getPublicImageUrl(product.photo_url) || ''} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                        <img src={getPublicImageUrl(product.photo_url) || ''} alt={product.name} />
                                                     ) : (
-                                                        <div style={{ width: '100%', height: '100%', backgroundColor: 'var(--bg-tertiary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                        <div className="search-result-fallback">
                                                             <Package size={20} />
                                                         </div>
                                                     )}
                                                 </div>
-                                                <div style={{ flex: 1 }}>
-                                                    <h4 style={{ fontSize: '0.95rem', margin: 0, color: 'var(--text-primary)', fontWeight: 700 }}>{product.name}</h4>
-                                                    <p style={{ fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 800 }}>{formatPrice(product.price_sale)}</p>
+                                                <div className="search-result-info">
+                                                    <h4>{product.name}</h4>
+                                                    <p>{formatPrice(product.price_sale)}</p>
                                                 </div>
-                                                <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
+                                                <div className="search-result-plus">
                                                     <Plus size={18} />
                                                 </div>
                                             </div>
                                         ))
                                     ) : (
-                                        <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-                                            <Search size={32} style={{ marginBottom: '1rem', opacity: 0.3 }} />
-                                            <p style={{ fontWeight: 600 }}>Pas de produit correspondant</p>
+                                        <div className="search-empty-state">
+                                            <div className="search-empty-icon">
+                                                <Search size={40} />
+                                            </div>
+                                            <p className="search-empty-text">Pas de produit ici...</p>
+                                            <Link
+                                                to="/search"
+                                                className="btn-search-global"
+                                                onClick={() => trackEvent('search_global_click', searchQuery)}
+                                            >
+                                                <Globe size={16} />
+                                                Chercher dans tout le Marketplace
+                                            </Link>
                                         </div>
                                     )}
                                 </motion.div>
@@ -1742,127 +1929,132 @@ export default function ShopPage() {
                 </AnimatePresence>
 
                 {/* 🏷️ Categories: Premium Visual Grid */}
-                {categories.length > 1 && (
-                    <div className="category-pills-container">
-                        <div className="category-visual-grid">
-                            {categories.map(cat => (
-                                <motion.div
-                                    key={cat as string}
-                                    whileHover={{ y: -5 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    onClick={() => handleCategoryClick(cat as string)}
-                                    className={`category-card ${selectedCategory === cat ? 'active' : ''}`}
-                                >
-                                    <div className="cat-icon">
-                                        {getCategoryIcon(cat as string)}
-                                    </div>
-                                    <span className="cat-name">{cat as string}</span>
-                                </motion.div>
-                            ))}
+                {
+                    categories.length > 1 && (
+                        <div className="category-pills-container">
+                            <div className="category-visual-grid">
+                                {categories.map(cat => (
+                                    <motion.div
+                                        key={cat as string}
+                                        whileHover={{ y: -5 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={() => handleCategoryClick(cat as string)}
+                                        className={`category-card ${selectedCategory === cat ? 'active' : ''}`}
+                                    >
+                                        <div className="cat-icon">
+                                            {getCategoryIcon(cat as string)}
+                                        </div>
+                                        <span className="cat-name">{cat as string}</span>
+                                    </motion.div>
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                )}
-            </header>
+                    )
+                }
+            </header >
 
             {/* ===================== PRODUCTS GRID ===================== */}
-            <section className="products-section">
+            < section className="products-section" >
                 {/* ✨ Section Intelligente "Pour Vous" */}
-                {!searchQuery && selectedCategory === 'Tout' && recommendedProducts.length > 0 && (
-                    <div className="recommendations-container">
-                        {/* Header section */}
-                        <div className="rec-section-header">
-                            <div className="rec-section-title-group">
-                                <div className="rec-title-accent" />
-                                <div className="rec-title-text">
-                                    <h3 className="rec-section-title">
-                                        ✨ Sélection pour vous
-                                    </h3>
-                                    <p className="rec-section-subtitle">
-                                        Basé sur vos préférences et produits populaires
-                                    </p>
+                {
+                    !searchQuery && selectedCategory === 'Tout' && recommendedProducts.length > 0 && (
+                        <div className="recommendations-container">
+                            {/* Header section */}
+                            <div className="rec-section-header">
+                                <div className="rec-section-title-group">
+                                    <div className="rec-title-accent" />
+                                    <div className="rec-title-text">
+                                        <h3 className="rec-section-title">
+                                            ✨ Sélection pour vous
+                                        </h3>
+                                        <p className="rec-section-subtitle">
+                                            Basé sur vos préférences et produits populaires
+                                        </p>
+                                    </div>
                                 </div>
+                                <span className="rec-count-badge">{recommendedProducts.length} produit{recommendedProducts.length > 1 ? 's' : ''}</span>
                             </div>
-                            <span className="rec-count-badge">{recommendedProducts.length} produit{recommendedProducts.length > 1 ? 's' : ''}</span>
-                        </div>
 
-                        {/* Scroll horizontal */}
-                        <div className="rec-scroll">
-                            {recommendedProducts.map((product) => {
-                                const isHot = (productViews[product.id] || 0) >= 3;
-                                const isFav = favorites.includes(product.id);
-                                const isNew = product.created_at &&
-                                    (Date.now() - new Date(product.created_at).getTime()) < 7 * 86400000;
-                                const inCart = cart.find(i => i.product.id === product.id);
+                            {/* Scroll horizontal */}
+                            <div className="rec-scroll">
+                                {recommendedProducts.map((product) => {
+                                    const isHot = (productViews[product.id] || 0) >= 3;
+                                    const isFav = favorites.includes(product.id);
+                                    const isNew = product.created_at &&
+                                        (Date.now() - new Date(product.created_at).getTime()) < 7 * 86400000;
+                                    const inCart = cart.find(i => i.product.id === product.id);
 
-                                return (
-                                    <motion.div
-                                        key={`rec-${product.id}`}
-                                        className="rec-card-v2"
-                                        whileTap={{ scale: 0.96 }}
-                                        onClick={() => {
-                                            setSelectedProduct(product);
-                                            setModalQuantity(1);
-                                        }}
-                                    >
-                                        {/* Image */}
-                                        <div className="rec-img-v2">
-                                            {product.photo_url ? (
-                                                <img
-                                                    src={getPublicImageUrl(product.photo_url) || ''}
-                                                    alt={product.name}
-                                                    loading="lazy"
-                                                    onError={(e) => {
-                                                        (e.target as HTMLImageElement).src = 'https://via.placeholder.com/200?text=Produit';
-                                                    }}
-                                                />
-                                            ) : (
-                                                <div className="rec-img-placeholder">
-                                                    <Package size={28} />
-                                                </div>
-                                            )}
-                                            {/* Badge overlay: priorité fav > hot > new */}
-                                            {isFav ? (
-                                                <span className="rec-overlay-badge fav">❤️ Favori</span>
-                                            ) : isHot ? (
-                                                <span className="rec-overlay-badge hot">🔥 Populaire</span>
-                                            ) : isNew ? (
-                                                <span className="rec-overlay-badge fresh">✦ Nouveau</span>
-                                            ) : null}
-                                        </div>
-
-                                        {/* Body */}
-                                        <div className="rec-body">
-                                            {product.category && (
-                                                <span className="rec-category">{product.category}</span>
-                                            )}
-                                            <p className="rec-name">{product.name}</p>
-                                            <p className="rec-price">{formatPrice(product.price_sale)}</p>
-                                            <button
-                                                className="rec-add-btn"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    addToCart(product);
-                                                }}
-                                            >
-                                                {inCart ? (
-                                                    <><Check size={13} /> Dans le panier</>
+                                    return (
+                                        <motion.div
+                                            key={`rec-${product.id}`}
+                                            className="rec-card-v2"
+                                            whileTap={{ scale: 0.96 }}
+                                            onClick={() => {
+                                                navigate(`/s/${shop?.slug}/p/${product.id}`, { replace: true });
+                                                setSelectedProduct(product);
+                                                setModalQuantity(1);
+                                            }}
+                                        >
+                                            {/* Image */}
+                                            <div className="rec-img-v2">
+                                                {product.photo_url ? (
+                                                    <img
+                                                        src={getPublicImageUrl(product.photo_url) || ''}
+                                                        alt={product.name}
+                                                        loading="lazy"
+                                                        onError={(e) => {
+                                                            (e.target as HTMLImageElement).src = 'https://via.placeholder.com/200?text=Produit';
+                                                        }}
+                                                    />
                                                 ) : (
-                                                    <><Plus size={13} /> Ajouter</>
+                                                    <div className="rec-img-placeholder" style={getProductPlaceholderStyle(product.name)}>
+                                                        {getProductInitials(product.name)}
+                                                    </div>
                                                 )}
-                                            </button>
-                                        </div>
-                                    </motion.div>
-                                );
-                            })}
+                                                {/* Badge overlay: priorité fav > hot > new */}
+                                                {isFav ? (
+                                                    <span className="rec-overlay-badge fav">❤️ Favori</span>
+                                                ) : isHot ? (
+                                                    <span className="rec-overlay-badge hot">🔥 Populaire</span>
+                                                ) : isNew ? (
+                                                    <span className="rec-overlay-badge fresh">✦ Nouveau</span>
+                                                ) : null}
+                                            </div>
+
+                                            {/* Body */}
+                                            <div className="rec-body">
+                                                {product.category && (
+                                                    <span className="rec-category">{product.category}</span>
+                                                )}
+                                                <p className="rec-name">{product.name}</p>
+                                                <p className="rec-price">{formatPrice(product.price_sale)}</p>
+                                                <button
+                                                    className="rec-add-btn"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        addToCart(product);
+                                                    }}
+                                                >
+                                                    {inCart ? (
+                                                        <><Check size={13} /> Dans le panier</>
+                                                    ) : (
+                                                        <><Plus size={13} /> Ajouter</>
+                                                    )}
+                                                </button>
+                                            </div>
+                                        </motion.div>
+                                    );
+                                })}
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )
+                }
 
                 {productGrid}
-            </section>
+            </section >
 
             {/* ===================== SHOP INFORMATION CARD ===================== */}
-            <section className="shop-info-section">
+            < section className="shop-info-section" >
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -2049,10 +2241,10 @@ export default function ShopPage() {
                         </button>
                     </div>
                 </motion.div>
-            </section>
+            </section >
 
             {/* ===================== TRUST SECTION ===================== */}
-            <section className="trust-section">
+            < section className="trust-section" >
                 <h3>Pourquoi commander chez nous ?</h3>
                 <div className="trust-grid">
                     <div className="trust-card">
@@ -2071,61 +2263,63 @@ export default function ShopPage() {
                         <p>Assistance 7j/7</p>
                     </div>
                 </div>
-            </section>
+            </section >
 
             {/* ===================== FOOTER ===================== */}
             {/* 📱 Mobile Floating Nav (Hidden when modal open) */}
-            {!selectedProduct && !isCartOpen && !isTrackOpen && (
-                <div className="bottom-nav">
-                    <button
-                        className={`nav-item ${selectedCategory === 'Tout' ? 'active' : ''}`}
-                        onClick={() => {
-                            setSelectedCategory('Tout');
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                        }}
-                    >
-                        <Home size={22} />
-                        <span>Accueil</span>
-                    </button>
-                    <button
-                        className={`nav-item ${showFilters ? 'active' : ''}`}
-                        onClick={() => {
-                            setShowFilters(true);
-                            const cats = document.querySelector('.category-pills-container');
-                            cats?.scrollIntoView({ behavior: 'smooth' });
-                        }}
-                    >
-                        <Filter size={22} />
-                        <span>Explorer</span>
-                    </button>
-                    <button
-                        className="nav-item"
-                        onClick={() => setIsCartOpen(true)}
-                    >
-                        <div className="cart-nav-icon">
-                            <ShoppingCart size={22} />
-                            {cart.length > 0 && (
-                                <span className="cart-nav-badge">{totalItems}</span>
-                            )}
-                        </div>
-                        <span>Panier</span>
-                    </button>
-                    <button
-                        className={`nav-item ${isTrackOpen ? 'active' : ''}`}
-                        onClick={() => setIsTrackOpen(true)}
-                    >
-                        <Package size={22} />
-                        <span>Suivi</span>
-                    </button>
-                    <button className="nav-item" onClick={() => {
-                        const info = document.querySelector('.shop-info-section');
-                        info?.scrollIntoView({ behavior: 'smooth' });
-                    }}>
-                        <Store size={22} />
-                        <span>Infos</span>
-                    </button>
-                </div>
-            )}
+            {
+                !selectedProduct && !isCartOpen && !isTrackOpen && (
+                    <div className="bottom-nav">
+                        <button
+                            className={`nav-item ${selectedCategory === 'Tout' ? 'active' : ''}`}
+                            onClick={() => {
+                                setSelectedCategory('Tout');
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }}
+                        >
+                            <Home size={22} />
+                            <span>Accueil</span>
+                        </button>
+                        <button
+                            className={`nav-item ${showFilters ? 'active' : ''}`}
+                            onClick={() => {
+                                setShowFilters(true);
+                                const cats = document.querySelector('.category-pills-container');
+                                cats?.scrollIntoView({ behavior: 'smooth' });
+                            }}
+                        >
+                            <Filter size={22} />
+                            <span>Explorer</span>
+                        </button>
+                        <button
+                            className="nav-item"
+                            onClick={() => setIsCartOpen(true)}
+                        >
+                            <div className="cart-nav-icon">
+                                <ShoppingCart size={22} />
+                                {cart.length > 0 && (
+                                    <span className="cart-nav-badge">{totalItems}</span>
+                                )}
+                            </div>
+                            <span>Panier</span>
+                        </button>
+                        <button
+                            className={`nav-item ${isTrackOpen ? 'active' : ''}`}
+                            onClick={() => setIsTrackOpen(true)}
+                        >
+                            <Package size={22} />
+                            <span>Suivi</span>
+                        </button>
+                        <button className="nav-item" onClick={() => {
+                            const info = document.querySelector('.shop-info-section');
+                            info?.scrollIntoView({ behavior: 'smooth' });
+                        }}>
+                            <Store size={22} />
+                            <span>Infos</span>
+                        </button>
+                    </div>
+                )
+            }
 
             <footer className="shop-footer">
                 <div className="footer-logo">
@@ -2140,19 +2334,22 @@ export default function ShopPage() {
             </footer>
 
             {/* ===================== FLOATING CART BUTTON ===================== */}
-            {cart.length > 0 && (
-                <motion.button
-                    className="cart-floating"
-                    onClick={() => setIsCartOpen(true)}
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    whileTap={{ scale: 0.95 }}
-                >
-                    <ShoppingCart size={22} />
-                    <span className="cart-badge">{totalItems}</span>
-                    <span>{formatPrice(totalAmount)}</span>
-                </motion.button>
-            )}
+            {
+                cart.length > 0 && (
+                    <motion.button
+                        className="cart-floating"
+                        onClick={() => setIsCartOpen(true)}
+                        initial={{ scale: 0, y: 100 }}
+                        animate={{ scale: 1, y: 0 }}
+                        exit={{ scale: 0, y: 100 }}
+                        whileTap={{ scale: 0.95 }}
+                    >
+                        <div className="cart-badge">{totalItems}</div>
+                        <ShoppingCart size={20} />
+                        <span className="cart-total-fab">{formatPrice(totalAmount)}</span>
+                    </motion.button>
+                )
+            }
 
             {/* ===================== CART SHEET ===================== */}
             <AnimatePresence>
@@ -2246,6 +2443,42 @@ export default function ShopPage() {
                                                 <span style={{ color: '#888' }}>TOTAL À PAYER</span>
                                                 <strong style={{ color: '#fff', fontSize: '1.4rem' }}>{formatPrice(submittedTotal)}</strong>
                                             </div>
+                                        </div>
+                                    )}
+
+                                    {/* 🧡 ORANGE MONEY ONE-TAP PAYMENT (MOBILE ONLY) */}
+                                    {/Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent) && (shop?.phone || shop?.whatsapp) && (
+                                        <div style={{ padding: '4px', background: 'rgba(255, 107, 0, 0.1)', borderRadius: '20px', border: '1px solid rgba(255, 107, 0, 0.2)', marginBottom: '16px' }}>
+                                            <a
+                                                href={`tel:*144*2*1*${(shop.whatsapp || shop.phone || "").replace(/\D/g, "")}*${submittedTotal}%23`}
+                                                style={{
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    gap: '4px',
+                                                    padding: '16px',
+                                                    background: 'linear-gradient(135deg, #FF6600, #CC5500)',
+                                                    color: 'white',
+                                                    borderRadius: '16px',
+                                                    fontWeight: 900,
+                                                    fontSize: '1.1rem',
+                                                    cursor: 'pointer',
+                                                    border: 'none',
+                                                    boxShadow: '0 8px 24px rgba(255, 107, 0, 0.4)',
+                                                    width: '100%',
+                                                    textDecoration: 'none',
+                                                    textAlign: 'center'
+                                                }}
+                                            >
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                    <Smartphone size={24} fill="currentColor" />
+                                                    PAYER PAR ORANGE MONEY
+                                                </div>
+                                                <span style={{ fontSize: '0.7rem', opacity: 0.9, fontWeight: 700, letterSpacing: '0.05em' }}>
+                                                    (Un clic, puis tapez votre code secret)
+                                                </span>
+                                            </a>
                                         </div>
                                     )}
 
@@ -2349,7 +2582,9 @@ export default function ShopPage() {
                                                     {item.product.photo_url ? (
                                                         <img src={getPublicImageUrl(item.product.photo_url) || ''} alt={item.product.name} />
                                                     ) : (
-                                                        <Store size={24} />
+                                                        <div style={{ ...getProductPlaceholderStyle(item.product.name), width: '100%', height: '100%', borderRadius: '14px', fontSize: '1rem' }}>
+                                                            {getProductInitials(item.product.name)}
+                                                        </div>
                                                     )}
                                                 </div>
                                                 <div className="cart-item-info">
@@ -2523,7 +2758,7 @@ export default function ShopPage() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            onClick={() => setSelectedProduct(null)}
+                            onClick={handleCloseProductModal}
                         />
                         <div className="product-modal-container">
                             <motion.div
@@ -2533,7 +2768,7 @@ export default function ShopPage() {
                                 exit={{ y: '100%' }}
                                 transition={{ type: 'spring', damping: 25, stiffness: 300 }}
                             >
-                                <button className="btn-close-modal" onClick={() => setSelectedProduct(null)}>
+                                <button className="btn-close-modal" onClick={handleCloseProductModal}>
                                     <X size={24} />
                                 </button>
                                 <button
@@ -2554,7 +2789,9 @@ export default function ShopPage() {
                                             alt={selectedProduct.name}
                                         />
                                     ) : (
-                                        <Store size={64} />
+                                        <div style={{ ...getProductPlaceholderStyle(selectedProduct.name), position: 'absolute', inset: 0, borderRadius: '0' }}>
+                                            <span style={{ fontSize: '4rem' }}>{getProductInitials(selectedProduct.name)}</span>
+                                        </div>
                                     )}
                                 </div>
 
@@ -2628,7 +2865,9 @@ export default function ShopPage() {
                                                             {rec.photo_url ? (
                                                                 <img src={getPublicImageUrl(rec.photo_url) || ''} alt={rec.name} />
                                                             ) : (
-                                                                <Package size={24} style={{ opacity: 0.2 }} />
+                                                                <div style={{ ...getProductPlaceholderStyle(rec.name), width: '100%', height: '100%', borderRadius: '12px', fontSize: '1rem' }}>
+                                                                    {getProductInitials(rec.name)}
+                                                                </div>
                                                             )}
                                                         </div>
                                                         <p className="rec-item-name">{rec.name}</p>
@@ -2703,6 +2942,125 @@ export default function ShopPage() {
                     </motion.div>
                 )}
             </AnimatePresence>
-        </div>
+
+            {/* 🌍 MARKETPLACE DISCOVERY SECTION */}
+            <div className="container">
+                <section className="marketplace-discovery">
+                    <div className="discovery-bg-glow" />
+                    <h3 className="discovery-title">Découvrez un monde de boutiques</h3>
+                    <p className="discovery-text">
+                        Velmo rassemble les meilleurs petits commerces d'Afrique.
+                        Qualité, confiance et livraison rapide garanties.
+                    </p>
+                    <Link to="/search" className="btn-discovery-explore">
+                        Explorer le Marketplace
+                        <ArrowRight size={20} />
+                    </Link>
+
+                    <div className="discovery-brands">
+                        <span className="brand-item">Mode</span>
+                        <span className="brand-item">Tech</span>
+                        <span className="brand-item">Maison</span>
+                        <span className="brand-item">Beauté</span>
+                    </div>
+                </section>
+            </div>
+
+            {/* 🔝 BACK TO TOP */}
+            <motion.button
+                className="btn-back-to-top"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: scrolled ? 1 : 0, y: scrolled ? 0 : 20 }}
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            >
+                <ChevronDown size={24} style={{ transform: 'rotate(180deg)' }} />
+            </motion.button>
+
+            {/* 🚀 LIVE ACTIVITY TOAST */}
+            <AnimatePresence>
+                {liveActivity && (
+                    <motion.div
+                        className="live-activity-toast"
+                        initial={{ opacity: 0, x: -50, scale: 0.8 }}
+                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                        exit={{ opacity: 0, x: -50, scale: 0.8 }}
+                    >
+                        <div className="live-toast-dot" />
+                        <span className="live-toast-text">{liveActivity.text}</span>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+            <AnimatePresence>
+                {showReferralModal && (
+                    <motion.div
+                        className="modal-overlay"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setShowReferralModal(false)}
+                    >
+                        <motion.div
+                            className="referral-modal-card"
+                            initial={{ y: 100, scale: 0.9 }}
+                            animate={{ y: 0, scale: 1 }}
+                            exit={{ y: 100, scale: 0.9 }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className="modal-header">
+                                <div className="header-icon-box">
+                                    <Gift size={32} />
+                                </div>
+                                <h3 className="modal-title">Parrainez un ami !</h3>
+                                <p className="modal-subtitle">Faites découvrir la boutique et gagnez des cadeaux !</p>
+                                <button className="modal-close" onClick={() => setShowReferralModal(false)}>
+                                    <X size={24} />
+                                </button>
+                            </div>
+
+                            <div className="referral-content">
+                                <div className="referral-info-grid">
+                                    <div className="referral-step">
+                                        <div className="step-num">1</div>
+                                        <p>Partagez le lien de la boutique à vos amis</p>
+                                    </div>
+                                    <div className="referral-step">
+                                        <div className="step-num">2</div>
+                                        <p>Ils découvrent nos pépites & commandent</p>
+                                    </div>
+                                    <div className="referral-step">
+                                        <div className="step-num">3</div>
+                                        <p>Vous recevez des cadeaux exclusifs !</p>
+                                    </div>
+                                </div>
+
+                                <div className="share-actions">
+                                    <button
+                                        className="btn-share-whatsapp"
+                                        onClick={() => {
+                                            const text = `Regarde ce que j'ai trouvé sur ${shop.name} ! 😍 Voici le lien : ${window.location.origin}/s/${shop.slug}`;
+                                            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+                                        }}
+                                    >
+                                        <MessageCircle size={20} fill="currentColor" /> Partager sur WhatsApp
+                                    </button>
+
+                                    <button
+                                        className="btn-copy-link"
+                                        onClick={() => {
+                                            navigator.clipboard.writeText(`${window.location.origin}/s/${shop.slug}`);
+                                            setCopiedLink(true);
+                                            setTimeout(() => setCopiedLink(false), 2000);
+                                        }}
+                                    >
+                                        {copiedLink ? <Check size={20} /> : <Share2 size={20} />}
+                                        {copiedLink ? "Lien copié !" : "Copier le lien"}
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div >
     );
 }

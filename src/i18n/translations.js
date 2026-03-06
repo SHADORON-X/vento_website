@@ -4,11 +4,12 @@ export const translations = {
       features: 'Fonctionnalités',
       marketplace: 'Marketplace',
       faq: 'FAQ',
+      pricing: 'Tarifs',
       download: 'Télécharger',
       createAccount: 'Créer un compte',
     },
     hero: {
-      badge: "Marketplace #1 · Afrique de l'Ouest · Live",
+      badge: "Marketplace #1 en Afrique · Live",
       title1: 'Trouvez',
       title2: "n'importe quoi",
       title3: 'près de chez vous',
@@ -146,6 +147,37 @@ export const translations = {
       go: 'Accéder',
       title: 'Accéder à ma boutique',
     },
+    problem: {
+      badge: 'Le constat',
+      title: 'Le commerce africain mérite mieux.',
+      subtitle: "Gérer une boutique au quotidien est un défi permanent. Sans les bons outils, vous perdez du temps et de l'argent.",
+      items: [
+        { title: 'Pertes de stock', desc: 'Difficile de savoir exactement ce qui reste en rayon en temps réel.' },
+        { title: 'Calculs manuels', desc: 'Passer des heures sur les registres pour calculer sa marge à la fin du mois.' },
+        { title: 'Dettes oubliées', desc: "L'argent qui dort dehors parce qu'on a oublié de relancer un client." },
+        { title: 'Isolement numérique', desc: 'Vos clients ne savent pas ce que vous avez en stock sans se déplacer.' },
+      ],
+    },
+    vision: {
+      badge: 'Notre Vision',
+      title: "L'épine dorsale du commerce.",
+      subtitle: 'Nous ne construisons pas juste un logiciel, mais une infrastructure complète pour propulser les commerçants.',
+      items: [
+        { title: 'Gestion (POS)', desc: 'Un outil puissant pour piloter le quotidien.' },
+        { title: 'Paiements', desc: 'Acceptez tous les modes de paiement, Mobile Money inclus.' },
+        { title: 'Crédit', desc: 'Accédez à des financements basés sur vos ventes réelles.' },
+        { title: 'Distribution', desc: 'Commandez vos stocks directement auprès des fournisseurs.' },
+      ],
+    },
+    testimonials: {
+      badge: 'Preuve Sociale',
+      title: "Ils font grandir leur business avec Velmo.",
+      items: [
+        { name: 'Mamadou Diallo', shop: 'Alimentation Générale DDL', text: "Depuis que j'utilise Velmo, je sais exactement combien je gagne chaque jour. Plus besoin de cahier." },
+        { name: 'Aïssatou Bah', shop: 'Awa Fashion Boutique', text: "La vitrine web m'a permis de vendre à des clients qui ne sont même pas dans mon quartier. C'est magique." },
+        { name: 'Ibrahima Sory', shop: 'Quincaillerie Centrale', text: "Le mode hors-ligne est indispensable avec les coupures de courant. Mes ventes ne s'arrêtent jamais." },
+      ],
+    },
   },
 
   en: {
@@ -153,11 +185,12 @@ export const translations = {
       features: 'Features',
       marketplace: 'Marketplace',
       faq: 'FAQ',
+      pricing: 'Pricing',
       download: 'Download',
       createAccount: 'Create account',
     },
     hero: {
-      badge: 'Marketplace #1 · West Africa · Live',
+      badge: 'Marketplace #1 in Africa · Live',
       title1: 'Find',
       title2: 'anything',
       title3: 'near you',
@@ -294,6 +327,37 @@ export const translations = {
       placeholder: 'your-shop',
       go: 'Go',
       title: 'Access my shop',
+    },
+    problem: {
+      badge: 'The Reality',
+      title: 'African commerce deserves better.',
+      subtitle: 'Managing a shop daily is a permanent challenge. Without the right tools, you lose time and money.',
+      items: [
+        { title: 'Inventory loss', desc: 'Hard to know exactly what remains on shelves in real time.' },
+        { title: 'Manual calculations', desc: 'Spending hours on registers to calculate margin at month-end.' },
+        { title: 'Forgotten debts', desc: 'Money sleeping outside because you forgot to follow up with a customer.' },
+        { title: 'Digital isolation', desc: 'Your customers don’t know what you have in stock without traveling.' },
+      ],
+    },
+    vision: {
+      badge: 'Our Vision',
+      title: 'The backbone of commerce.',
+      subtitle: 'We are not just building software, but a complete infrastructure to empower merchants.',
+      items: [
+        { title: 'Management (POS)', desc: 'A powerful tool to pilot daily operations.' },
+        { title: 'Payments', desc: 'Accept all payment methods, including Mobile Money.' },
+        { title: 'Credit', desc: 'Access financing based on your real sales data.' },
+        { title: 'Distribution', desc: 'Order your stocks directly from suppliers.' },
+      ],
+    },
+    testimonials: {
+      badge: 'Social Proof',
+      title: 'They grow their business with Velmo.',
+      items: [
+        { name: 'Mamadou Diallo', shop: 'DDL General Store', text: "Since using Velmo, I know exactly how much I earn every day. No more notebooks." },
+        { name: 'Aïssatou Bah', shop: 'Awa Fashion Boutique', text: "The web storefront allowed me to sell to customers who aren't even in my neighborhood. It's magic." },
+        { name: 'Ibrahima Sory', shop: 'Central Hardware', text: "Offline mode is essential with power outages. My sales never stop." },
+      ],
     },
   },
 };

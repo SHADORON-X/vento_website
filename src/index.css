@@ -44,30 +44,35 @@
 }
 
 [data-theme="dark"] {
-  /* Premium Dark Mode (Deep Slate) */
-  --bg-main: #020617;
-  /* Slate 950 */
-  --bg-alt: #0f172a;
-  /* Slate 900 */
-  --bg-subtle: #1e293b;
-  /* Slate 800 */
-
-  --card-bg: #1e293b;
-  /* Slate 800 */
-  --nav-bg: rgba(15, 23, 42, 0.9);
-  /* Slate 900 */
-
+  /* 💎 Fintech Premium Immersive */
+  --bg-main: #04050a;
+  --bg-alt: #0a0b16;
+  --bg-subtle: #121421;
+  --card-bg: rgba(18, 20, 33, 0.7);
+  --nav-bg: rgba(4, 5, 10, 0.85);
   --text-primary: #ffffff;
-  --text-secondary: #cbd5e1;
-  /* Slate 300 */
-  --text-tertiary: #94a3b8;
-  /* Slate 400 */
-  --border: #1e293b;
+  --text-secondary: #94a3b8;
+  --text-tertiary: #64748b;
+  --border: rgba(255, 255, 255, 0.1);
   --border-light: rgba(255, 98, 0, 0.2);
-
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.6);
   --shadow-glow: 0 0 40px rgba(255, 98, 0, 0.15);
+}
+
+[data-theme="dark"] body {
+  background-color: var(--bg-main);
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(124, 58, 237, 0.12) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(255, 98, 0, 0.08) 0px, transparent 50%);
+  background-attachment: fixed;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 * {
@@ -1487,14 +1492,62 @@ footer {
 }
 
 /* ===== GLOBAL SEARCH ===== */
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
+
+/* ===== PREMIUM UTILITIES ===== */
+.velmo-btn-premium {
+  @apply relative overflow-hidden px-10 py-5 rounded-[1.5rem] text-lg font-black transition-all duration-500 shadow-2xl;
+  background: linear-gradient(135deg, #ff6200, #ff8c42, #ff6200);
+  background-size: 200% auto;
+}
+
+.velmo-btn-premium:hover {
+  background-position: right center;
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 20px 40px -12px rgba(255, 98, 0, 0.4);
+}
+
+.velmo-btn-premium:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.velmo-gradient-text-animated {
+  background: linear-gradient(to right,
+      #ff6200,
+      #ff8c42,
+      #8b5cf6,
+      #ff6200);
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: velmo-gradient-flow 8s linear infinite;
+}
+
+@keyframes velmo-gradient-flow {
+  0% {
+    background-position: 0% center;
   }
 
-  to {
-    transform: rotate(360deg);
+  100% {
+    background-position: 300% center;
   }
+}
+
+.velmo-glass-card {
+  @apply backdrop-blur-2xl border transition-all duration-500;
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.dark .velmo-glass-card {
+  background: rgba(8, 11, 16, 0.5);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.velmo-glass-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 98, 0, 0.2);
+  transform: translateY(-8px);
 }
 
 .search-result-row:hover {
@@ -1771,3 +1824,17 @@ html:not(.dark) .velmo-grid-pattern {
 
 /* Note: les utilitaires bg-white/N et border-white/N sont générés
    automatiquement par Tailwind JIT — pas besoin de les déclarer ici. */
+
+.animate-spin-slow {
+  animation: spin 8s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
