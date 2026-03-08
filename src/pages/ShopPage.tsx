@@ -34,6 +34,14 @@ export default function ShopPage() {
     const [searchParams] = useSearchParams();
     const [shop, setShop] = useState<Shop | null>(null);
     const [trackedOrder, setTrackedOrder] = useState<CustomerOrder | null>(null);
+    const [scrolled, setScrolled] = useState(false);
+
+    // 🔝 Scroll tracking for "Back to Top" button
+    useEffect(() => {
+        const handleScroll = () => setScrolled(window.scrollY > 300);
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
 
     // 🕵️ Track Order
@@ -182,6 +190,10 @@ export default function ShopPage() {
 
     const [liveActivity, setLiveActivity] = useState<{ id: string; text: string } | null>(null);
 
+
+    // 🔝 Scroll tracking for "Back to Top" button
+
+
     // 🚀 LIVE ACTIVITY SIMULATOR (Social Proof)
     useEffect(() => {
         if (!shop || loading) return;
@@ -213,11 +225,12 @@ export default function ShopPage() {
         return () => clearInterval(timer);
     }, [shop, loading, products]);
 
-    // ✨ Mouse tracking for holographic effect
+    // ✨ Mouse tracking for holographic effect (Optimized)
     useEffect(() => {
         const handleMouseMove = (e: MouseEvent) => {
-            const cards = document.getElementsByClassName('product-card');
-            for (const card of cards as any) {
+            const target = e.target as HTMLElement;
+            const card = target.closest('.product-card') as HTMLElement;
+            if (card) {
                 const rect = card.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
@@ -232,6 +245,10 @@ export default function ShopPage() {
     // Reset pagination on search/filter change
     useEffect(() => {
         setVisibleCount(12);
+        // If searching, show products from all categories to avoid "empty result" confusion
+        if (searchQuery.trim().length > 0 && selectedCategory !== 'Tout') {
+            setSelectedCategory('Tout');
+        }
     }, [searchQuery, selectedCategory, sortOption, filterOption]);
 
     // ❤️ Favorites
@@ -647,7 +664,7 @@ export default function ShopPage() {
     const filteredAndSortedProducts = useMemo(() => {
         let result = products.filter(product => {
             const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                (product.description?.toLowerCase().includes(searchQuery.toLowerCase()));
+                (product.description?.toLowerCase()?.includes(searchQuery.toLowerCase()) ?? false);
             const matchesCategory = selectedCategory === 'Tout' || product.category === selectedCategory;
 
             let matchesFilter = true;
@@ -848,25 +865,9 @@ export default function ShopPage() {
                                         <button
                                             className="btn-wa-product-mini"
                                             onClick={(e) => openProductWhatsApp(e, product)}
-                                            style={{
-                                                marginTop: '8px',
-                                                width: '100%',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                gap: '6px',
-                                                padding: '8px',
-                                                borderRadius: '12px',
-                                                border: '1px solid rgba(37, 211, 102, 0.3)',
-                                                background: 'transparent',
-                                                color: '#25d366',
-                                                fontSize: '0.75rem',
-                                                fontWeight: 800,
-                                                cursor: 'pointer'
-                                            }}
                                         >
                                             <MessageCircle size={14} fill="currentColor" />
-                                            Commander via WhatsApp
+                                            <span>Commander via WhatsApp</span>
                                         </button>
                                     )}
                                 </div>
@@ -1446,41 +1447,40 @@ export default function ShopPage() {
     if (loading) {
         return (
             <div className="shop-loading-screen">
-                <div className="particles-container">
-                    {loadingParticles.map((p, i) => (
-                        <div
-                            key={i}
-                            className={`particle ${p.glow ? 'glow' : ''}`}
-                            style={{
-                                left: `${p.left}%`,
-                                width: `${p.width}px`,
-                                height: `${p.height}px`,
-                                animationDuration: `${p.duration}s`,
-                                animationDelay: `${p.delay}s`
+                <div className="loading-blur-glow"></div>
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="loading-content"
+                >
+                    <div className="luxury-loader-box">
+                        <motion.div
+                            animate={{
+                                rotate: [0, 360],
+                                borderRadius: ["24%", "50%", "24%"]
                             }}
+                            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                            className="loader-ring"
                         />
-                    ))}
-                </div>
-
-                <div className="loader-content">
-                    <div className="loader-logo-container">
-                        <div className="loader-ring"></div>
-                        <div className="loader-ring-inner"></div>
-                        <svg viewBox="0 0 100 100" fill="none" className="loader-logo">
-                            <rect width="100" height="100" rx="28" fill="#ff5500" />
-                            <path d="M32 38L50 72L68 38" stroke="white" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
+                        <ShoppingBag size={42} className="loader-icon text-primary" />
                     </div>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
+                    <motion.h3
+                        animate={{ opacity: [0.5, 1, 0.5] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="loading-text"
+                        style={{ marginTop: '24px' }}
                     >
-                        <h2 className="loading-text">Ouverture de la boutique...</h2>
-                        <p className="loading-subtext">Chargement des produits en cours</p>
-                    </motion.div>
-                </div>
+                        Expérience Velmo Pro...
+                    </motion.h3>
+                    <div className="loading-bar-container">
+                        <motion.div
+                            className="loading-bar-fill"
+                            initial={{ width: "0%" }}
+                            animate={{ width: "100%" }}
+                            transition={{ duration: 2.5, ease: "easeInOut" }}
+                        />
+                    </div>
+                </motion.div>
             </div>
         );
     }
@@ -1841,7 +1841,10 @@ export default function ShopPage() {
                                                 </div>
                                                 <div className="search-result-info">
                                                     <h4>{product.name}</h4>
-                                                    <p>{formatPrice(product.price_sale)}</p>
+                                                    <div className="search-result-meta">
+                                                        {product.category && <span className="search-result-cat">{product.category}</span>}
+                                                        <span className="search-result-price">{formatPrice(product.price_sale)}</span>
+                                                    </div>
                                                 </div>
                                                 <div className="search-result-plus">
                                                     <Plus size={18} />

@@ -1056,7 +1056,7 @@ function AppSection() {
 
           <motion.div initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}>
             <SectionLabel icon={<Sparkles size={10} />} label={lang === 'fr' ? 'SaaS Nouvelle Génération' : 'Next-Gen SaaS'} />
-            <h2 className={`text-4xl md:text-5xl lg:text-7xl font-black mb-6 leading-[0.85] tracking-tighter ${isDark ? 'text-white' : 'text-slate-900'}`}>
+            <h2 className={`text-3xl md:text-4xl lg:text-5xl font-black mb-5 leading-[1.1] tracking-tighter ${isDark ? 'text-white' : 'text-slate-900'}`}>
               La caisse <br />
               <span className="velmo-gradient-text-animated">réinventée.</span>
             </h2>
@@ -1287,19 +1287,19 @@ export default function Landing() {
             </motion.div>
 
             {/* Headline */}
-            <motion.div variants={heroItem} className="mb-8 max-w-5xl">
-              <h1 className="font-black leading-[0.9] tracking-tighter">
-                <span className={`block text-5xl sm:text-7xl md:text-8xl lg:text-[110px] ${isDark ? 'text-white' : 'text-slate-900'}`}>
+            <motion.div variants={heroItem} className="mb-8 max-w-4xl">
+              <h1 className="font-black leading-[0.95] tracking-tighter">
+                <span className={`block text-4xl sm:text-5xl md:text-6xl lg:text-7xl ${isDark ? 'text-white' : 'text-slate-900'}`}>
                   {lang === 'fr' ? 'La Caisse' : 'The POS'} <span className="velmo-gradient-text-animated">{lang === 'fr' ? 'Intégrale.' : 'Full.'}</span>
                 </span>
-                <span className={`block text-4xl sm:text-6xl md:text-7xl lg:text-9xl mt-2 ${isDark ? 'text-white/40' : 'text-slate-300'}`}>
+                <span className={`block text-3xl sm:text-4xl md:text-5xl lg:text-6xl mt-2 ${isDark ? 'text-white/40' : 'text-slate-300'}`}>
                   {lang === 'fr' ? 'Pilotez' : 'Pilot'} <span className="hover:text-orange-500 transition-colors duration-500">{lang === 'fr' ? 'votre business.' : 'your business.'}</span>
                 </span>
               </h1>
             </motion.div>
 
             {/* Subtitle */}
-            <motion.p variants={heroItem} className="text-slate-500 dark:text-slate-400 text-lg md:text-2xl max-w-2xl mx-auto mb-12 font-medium leading-relaxed px-4">
+            <motion.p variants={heroItem} className="text-slate-500 dark:text-slate-400 text-base md:text-lg max-w-2xl mx-auto mb-10 font-medium leading-relaxed px-4">
               {lang === 'fr'
                 ? "L'OS du commerce africain. Gérez votre boutique, vos stocks et vos ventes en une seule application fluide et ultra-rapide."
                 : "The OS for African commerce. Manage your shop, inventory, and sales in one fluid and ultra-fast application."}
@@ -1307,18 +1307,18 @@ export default function Landing() {
 
             {/* Main Action Group */}
             <motion.div variants={heroItem} className="flex flex-col sm:flex-row justify-center gap-4 mb-20 w-full px-6">
-              <a href="/velmomobile/index.html#/signup" target="_blank" rel="noopener noreferrer" className="velmo-btn-premium group flex items-center justify-center gap-3">
-                <Zap size={22} className="group-hover:rotate-12 transition-transform" />
-                <span>{t.features.tryFree}</span>
+              <a href="/velmomobile/index.html#/signup" target="_blank" rel="noopener noreferrer" className="velmo-btn-premium group flex items-center justify-center gap-3 py-4">
+                <Zap size={20} className="group-hover:rotate-12 transition-transform" />
+                <span className="text-base">{t.features.tryFree}</span>
               </a>
               <button
                 onClick={() => document.getElementById('problem')?.scrollIntoView({ behavior: 'smooth' })}
-                className={`px-10 py-5 rounded-[1.5rem] text-lg font-black transition-all border flex items-center justify-center gap-2 ${isDark
+                className={`px-8 py-4 rounded-[1.25rem] text-base font-black transition-all border flex items-center justify-center gap-2 ${isDark
                   ? 'bg-white/5 border-white/10 hover:bg-white/10 text-white'
                   : 'bg-white border-slate-200 hover:border-slate-300 shadow-md text-slate-900'}`}
               >
                 Découvrir la solution
-                <ArrowRight size={20} />
+                <ArrowRight size={18} />
               </button>
             </motion.div>
 
