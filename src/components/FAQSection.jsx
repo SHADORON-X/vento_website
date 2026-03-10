@@ -95,7 +95,7 @@ export default function FAQSection() {
           <p className={`text-sm ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>
             {t.faq.contactUs}{' '}
             <a
-              href="https://wa.me/224621233847"
+              href="https://wa.me/224663639000"
               target="_blank"
               rel="noopener noreferrer"
               className="text-orange-400 hover:text-orange-300 font-semibold transition-colors"

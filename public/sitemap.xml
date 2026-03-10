@@ -7,14 +7,20 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://velmo.org/s/wahabi-fils</loc>
-    <lastmod>2026-02-26</lastmod>
+    <loc>https://velmo.org/s/fofana-fils</loc>
+    <lastmod>2026-03-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://velmo.org/s/fofana-fils</loc>
-    <lastmod>2026-03-01</lastmod>
+    <loc>https://velmo.org/s/m-b-d-inc</loc>
+    <lastmod>2026-03-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://velmo.org/s/wahabi-fils</loc>
+    <lastmod>2026-03-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -679,14 +685,14 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://velmo.org/s/fofana-fils/p/f259de94-86b4-48da-af82-d3347b0bd557</loc>
-    <lastmod>2026-02-10</lastmod>
+    <loc>https://velmo.org/s/fofana-fils/p/4aa9daba-bcc4-4380-b82c-50f96ab4c76e</loc>
+    <lastmod>2026-02-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://velmo.org/s/fofana-fils/p/4aa9daba-bcc4-4380-b82c-50f96ab4c76e</loc>
-    <lastmod>2026-02-17</lastmod>
+    <loc>https://velmo.org/s/fofana-fils/p/f259de94-86b4-48da-af82-d3347b0bd557</loc>
+    <lastmod>2026-03-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -973,12 +979,6 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://velmo.org/s/fofana-fils/p/7eb56c88-7a22-4386-bd68-aef1dce6be45</loc>
-    <lastmod>2026-03-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://velmo.org/s/wahabi-fils/p/a969c8f7-0ab2-4a3d-b353-9ca5b2722ad7</loc>
     <lastmod>2026-02-17</lastmod>
     <changefreq>monthly</changefreq>
@@ -1003,6 +1003,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://velmo.org/s/fofana-fils/p/7eb56c88-7a22-4386-bd68-aef1dce6be45</loc>
+    <lastmod>2026-03-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://velmo.org/s/fofana-fils/p/a6cb9b14-2579-440c-9a2b-b97796c387ae</loc>
     <lastmod>2026-02-10</lastmod>
     <changefreq>monthly</changefreq>
@@ -1023,6 +1029,12 @@
   <url>
     <loc>https://velmo.org/s/fofana-fils/p/2f860085-32d7-460b-bb6f-f5bb4f3babdf</loc>
     <lastmod>2026-02-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://velmo.org/s/m-b-d-inc/p/7f1df74d-98f2-46a4-9e56-cec0ac076b28</loc>
+    <lastmod>2026-03-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1053,6 +1065,12 @@
   <url>
     <loc>https://velmo.org/s/fofana-fils/p/709f98d0-980d-41c2-b3e0-0bb9cada4525</loc>
     <lastmod>2026-02-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://velmo.org/s/m-b-d-inc/p/6d44c13d-d0a3-4453-9d25-438b83c788c9</loc>
+    <lastmod>2026-03-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1137,6 +1155,12 @@
   <url>
     <loc>https://velmo.org/s/fofana-fils/p/ff05835c-4989-475f-8623-9b88237c2fa9</loc>
     <lastmod>2026-02-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://velmo.org/s/m-b-d-inc/p/0ac5a4ed-57b7-44df-b061-c5265d1e38c8</loc>
+    <lastmod>2026-03-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1239,6 +1263,12 @@
   <url>
     <loc>https://velmo.org/s/wahabi-fils/p/8ba14780-ebf7-42d3-8655-290f07d04616</loc>
     <lastmod>2026-02-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://velmo.org/s/m-b-d-inc/p/88bf86ae-ecb9-4653-9dcf-0cd8f0c9f523</loc>
+    <lastmod>2026-03-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1976,7 +2006,7 @@
   </url>
   <url>
     <loc>https://velmo.org/s/fofana-fils/p/4f303be1-5790-4e9e-a612-26b038201c7c</loc>
-    <lastmod>2026-03-06</lastmod>
+    <lastmod>2026-03-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2575,12 +2605,6 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://velmo.org/s/fofana-fils/p/ce733372-c379-4b57-859b-e9f423117bc0</loc>
-    <lastmod>2026-03-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://velmo.org/s/fofana-fils/p/9aafebcb-9cc4-4a40-92eb-4955048746b3</loc>
     <lastmod>2026-02-10</lastmod>
     <changefreq>monthly</changefreq>
@@ -2721,6 +2745,12 @@
   <url>
     <loc>https://velmo.org/s/fofana-fils/p/cef309a0-9662-450e-a734-4ae7c9b33f5e</loc>
     <lastmod>2026-02-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://velmo.org/s/fofana-fils/p/ce733372-c379-4b57-859b-e9f423117bc0</loc>
+    <lastmod>2026-03-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -3181,18 +3211,6 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://velmo.org/s/fofana-fils/p/2fd7653e-0885-4e0b-94b6-fe9c0951cb75</loc>
-    <lastmod>2026-02-10</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://velmo.org/s/fofana-fils/p/85cbda1c-7d77-450b-be8e-72477e130f08</loc>
-    <lastmod>2026-02-10</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://velmo.org/s/fofana-fils/p/661d142a-61b6-45f8-bd28-54da6e9f0319</loc>
     <lastmod>2026-02-10</lastmod>
     <changefreq>monthly</changefreq>
@@ -3217,12 +3235,6 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://velmo.org/s/fofana-fils/p/d52a43a4-8a47-427d-9ab7-4b991399ad18</loc>
-    <lastmod>2026-02-27</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://velmo.org/s/fofana-fils/p/705ff39c-805c-4a8e-8bc3-ce3ae28ffb8e</loc>
     <lastmod>2026-02-16</lastmod>
     <changefreq>monthly</changefreq>
@@ -3230,7 +3242,25 @@
   </url>
   <url>
     <loc>https://velmo.org/s/fofana-fils/p/007dc605-ea78-452d-8bb7-d0fe4091d2a1</loc>
-    <lastmod>2026-02-27</lastmod>
+    <lastmod>2026-03-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://velmo.org/s/fofana-fils/p/d52a43a4-8a47-427d-9ab7-4b991399ad18</loc>
+    <lastmod>2026-03-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://velmo.org/s/fofana-fils/p/2fd7653e-0885-4e0b-94b6-fe9c0951cb75</loc>
+    <lastmod>2026-03-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://velmo.org/s/fofana-fils/p/85cbda1c-7d77-450b-be8e-72477e130f08</loc>
+    <lastmod>2026-03-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -3309,6 +3339,12 @@
   <url>
     <loc>https://velmo.org/s/fofana-fils/p/f62acf63-1db2-45bf-9924-c395602ad90b</loc>
     <lastmod>2026-02-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://velmo.org/s/fofana-fils/p/b9e78536-bdc7-401d-b947-752f20f2f78f</loc>
+    <lastmod>2026-03-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -3453,12 +3489,6 @@
   <url>
     <loc>https://velmo.org/s/fofana-fils/p/f6ebcb41-7e65-4517-8c70-f3ded2b8ff14</loc>
     <lastmod>2026-02-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://velmo.org/s/fofana-fils/p/b9e78536-bdc7-401d-b947-752f20f2f78f</loc>
-    <lastmod>2026-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -3613,14 +3643,14 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://velmo.org/s/fofana-fils/p/801cde11-5aa8-453f-b5f4-2e8b907e789c</loc>
-    <lastmod>2026-03-06</lastmod>
+    <loc>https://velmo.org/s/fofana-fils/p/c09cd135-cd04-4ab5-9e91-a23a521f3594</loc>
+    <lastmod>2026-02-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://velmo.org/s/fofana-fils/p/c09cd135-cd04-4ab5-9e91-a23a521f3594</loc>
-    <lastmod>2026-02-17</lastmod>
+    <loc>https://velmo.org/s/fofana-fils/p/801cde11-5aa8-453f-b5f4-2e8b907e789c</loc>
+    <lastmod>2026-03-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -4291,12 +4321,6 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://velmo.org/s/fofana-fils/p/2f9d9247-003e-4a55-bb4e-c04ee36b7f30</loc>
-    <lastmod>2026-03-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://velmo.org/s/fofana-fils/p/fdd3e97b-7257-40a0-9172-4dc85c6dc90c</loc>
     <lastmod>2026-02-10</lastmod>
     <changefreq>monthly</changefreq>
@@ -4335,6 +4359,12 @@
   <url>
     <loc>https://velmo.org/s/fofana-fils/p/67806db5-2c63-4eae-8a39-a61a965353f8</loc>
     <lastmod>2026-02-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://velmo.org/s/fofana-fils/p/2f9d9247-003e-4a55-bb4e-c04ee36b7f30</loc>
+    <lastmod>2026-03-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -4669,12 +4699,6 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://velmo.org/s/fofana-fils/p/74edf260-8df4-4b49-acc2-fe83e76c5037</loc>
-    <lastmod>2026-03-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://velmo.org/s/fofana-fils/p/0ebd5d03-f83d-4697-a5df-ded8f7900759</loc>
     <lastmod>2026-02-10</lastmod>
     <changefreq>monthly</changefreq>
@@ -4707,6 +4731,12 @@
   <url>
     <loc>https://velmo.org/s/fofana-fils/p/01450352-b58e-435b-a956-8234688dc6fe</loc>
     <lastmod>2026-02-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://velmo.org/s/fofana-fils/p/74edf260-8df4-4b49-acc2-fe83e76c5037</loc>
+    <lastmod>2026-03-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -5485,12 +5515,6 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://velmo.org/s/fofana-fils/p/dc31df26-4853-43b0-bbc4-56acbf4d5e06</loc>
-    <lastmod>2026-03-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://velmo.org/s/fofana-fils/p/48fab175-a618-48ca-aa24-76208c5958e6</loc>
     <lastmod>2026-02-17</lastmod>
     <changefreq>monthly</changefreq>
@@ -5499,6 +5523,12 @@
   <url>
     <loc>https://velmo.org/s/fofana-fils/p/f559d6ba-e73a-4a7b-9ddc-d14380b2bf09</loc>
     <lastmod>2026-02-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://velmo.org/s/fofana-fils/p/dc31df26-4853-43b0-bbc4-56acbf4d5e06</loc>
+    <lastmod>2026-03-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>

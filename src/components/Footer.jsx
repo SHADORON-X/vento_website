@@ -32,7 +32,7 @@ export default function Footer() {
     {
       title: t.footer.support,
       links: [
-        { label: t.footer.links.whatsapp, href: 'https://wa.me/224621233847' },
+        { label: t.footer.links.whatsapp, href: 'https://wa.me/224663639000' },
         { label: t.footer.links.guide, href: '/velmomobile/index.html' },
         { label: t.footer.links.contact, href: 'mailto:contact@velmo.org' },
       ],

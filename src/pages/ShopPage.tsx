@@ -172,7 +172,6 @@ export default function ShopPage() {
     const [sortOption, setSortOption] = useState<SortOption>('default');
     const [filterOption, setFilterOption] = useState<FilterOption>('all');
     const [showFilters, setShowFilters] = useState(false);
-    const [showReferralModal, setShowReferralModal] = useState(false);
 
     // 📦 Smart Pagination State
     const [visibleCount, setVisibleCount] = useState(12);
@@ -398,11 +397,36 @@ export default function ShopPage() {
                 )
                 .subscribe();
 
+            // 📡 Realtime: Shop Customization Changes
+            const customizationChannel = supabase
+                .channel(`public-customization-${slug}`)
+                .on(
+                    'postgres_changes',
+                    {
+                        event: '*',
+                        schema: 'public',
+                        table: 'shop_customizations',
+                        filter: `shop_id=eq.${shop?.id}`
+                    },
+                    (payload) => {
+                        console.log('⚡️ Customization update received:', payload);
+                        if (payload.new) {
+                            const cData = payload.new as any;
+                            applyTheme(cData.theme_id, {
+                                '--accent': cData.primary_color,
+                                '--accent-hover': cData.secondary_color || cData.primary_color,
+                            });
+                        }
+                    }
+                )
+                .subscribe();
+
             return () => {
                 supabase.removeChannel(shopChannel);
+                supabase.removeChannel(customizationChannel);
             };
         }
-    }, [slug]);
+    }, [slug, shop?.id]);
 
     // 📡 Realtime: Products Changes
     useEffect(() => {
@@ -496,36 +520,50 @@ export default function ShopPage() {
     const recommendedProducts = useMemo(() => {
         if (!products.length) return [];
 
-        // Algorithme de recommandation puissant
+        // 🧠 ALGORITHME DOPAMINE LOOP V2 (Neural-Inspired)
         return [...products]
             .map(p => {
                 let score = 0;
 
-                // 💎 Facteur 1: Intérêt direct (Favoris)
-                if (favorites.includes(p.id)) score += 500;
+                // 💎 Facteur 1: Rétention & Fidélité (Favoris + Paniers persistants)
+                if (favorites.includes(p.id)) score += 2000;
+                if (cart.some(item => item.product.id === p.id)) score += 500;
 
-                // 👁️ Facteur 2: Vues produit locales
-                score += (productViews[p.id] || 0) * 25;
+                // 👁️ Facteur 2: Engagement Cognitif (Vues locales cumulées)
+                const views = productViews[p.id] || 0;
+                score += Math.min(views * 150, 1500); // Plafond pour éviter de ne montrer QUE les mêmes produits
 
-                // 🏷️ Facteur 3: Affinité par catégorie (Apprentissage des goûts)
+                // 🏷️ Facteur 3: Cluster d'Affinité Sémantique (Apprentissage des goûts)
                 if (p.category && categoryViews[p.category]) {
-                    score += categoryViews[p.category] * 10;
+                    // Bonus exponentiel selon l'intérêt pour la catégorie
+                    score += Math.pow(categoryViews[p.category], 1.2) * 40;
                 }
 
-                // 🛒 Facteur 4: Cross-selling (Produits liés au panier actuel)
-                const isInCategoryInCart = cart.some(item => item.product.category === p.category);
-                if (isInCategoryInCart) score += 50;
+                // 🛒 Facteur 4: Cross-Selling & Panier Intelligent
+                const categoriesInCart = new Set(cart.map(item => item.product.category).filter(Boolean));
+                if (p.category && categoriesInCart.has(p.category)) {
+                    score += 300;
+                }
 
-                // 📦 Facteur 5: Nouveauté (Bonus pour les produits récents)
-                const isNew = p.created_at && (new Date().getTime() - new Date(p.created_at).getTime()) < (7 * 24 * 60 * 60 * 1000);
-                if (isNew) score += 30;
+                // 🔍 Facteur 5: Intention de Session (Dernières recherches)
+                if (searchQuery.length > 2 && p.name.toLowerCase().includes(searchQuery.toLowerCase())) {
+                    score += 1000;
+                }
+
+                // 📦 Facteur 6: Rareté & FOMO (Fear Of Missing Out)
+                if (p.quantity > 0 && p.quantity <= 2) score += 600;
+                if (p.price_sale < (p.price_regular || 0)) score += 400; // Promo boost
+
+                // 🎨 Facteur 7: Esthétique (Les produits avec photos sont priorisés)
+                if (p.photo_url) score += 200;
 
                 return { ...p, relevanceScore: score };
             })
-            .filter(p => p.relevanceScore > 0)
+            .filter(p => p.relevanceScore > 30) // Seuil de pertinence minimum
             .sort((a, b) => b.relevanceScore - a.relevanceScore)
-            .slice(0, 10);
-    }, [products, favorites, productViews, categoryViews, cart]);
+            .slice(0, 15);
+    }, [products, favorites, productViews, categoryViews, cart, searchQuery]);
+
 
     // ============================================================
     // 🔧 HELPERS (Déplacés ici pour éviter les erreurs d'initialisation)
@@ -1349,6 +1387,7 @@ export default function ShopPage() {
             setSubmittedTotal(currentTotal);
 
             // 1. Enregistrement Supabase
+            // 1. Enregistrement Supabase
             const items_json: OrderItem[] = cart.map(item => ({
                 id: item.product.id,
                 name: item.product.name,
@@ -1364,6 +1403,7 @@ export default function ShopPage() {
                     customer_name: customerInfo.name || 'Client WhatsApp',
                     customer_phone: customerInfo.phone || null,
                     items_json: items_json,
+                    items_count: cart.length, // ✅ Fix: On ajoute le nombre d'articles
                     total_amount: currentTotal,
                     status: 'pending',
                     delivery_method: deliveryMethod || 'pickup',
@@ -1586,16 +1626,14 @@ export default function ShopPage() {
             </div>
 
             {/* 🔝 Premium Sticky Nav */}
-            <nav className="sticky-nav">
-                <div className="nav-brand-area">
+            <nav className={`sticky-nav ${scrolled ? 'nav-scrolled' : 'nav-at-top'} ${selectedProduct || isCartOpen || isTrackOpen ? 'nav-hidden-modal' : ''}`}>
+                <div className={`nav-brand-area ${!scrolled ? 'nav-brand-hidden' : ''}`}>
                     <Link to="/" className="btn-nav-back">
                         <ArrowRight size={20} style={{ transform: 'rotate(180deg)' }} />
                     </Link>
-                    <div className="nav-shop-info">
-                        <span className="nav-shop-label">Market</span>
-                        <span className="nav-shop-name">{shop.name}</span>
-                    </div>
+                    <span className="nav-shop-name">{shop.name}</span>
                 </div>
+
 
                 <div className="nav-actions-area">
                     <Link
@@ -1607,22 +1645,15 @@ export default function ShopPage() {
                         <span className="btn-label-desktop">Marketplace</span>
                     </Link>
                     <button
-                        onClick={() => setShowReferralModal(true)}
-                        className="btn-nav-action referral-glow"
-                        title="Parrainez & Gagnez"
-                    >
-                        <Gift size={20} className="text-orange-500" />
-                    </button>
-                    <button
                         onClick={() => setIsTrackOpen(true)}
-                        className="btn-nav-action"
+                        className="btn-nav-action hide-mobile"
                         title="Suivre ma commande"
                     >
                         <Package size={20} />
                     </button>
                     <button
                         onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                        className="btn-nav-action"
+                        className="btn-nav-action hide-mobile"
                         title="Changer le thème"
                     >
                         {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
@@ -1721,33 +1752,41 @@ export default function ShopPage() {
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.6 }}
-                        className="shop-info-bar"
+                        className="shop-info-bar-glass"
                     >
-                        {shop.location && (
-                            <div className="info-badge">
-                                <MapPin size={16} />
-                                <span>{shop.location}</span>
-                            </div>
-                        )}
-                        {shop.opening_hours && (
-                            <div className="info-badge">
-                                <Clock size={16} />
-                                <span>{shop.opening_hours}</span>
-                            </div>
-                        )}
-                        {(shop.whatsapp || shop.phone) && (
-                            <motion.a
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                href={`https://wa.me/${(shop.whatsapp || shop.phone)?.replace(/\D/g, '')}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="info-badge whatsapp-badge"
-                            >
-                                <MessageCircle size={16} fill="currentColor" />
-                                <span>Contacter</span>
-                            </motion.a>
-                        )}
+                        <div className="info-hub-content">
+                            {shop.location && (
+                                <div className="info-hub-item">
+                                    <div className="info-hub-icon"><MapPin size={18} /></div>
+                                    <div className="info-hub-texts">
+                                        <span className="info-hub-label">Localisation</span>
+                                        <span className="info-hub-value">{shop.location}</span>
+                                    </div>
+                                </div>
+                            )}
+                            {shop.opening_hours && (
+                                <div className="info-hub-item">
+                                    <div className="info-hub-icon"><Clock size={18} /></div>
+                                    <div className="info-hub-texts">
+                                        <span className="info-hub-label">Horaires</span>
+                                        <span className="info-hub-value">{shop.opening_hours}</span>
+                                    </div>
+                                </div>
+                            )}
+                            {(shop.whatsapp || shop.phone) && (
+                                <motion.a
+                                    whileHover={{ y: -3, scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    href={`https://wa.me/${(shop.whatsapp || shop.phone)?.replace(/\D/g, '')}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="info-hub-action-btn"
+                                >
+                                    <MessageCircle size={20} fill="currentColor" />
+                                    <span>Commander via WhatsApp</span>
+                                </motion.a>
+                            )}
+                        </div>
                     </motion.div>
 
                     {/* 📝 Sophisticated Description */}
@@ -1762,32 +1801,18 @@ export default function ShopPage() {
                         </motion.p>
                     )}
 
-                    {/* 🎁 PROMINENT REFERRAL BANNER */}
-                    <motion.div
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: 0.9, type: "spring" }}
-                        className="referral-banner-mini"
-                        onClick={() => setShowReferralModal(true)}
-                    >
-                        <div className="banner-gift-icon">
-                            <Gift size={24} />
-                        </div>
-                        <div className="banner-text">
-                            <h4>Parrainez & Gagnez des Cadeaux ! 🎁</h4>
-                            <p>Partagez {shop.name} et recevez des récompenses exclusives.</p>
-                        </div>
-                        <ArrowRight size={20} className="banner-arrow" />
-                    </motion.div>
                 </div>
+            </header>
 
-                {/* 🔍 Premium Integrated Search & Filter Row */}
+            {/* 🔍 Premium Integrated Search & Filter Row */}
+            <div className="search-filter-section">
                 <motion.div
                     initial={{ y: 30, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.8 }}
                     className="search-filter-row"
                 >
+
                     <div className="search-container">
                         <motion.div
                             className="search-icon-wrapper"
@@ -1880,81 +1905,82 @@ export default function ShopPage() {
                         <ChevronDown size={18} className={`chevron ${showFilters ? 'rotated' : ''}`} />
                     </button>
                 </motion.div>
+            </div>
 
-                {/* Filters Panel Expansion */}
-                <AnimatePresence>
-                    {showFilters && (
-                        <motion.div
-                            className="filters-panel"
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                        >
-                            <div className="filter-group">
-                                <span className="filter-label">Trier la collection</span>
-                                <div className="filter-options">
-                                    {[
-                                        { value: 'default', label: 'Défaut' },
-                                        { value: 'price-asc', label: 'Prix croissant' },
-                                        { value: 'price-desc', label: 'Prix décroissant' },
-                                        { value: 'name', label: 'Alphabétique' },
-                                    ].map(opt => (
-                                        <button
-                                            key={opt.value}
-                                            className={`filter-chip ${sortOption === opt.value ? 'active' : ''}`}
-                                            onClick={() => setSortOption(opt.value as SortOption)}
-                                        >
-                                            {opt.label}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                            <div className="filter-group">
-                                <span className="filter-label">Sélectionner par état</span>
-                                <div className="filter-options">
-                                    {[
-                                        { value: 'all', label: 'Tous les produits' },
-                                        { value: 'available', label: 'En stock uniquement' },
-                                        { value: 'new', label: 'Nouveautés' },
-                                    ].map(opt => (
-                                        <button
-                                            key={opt.value}
-                                            className={`filter-chip ${filterOption === opt.value ? 'active' : ''}`}
-                                            onClick={() => setFilterOption(opt.value as FilterOption)}
-                                        >
-                                            {opt.label}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
 
-                {/* 🏷️ Categories: Premium Visual Grid */}
-                {
-                    categories.length > 1 && (
-                        <div className="category-pills-container">
-                            <div className="category-visual-grid">
-                                {categories.map(cat => (
-                                    <motion.div
-                                        key={cat as string}
-                                        whileHover={{ y: -5 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        onClick={() => handleCategoryClick(cat as string)}
-                                        className={`category-card ${selectedCategory === cat ? 'active' : ''}`}
+            {/* Filters Panel Expansion */}
+            <AnimatePresence>
+                {showFilters && (
+                    <motion.div
+                        className="filters-panel"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                    >
+                        <div className="filter-group">
+                            <span className="filter-label">Trier la collection</span>
+                            <div className="filter-options">
+                                {[
+                                    { value: 'default', label: 'Défaut' },
+                                    { value: 'price-asc', label: 'Prix croissant' },
+                                    { value: 'price-desc', label: 'Prix décroissant' },
+                                    { value: 'name', label: 'Alphabétique' },
+                                ].map(opt => (
+                                    <button
+                                        key={opt.value}
+                                        className={`filter-chip ${sortOption === opt.value ? 'active' : ''}`}
+                                        onClick={() => setSortOption(opt.value as SortOption)}
                                     >
-                                        <div className="cat-icon">
-                                            {getCategoryIcon(cat as string)}
-                                        </div>
-                                        <span className="cat-name">{cat as string}</span>
-                                    </motion.div>
+                                        {opt.label}
+                                    </button>
                                 ))}
                             </div>
                         </div>
-                    )
-                }
-            </header >
+                        <div className="filter-group">
+                            <span className="filter-label">Sélectionner par état</span>
+                            <div className="filter-options">
+                                {[
+                                    { value: 'all', label: 'Tous les produits' },
+                                    { value: 'available', label: 'En stock uniquement' },
+                                    { value: 'new', label: 'Nouveautés' },
+                                ].map(opt => (
+                                    <button
+                                        key={opt.value}
+                                        className={`filter-chip ${filterOption === opt.value ? 'active' : ''}`}
+                                        onClick={() => setFilterOption(opt.value as FilterOption)}
+                                    >
+                                        {opt.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* 🏷️ Categories: Premium Visual Grid */}
+            {
+                categories.length > 1 && (
+                    <div className="category-pills-container">
+                        <div className="category-visual-grid">
+                            {categories.map(cat => (
+                                <motion.div
+                                    key={cat as string}
+                                    whileHover={{ y: -5 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={() => handleCategoryClick(cat as string)}
+                                    className={`category-card ${selectedCategory === cat ? 'active' : ''}`}
+                                >
+                                    <div className="cat-icon">
+                                        {getCategoryIcon(cat as string)}
+                                    </div>
+                                    <span className="cat-name">{cat as string}</span>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+                )
+            }
 
             {/* ===================== PRODUCTS GRID ===================== */}
             < section className="products-section" >
@@ -2639,6 +2665,18 @@ export default function ShopPage() {
                                             </div>
 
                                             <div className="luxury-group">
+                                                <label className="luxury-label required">Votre numéro de téléphone (WhatsApp)</label>
+                                                <input
+                                                    type="tel"
+                                                    className="luxury-input"
+                                                    placeholder="Ex: 622 11 22 33"
+                                                    value={customerInfo.phone}
+                                                    onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
+                                                    required
+                                                />
+                                            </div>
+
+                                            <div className="luxury-group">
                                                 <label className="luxury-label required">Quartier / Adresse de livraison</label>
                                                 <input
                                                     type="text"
@@ -2990,77 +3028,6 @@ export default function ShopPage() {
                     >
                         <div className="live-toast-dot" />
                         <span className="live-toast-text">{liveActivity.text}</span>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-            <AnimatePresence>
-                {showReferralModal && (
-                    <motion.div
-                        className="modal-overlay"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onClick={() => setShowReferralModal(false)}
-                    >
-                        <motion.div
-                            className="referral-modal-card"
-                            initial={{ y: 100, scale: 0.9 }}
-                            animate={{ y: 0, scale: 1 }}
-                            exit={{ y: 100, scale: 0.9 }}
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <div className="modal-header">
-                                <div className="header-icon-box">
-                                    <Gift size={32} />
-                                </div>
-                                <h3 className="modal-title">Parrainez un ami !</h3>
-                                <p className="modal-subtitle">Faites découvrir la boutique et gagnez des cadeaux !</p>
-                                <button className="modal-close" onClick={() => setShowReferralModal(false)}>
-                                    <X size={24} />
-                                </button>
-                            </div>
-
-                            <div className="referral-content">
-                                <div className="referral-info-grid">
-                                    <div className="referral-step">
-                                        <div className="step-num">1</div>
-                                        <p>Partagez le lien de la boutique à vos amis</p>
-                                    </div>
-                                    <div className="referral-step">
-                                        <div className="step-num">2</div>
-                                        <p>Ils découvrent nos pépites & commandent</p>
-                                    </div>
-                                    <div className="referral-step">
-                                        <div className="step-num">3</div>
-                                        <p>Vous recevez des cadeaux exclusifs !</p>
-                                    </div>
-                                </div>
-
-                                <div className="share-actions">
-                                    <button
-                                        className="btn-share-whatsapp"
-                                        onClick={() => {
-                                            const text = `Regarde ce que j'ai trouvé sur ${shop.name} ! 😍 Voici le lien : ${window.location.origin}/s/${shop.slug}`;
-                                            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
-                                        }}
-                                    >
-                                        <MessageCircle size={20} fill="currentColor" /> Partager sur WhatsApp
-                                    </button>
-
-                                    <button
-                                        className="btn-copy-link"
-                                        onClick={() => {
-                                            navigator.clipboard.writeText(`${window.location.origin}/s/${shop.slug}`);
-                                            setCopiedLink(true);
-                                            setTimeout(() => setCopiedLink(false), 2000);
-                                        }}
-                                    >
-                                        {copiedLink ? <Check size={20} /> : <Share2 size={20} />}
-                                        {copiedLink ? "Lien copié !" : "Copier le lien"}
-                                    </button>
-                                </div>
-                            </div>
-                        </motion.div>
                     </motion.div>
                 )}
             </AnimatePresence>
