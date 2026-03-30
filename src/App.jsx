@@ -5,10 +5,9 @@ import { Loader2 } from 'lucide-react';
 const Landing = React.lazy(() => import('./pages/Landing'));
 const JoinShopPage = React.lazy(() => import('./pages/JoinShopPage'));
 const ShopPage = React.lazy(() => import('./pages/ShopPage'));
+const ShopPageNew = React.lazy(() => import('./pages/ShopPageNew'));
 const OrderPage = React.lazy(() => import('./pages/OrderPage'));
 const SearchResults = React.lazy(() => import('./pages/SearchResults'));
-const TelegramDashboard = React.lazy(() => import('./pages/TelegramDashboard'));
-
 function PageLoader() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#080b10]">
@@ -27,15 +26,13 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/search" element={<SearchResults />} />
-        <Route path="/s/:slug/p/:productId" element={<ShopPage />} />
+<Route path="/s/:slug/p/:productId" element={<ShopPage />} />
         <Route path="/s/:slug" element={<ShopPage />} />
-        <Route path="/b/:slug/p/:productId" element={<ShopPage />} />
-        <Route path="/b/:slug" element={<ShopPage />} />
+        <Route path="/b/:slug/p/:productId" element={<ShopPageNew />} />
+        <Route path="/b/:slug" element={<ShopPageNew />} />
         <Route path="/join" element={<JoinShopPage />} />
         <Route path="/order/:orderId" element={<OrderPage />} />
         <Route path="/receipt/:orderId" element={<OrderPage />} />
-        <Route path="/telegram-mini-app" element={<TelegramDashboard />} />
-        <Route path="/telegram" element={<TelegramDashboard />} />
         {/* Catch-all pour les slugs directs type velmo.pro/ma-boutique */}
         <Route path="/:slug/p/:productId" element={<ShopPage />} />
         <Route path="/:slug" element={<ShopPage />} />

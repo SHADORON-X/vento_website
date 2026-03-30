@@ -52,6 +52,8 @@ export default function TelegramDashboard() {
     const [saving, setSaving] = useState(false);
     const [saved, setSaved] = useState(false);
     const [activeTab, setActiveTab] = useState('live');
+    const [orders, setOrders] = useState([]);
+    const [shopInfo, setShopInfo] = useState({ phone: '', whatsapp: '' });
     const [error, setError] = useState(null);
 
     const fetchData = useCallback(async () => {
@@ -63,31 +65,22 @@ export default function TelegramDashboard() {
             const { data: rpcData, error: rpcErr } = await supabase.rpc('get_tambo_dashboard_stats', { p_shop_id: shopId });
 
             if (rpcErr) {
-                console.warn('RPC fail, using direct queries:', rpcErr);
-                // Fallback: requêtes directes si RPC pas encore créée ou accessible
-                const today = new Date(); today.setHours(0, 0, 0, 0);
-                const sevenDaysAgo = new Date(); sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-                const [salesRes, productsRes, debtsRes, shopRes] = await Promise.all([
-                    supabase.from('sales').select('total_amount, created_at').eq('shop_id', shopId).gte('created_at', sevenDaysAgo.toISOString()),
-                    supabase.from('products').select('name, quantity, stock_alert').eq('shop_id', shopId).eq('is_deleted', false),
-                    supabase.from('debts').select('amount_remaining').eq('shop_id', shopId).eq('status', 'active'),
-                    supabase.from('shops').select('name').eq('id', shopId).maybeSingle(),
-                ]);
-
-                const allSales = salesRes.data || [];
-                const todaySales = allSales.filter(s => new Date(s.created_at) >= today);
-                const revenue = todaySales.reduce((s, r) => s + (r.total_amount || 0), 0);
-                const totalDebt = (debtsRes.data || []).reduce((s, d) => s + (d.amount_remaining || 0), 0);
-                const prods = productsRes.data || [];
-                const lowStockCount = prods.filter(p => p.quantity <= (p.stock_alert || 5)).length;
-
-                const days = Array.from({ length: 7 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() - (6 - i)); return d.toISOString().split('T')[0]; });
-                const trendData = days.map(date => ({ name: date.split('-').slice(1).join('/'), total: allSales.filter(s => s.created_at.startsWith(date)).reduce((s, r) => s + (r.total_amount || 0), 0) }));
-                const hourlyData = Array.from({ length: 8 }, (_, i) => ({ hour: `${8 + i * 2}h`, total: 0 }));
-                todaySales.forEach(s => { const h = new Date(s.created_at).getHours(); const slot = Math.floor((h - 8) / 2); if (slot >= 0 && slot < 8) hourlyData[slot].total += s.total_amount || 0; });
-
-                setStats({ revenue, salesCount: todaySales.length, totalDebt, lowStockCount, trendData, hourlyData, shopName: shopRes.data?.name || 'Mon Empire' });
+                // Fallback: get_telegram_stats (RLS-safe)
+                const { data: tStats } = await supabase.rpc('get_telegram_stats', { p_shop_id: shopId, p_days: 7 });
+                if (tStats && !tStats.error) {
+                    const today = new Date(); today.setHours(0, 0, 0, 0);
+                    const allSales = tStats.sales || [];
+                    const todaySales = allSales.filter(s => new Date(s.created_at) >= today);
+                    const revenue = todaySales.reduce((s, r) => s + (r.total_amount || 0), 0);
+                    const totalDebt = (tStats.debts || []).reduce((s, d) => s + (d.remaining_amount || 0), 0);
+                    const prods = tStats.products || [];
+                    const lowStockCount = prods.filter(p => p.quantity <= (p.stock_alert || 5)).length;
+                    const days = Array.from({ length: 7 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() - (6 - i)); return d.toISOString().split('T')[0]; });
+                    const trendData = days.map(date => ({ name: date.split('-').slice(1).join('/'), total: allSales.filter(s => s.created_at?.startsWith(date)).reduce((s, r) => s + (r.total_amount || 0), 0) }));
+                    const hourlyData = Array.from({ length: 8 }, (_, i) => ({ hour: `${8 + i * 2}h`, total: 0 }));
+                    todaySales.forEach(s => { const h = new Date(s.created_at).getHours(); const slot = Math.floor((h - 8) / 2); if (slot >= 0 && slot < 8) hourlyData[slot].total += s.total_amount || 0; });
+                    setStats({ revenue, salesCount: todaySales.length, totalDebt, lowStockCount, trendData, hourlyData, shopName: tStats.shop?.name || 'Mon Empire' });
+                }
             } else if (rpcData) {
                 setStats(rpcData);
             }
@@ -108,6 +101,16 @@ export default function TelegramDashboard() {
                     report_hour: sub.report_hour ?? 18,
                 });
             }
+
+            // Fetch Customer Orders + Shop Info via RPCs (RLS-safe)
+            const [ordersRes, shopRes] = await Promise.all([
+                supabase.rpc('sync_pull_table', { p_table_name: 'customer_orders', p_shop_id: shopId, p_last_sync: new Date(0).toISOString() }),
+                supabase.rpc('get_shop_settings', { p_shop_id: shopId }),
+            ]);
+            const ordData = Array.isArray(ordersRes.data) ? ordersRes.data : [];
+            setOrders(ordData.slice(-20).reverse());
+            const shp = shopRes.data?.shop;
+            if (shp) setShopInfo({ phone: shp.phone || '', whatsapp: shp.whatsapp || '' });
         } catch (err) {
             console.error(err);
             setError('Impossible de charger les données. Vérifiez votre connexion.');
@@ -122,15 +125,17 @@ export default function TelegramDashboard() {
         if (!shopId) return;
         setSaving(true);
         try {
-            await supabase.from('telegram_subscribers')
-                .update({
-                    notify_big_sales: settings.notify_big_sales,
-                    big_sale_threshold: settings.big_sale_threshold,
-                    notif_mute_start: settings.notif_mute_start + ':00',
-                    notif_mute_end: settings.notif_mute_end + ':00',
-                    report_hour: settings.report_hour,
-                })
-                .eq('shop_id', shopId);
+            // Update Bot Settings + Shop Info via RPCs (RLS-safe)
+            await Promise.all([
+                supabase.rpc('save_whatsapp_config', {
+                    p_shop_id: shopId,
+                    p_data: { report_hour: settings.report_hour, daily_report_enabled: true },
+                }),
+                supabase.rpc('update_shop_online_profile', {
+                    p_shop_id: shopId,
+                    p_data: { phone: shopInfo.phone, whatsapp: shopInfo.whatsapp },
+                }),
+            ]);
 
             setSaved(true);
             setTimeout(() => setSaved(false), 2500);
@@ -193,9 +198,10 @@ export default function TelegramDashboard() {
             <div className="flex gap-1 px-4 pt-4 pb-2 overflow-x-auto hide-scrollbar">
                 {[
                     { id: 'live', label: '⚡ Live', icon: LayoutDashboard },
-                    { id: 'trends', label: '📈 Tendances', icon: TrendingUp },
+                    { id: 'orders', label: '📦 Commandes', icon: Package },
+                    { id: 'trends', label: '📈 Stats', icon: TrendingUp },
                     { id: 'automations', label: '🤖 Auto', icon: Zap },
-                    { id: 'settings', label: '⚙️ Réglages', icon: Settings },
+                    { id: 'settings', label: '⚙️ Shop', icon: Settings },
                 ].map(tab => (
                     <button
                         key={tab.id}
@@ -277,6 +283,70 @@ export default function TelegramDashboard() {
                 </div>
             )}
 
+            {activeTab === 'orders' && (
+                <div className="px-4 space-y-4 mt-2 animate-in fade-in slide-in-from-right-4 duration-500">
+                    <div className="flex items-center justify-between mb-2">
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Dernières commandes ({orders.length})</p>
+                        <RefreshCw size={14} className={`text-slate-600 ${loading ? 'animate-spin' : ''}`} onClick={fetchData} />
+                    </div>
+
+                    {orders.length === 0 ? (
+                        <div className="py-20 text-center">
+                            <Package size={48} className="text-white/5 mx-auto mb-4" />
+                            <p className="text-slate-500 text-sm">Aucune commande reçue via le site pour le moment.</p>
+                        </div>
+                    ) : (
+                        orders.map(order => (
+                            <div key={order.id} className="bg-white/[0.04] border border-white/8 rounded-3xl p-5 space-y-4">
+                                <div className="flex justify-between items-start">
+                                    <div>
+                                        <h4 className="text-sm font-black text-white">{order.customer_name}</h4>
+                                        <p className="text-[10px] text-slate-500">{new Date(order.created_at).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}</p>
+                                    </div>
+                                    <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${order.status === 'pending' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' :
+                                        order.status === 'confirmed' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' :
+                                            'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
+                                        }`}>
+                                        {order.status === 'pending' ? '⏳ En attente' : order.status === 'confirmed' ? '✅ Confirmée' : '🏁 Livrée'}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    {(order.items_json || []).map((item, i) => (
+                                        <div key={i} className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/5 overflow-hidden shrink-0">
+                                                {item.image_url ? (
+                                                    <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center text-white/10">
+                                                        <Package size={16} />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-xs font-bold text-white truncate">{item.name}</p>
+                                                <p className="text-[10px] text-slate-500">{item.quantity} x {fmt(item.price)} GNF</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="pt-3 border-t border-white/5 flex justify-between items-center">
+                                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Total</span>
+                                    <span className="text-sm font-black text-orange-500">{fmt(order.total_amount)} GNF</span>
+                                </div>
+
+                                <button
+                                    onClick={() => window.open(`https://velmo.org/order/${order.id}`, '_blank')}
+                                    className="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl text-[10px] font-black text-white uppercase tracking-widest transition-all"
+                                >
+                                    Détails & Actions
+                                </button>
+                            </div>
+                        ))
+                    )}
+                </div>
+            )}
             {activeTab === 'trends' && (
                 <div className="px-4 space-y-4 mt-2">
                     <div className="bg-white/[0.04] border border-white/8 rounded-3xl p-4">
@@ -396,22 +466,48 @@ export default function TelegramDashboard() {
                         <p className="text-xs text-slate-500 font-mono mt-1 opacity-50 uppercase tracking-widest">{shopId}</p>
                     </div>
 
-                    <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-3xl p-6 flex items-center gap-4">
-                        <ShieldCheck size={24} className="text-emerald-400" />
-                        <div>
-                            <p className="text-sm font-black text-emerald-200 uppercase tracking-wide">État de Connexion</p>
-                            <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-widest">Liaison Intelligente Active</p>
+                    <div className="bg-white/[0.04] border border-white/8 rounded-3xl p-6 space-y-6">
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Informations de Contact Vitrine</p>
+
+                        <div className="space-y-4">
+                            <div>
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">📞 Numéro de Téléphone (Client)</label>
+                                <input
+                                    type="text"
+                                    value={shopInfo.phone}
+                                    onChange={e => setShopInfo(s => ({ ...s, phone: e.target.value }))}
+                                    placeholder="Ex: 622 00 00 00"
+                                    className="w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-4 text-white font-bold text-sm focus:border-orange-500 outline-none transition-all"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">💬 Numéro WhatsApp (Commandes)</label>
+                                <input
+                                    type="text"
+                                    value={shopInfo.whatsapp}
+                                    onChange={e => setShopInfo(s => ({ ...s, whatsapp: e.target.value }))}
+                                    placeholder="Ex: 622 00 00 00"
+                                    className="w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-4 text-white font-bold text-sm focus:border-orange-500 outline-none transition-all border-dashed"
+                                />
+                                <p className="text-[9px] text-slate-500 mt-2 italic">C'est ce numéro qui recevra les messages de commande de la vitrine.</p>
+                            </div>
                         </div>
+
+                        <button onClick={saveSettings} disabled={saving}
+                            className="w-full py-4 rounded-2xl font-black text-sm bg-white/5 hover:bg-white/10 text-white border border-white/5 flex items-center justify-center gap-2 active:scale-95 transition-all">
+                            {saving ? <RefreshCw size={16} className="animate-spin" /> : <Save size={16} />}
+                            Sauvegarder les Infos
+                        </button>
                     </div>
 
                     <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-2 space-y-1">
                         {[
-                            { label: '📊 Voir le Tableau de Bord', action: () => setActiveTab('live') },
-                            { label: '⚙️ Configurer les Alertes', action: () => setActiveTab('automations') },
-                            { label: '📈 Analyser les Tendances', action: () => setActiveTab('trends') },
+                            { label: '📊 Tableau de Bord', action: () => setActiveTab('live') },
+                            { label: '⚙️ Configuration Alertes', action: () => setActiveTab('automations') },
+                            { label: '🔗 Ouvrir ma Vitrine', action: () => window.open(`https://velmo.org/s/${stats?.slug || ''}`, '_blank') },
                         ].map((item, i) => (
                             <button key={i} onClick={item.action} className="w-full flex items-center justify-between p-4 hover:bg-white/5 rounded-2xl transition-all group">
-                                <span className="text-xs text-slate-400 font-bold group-hover:text-white transition-colors uppercase tracking-widest">{item.label}</span>
+                                <span className="text-[10px] text-slate-400 font-black group-hover:text-white transition-colors uppercase tracking-widest">{item.label}</span>
                                 <ChevronRight size={14} className="text-slate-600 group-hover:text-orange-500 transition-colors" />
                             </button>
                         ))}

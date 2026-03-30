@@ -55,6 +55,7 @@ export interface Shop {
 
   // 🔘 STATUTS
   is_public: boolean;
+  is_online_active?: boolean;
   is_verified?: boolean;
   is_active?: boolean;
 
@@ -91,8 +92,10 @@ export interface Product {
   quantity?: number;
   stock_alert?: number;
 
-  // 📸 IMAGE
+  // 📸 IMAGES
   photo_url?: string | null;
+  images_json?: string | null;  // JSON array of additional image URLs
+  promo_price?: number | null;  // Promotional price (shown crossed out)
 
   // 🔘 STATUTS
   is_active: boolean;
@@ -115,6 +118,7 @@ export interface OrderItem {
 export interface CustomerOrder {
   id?: string;
   short_ref?: string;
+  order_number?: string | null;
   shop_id: string;
 
   // 👤 INFORMATIONS CLIENT

@@ -44,38 +44,25 @@ export default function JoinShopPage() {
     const [submitting, setSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState('');
 
-    // ─── Search shop ─────────────────────────────────────────────
+    // ─── Search shop by slug ──────────────────────────────────────
     const handleSearch = async () => {
-        const q = searchQuery.trim().toUpperCase();
+        const q = searchQuery.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
         if (!q) return;
         setSearching(true);
         setSearchError('');
         setFoundShop(null);
         try {
-            let shopData = null;
-            if (q.startsWith('SHP-')) {
-                const { data, error } = await supabase.rpc('get_shop_by_code', { p_shop_code: q });
-                if (error) throw error;
-                shopData = Array.isArray(data) ? data[0] : data;
-            } else if (q.startsWith('VLM-')) {
-                const { data, error } = await supabase.rpc('get_shop_by_owner_velmo_id', { p_velmo_id: q });
-                if (error) throw error;
-                shopData = Array.isArray(data) ? data[0] : data;
+            const { data, error } = await supabase
+                .from('shops')
+                .select('id, name, category, location, logo, slug')
+                .eq('slug', q)
+                .eq('is_active', true)
+                .maybeSingle();
+            if (error) throw error;
+            if (!data) {
+                setSearchError('Boutique introuvable. Vérifiez le nom de la boutique.');
             } else {
-                // Phone search
-                const raw = q.replace(/\D/g, '');
-                const { data, error } = await supabase
-                    .from('shops')
-                    .select('id, name, category, city, logo_url, shop_code')
-                    .eq('phone', raw)
-                    .maybeSingle();
-                if (error) throw error;
-                shopData = data;
-            }
-            if (!shopData) {
-                setSearchError('Aucune boutique trouvée. Vérifiez le code ou le numéro.');
-            } else {
-                setFoundShop(shopData);
+                setFoundShop(data);
             }
         } catch (err) {
             setSearchError('Erreur de connexion. Vérifiez votre internet.');
@@ -194,8 +181,8 @@ export default function JoinShopPage() {
                                     <div className="w-14 h-14 bg-orange-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-orange-500/20">
                                         <Search size={26} className="text-orange-400" />
                                     </div>
-                                    <h1 className="text-2xl font-black text-white">Trouver une boutique</h1>
-                                    <p className="text-slate-400 text-sm mt-2">Entrez le code SHP-, l'ID VLM- ou le numéro de téléphone</p>
+                                    <h1 className="text-2xl font-black text-white">Rejoindre une boutique</h1>
+                                    <p className="text-slate-400 text-sm mt-2">Entrez le nom de la boutique (ex : diallo-electronique)</p>
                                 </div>
 
                                 <div className="space-y-4">
@@ -204,9 +191,9 @@ export default function JoinShopPage() {
                                         <input
                                             type="text"
                                             value={searchQuery}
-                                            onChange={e => setSearchQuery(e.target.value)}
+                                            onChange={e => setSearchQuery(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))}
                                             onKeyDown={e => e.key === 'Enter' && handleSearch()}
-                                            placeholder="SHP-AB1234 ou VLM-AB-123 ou 622..."
+                                            placeholder="diallo-electronique"
                                             className="w-full pl-10 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-slate-500 focus:outline-none focus:border-orange-500/60 font-mono text-sm transition-colors"
                                         />
                                     </div>
@@ -232,13 +219,13 @@ export default function JoinShopPage() {
                                             className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl">
                                             <div className="flex items-center gap-4">
                                                 <div className="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center border border-orange-500/20 overflow-hidden shrink-0">
-                                                    {foundShop.logo_url
-                                                        ? <img src={foundShop.logo_url} alt="" className="w-full h-full object-cover" />
+                                                    {foundShop.logo
+                                                        ? <img src={foundShop.logo} alt="" className="w-full h-full object-cover" />
                                                         : <Store size={20} className="text-orange-400" />}
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <p className="font-black text-white truncate">{foundShop.name}</p>
-                                                    <p className="text-xs text-slate-400">{foundShop.category || 'Boutique'} {foundShop.city ? `· ${foundShop.city}` : ''}</p>
+                                                    <p className="text-xs text-slate-400">{foundShop.category || 'Boutique'} {foundShop.location ? `· ${foundShop.location}` : ''}</p>
                                                 </div>
                                                 <CheckCircle size={20} className="text-emerald-400 shrink-0" />
                                             </div>

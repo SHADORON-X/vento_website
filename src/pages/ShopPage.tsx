@@ -56,7 +56,7 @@ export default function ShopPage() {
     const [theme, setTheme] = useState<'light' | 'dark'>(() => {
         const saved = localStorage.getItem('theme');
         if (saved === 'light' || saved === 'dark') return saved;
-        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        return 'light'; // Light par défaut — marketplace inspire plus confiance
     });
 
     useEffect(() => {
@@ -117,6 +117,7 @@ export default function ShopPage() {
     // 🖼️ Product Modal State
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [modalQuantity, setModalQuantity] = useState(1);
+    const [galleryIndex, setGalleryIndex] = useState(0);
 
     // 🕵️ Direct product opening (from Search Param OR Route Param)
     useEffect(() => {
@@ -125,6 +126,7 @@ export default function ShopPage() {
             const found = products.find(p => p.id === pid);
             if (found) {
                 setSelectedProduct(found);
+                setGalleryIndex(0);
             }
         }
     }, [routeProductId, searchParams, products]);
@@ -699,6 +701,12 @@ export default function ShopPage() {
         [products]
     );
 
+    // O(1) cart lookup — évite O(n) cart.find() dans productGrid
+    const cartMap = useMemo(
+        () => new Map(cart.map(i => [i.product.id, i.quantity])),
+        [cart]
+    );
+
     const filteredAndSortedProducts = useMemo(() => {
         let result = products.filter(product => {
             const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -778,8 +786,7 @@ export default function ShopPage() {
                 <div className="product-grid">
                     {visibleProducts.map((product, index) => {
                         const isFavorite = favorites.includes(product.id);
-                        const cartItem = cart.find(item => item.product.id === product.id);
-                        const quantity = cartItem ? cartItem.quantity : 0;
+                        const quantity = cartMap.get(product.id) || 0;
 
                         const isHot = (productViews[product.id] || 0) >= 3;
                         const isNew = product.created_at &&
@@ -789,13 +796,14 @@ export default function ShopPage() {
                             <motion.div
                                 key={product.id}
                                 className="product-card"
-                                initial={{ opacity: 0, scale: 0.95 }}
+                                initial={{ opacity: 0, scale: 0.97 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: Math.min(index * 0.05, 0.6) }}
+                                transition={{ duration: 0.15 }}
                                 onClick={() => {
                                     navigate(`/s/${shop?.slug}/p/${product.id}`, { replace: true });
                                     setSelectedProduct(product);
                                     setModalQuantity(1);
+                                    setGalleryIndex(0);
                                     trackEvent('view_product', product.id, product.category || undefined);
                                     setProductViews(prev => ({
                                         ...prev,
@@ -855,12 +863,25 @@ export default function ShopPage() {
                                     </div>
                                     <h3 className="product-title">{product.name}</h3>
 
+                                    {product.description && (
+                                        <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary, #9CA3AF)', margin: '2px 0 4px', lineHeight: 1.4, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' } as React.CSSProperties}>
+                                            {product.description}
+                                        </p>
+                                    )}
+
                                     <div className="product-price-row">
                                         <div className="price-glass-container">
-                                            <span className="product-price">{formatPrice(product.price_sale)}</span>
-                                            {product.price_regular && product.price_regular > product.price_sale && (
+                                            <span className="product-price">
+                                                {formatPrice(product.promo_price && product.promo_price < product.price_sale
+                                                    ? product.promo_price
+                                                    : product.price_sale
+                                                )}
+                                            </span>
+                                            {product.promo_price && product.promo_price < product.price_sale ? (
+                                                <span className="product-price-old">{formatPrice(product.price_sale)}</span>
+                                            ) : product.price_regular && product.price_regular > product.price_sale ? (
                                                 <span className="product-price-old">{formatPrice(product.price_regular)}</span>
-                                            )}
+                                            ) : null}
                                         </div>
                                     </div>
 
@@ -927,7 +948,7 @@ export default function ShopPage() {
                 )}
             </>
         );
-    }, [filteredAndSortedProducts, favorites, cart, visibleCount, productViews, shop]);
+    }, [filteredAndSortedProducts, favorites, cartMap, visibleCount, productViews, shop]);
 
     const totalAmount = cart.reduce((acc, item) => acc + ((item.product.price_sale || 0) * item.quantity), 0);
     const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
@@ -999,9 +1020,8 @@ export default function ShopPage() {
     // 🛒 CART ACTIONS
     // ============================================================
 
-    const addToCart = (product: Product, quantity: number = 1) => {
+    const addToCart = useCallback((product: Product, quantity: number = 1) => {
         if (navigator.vibrate) navigator.vibrate(50);
-
         setCart(prev => {
             const existing = prev.find(item => item.product.id === product.id);
             if (existing) {
@@ -1013,33 +1033,25 @@ export default function ShopPage() {
             }
             return [...prev, { product, quantity }];
         });
-
-        // Analytics Intelligent
         trackEvent('add_to_cart', product.id, product.category || undefined, undefined, { quantity });
-
         setAddedId(product.id);
         setTimeout(() => setAddedId(null), 1500);
-    };
+    }, [trackEvent]);
 
-    const updateQuantity = (productId: string, delta: number) => {
+    const updateQuantity = useCallback((productId: string, delta: number) => {
         setCart(prev => {
             const existing = prev.find(item => item.product.id === productId);
             if (!existing) return prev;
-
             const newQty = existing.quantity + delta;
             if (newQty <= 0) {
-                // Analytics
                 trackEvent('remove_from_cart', productId);
                 return prev.filter(item => item.product.id !== productId);
             }
-
             return prev.map(item =>
-                item.product.id === productId
-                    ? { ...item, quantity: newQty }
-                    : item
+                item.product.id === productId ? { ...item, quantity: newQty } : item
             );
         });
-    };
+    }, [trackEvent]);
 
     const setManualQuantity = (productId: string, quantity: number) => {
         const val = Math.max(0, quantity);
@@ -1074,7 +1086,7 @@ export default function ShopPage() {
     // 🎫 TICKET IMAGE GENERATOR (Canvas)
     // ============================================================
 
-    const generateOrderTicketImage = async (orderId?: string): Promise<Blob | null> => {
+    const generateOrderTicketImage = async (orderRef?: string | null): Promise<Blob | null> => {
         if (!shop) return null;
 
         const W = 480;
@@ -1122,10 +1134,10 @@ export default function ShopPage() {
 
         ctx.fillStyle = '#888';
         ctx.font = '13px Arial';
-        ctx.fillText('velmo.market', PADDING + 58, 60);
+        ctx.fillText('velmo.org', PADDING + 58, 60);
 
         // --- Order reference & date ---
-        const ref = orderId ? orderId.slice(0, 8).toUpperCase() : 'VEL-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+        const ref = orderRef || 'CMD-' + Math.random().toString(36).slice(2, 6).toUpperCase();
         const now = new Date();
         const dateStr = now.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
         ctx.fillStyle = '#ff5500';
@@ -1232,7 +1244,7 @@ export default function ShopPage() {
 
         // --- QR Code ---
         const qrY = infoY + 60;
-        const trackingUrl = `https://velmo.market/order/${ref}`;
+        const trackingUrl = `https://velmo.org/order/${ref}`;
         const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${QR_SIZE}x${QR_SIZE}&data=${encodeURIComponent(trackingUrl)}&color=ffffff&bgcolor=15151f`;
 
         try {
@@ -1288,10 +1300,10 @@ export default function ShopPage() {
     };
 
     // Ouverture WhatsApp (fallback texte si partage image impossible)
-    const openWhatsApp = (orderId?: string) => {
+    const openWhatsApp = (orderRef?: string | null) => {
         if (!shop) return;
         const shopPhone = (shop.whatsapp || shop.phone || '').replace(/\D/g, '');
-        const ref = orderId ? orderId.slice(0, 8).toUpperCase() : '';
+        const ref = orderRef || '';
 
         // Liste détaillée des produits dans le message
         const itemLines = cart.map(item => {
@@ -1314,7 +1326,7 @@ export default function ShopPage() {
                 : '',
             ref ? `🔖 *Réf :* #${ref}` : '',
             ``,
-            `_Commande passée via velmo.market_`
+            `_Commande passée via velmo.org_`
         ].filter(Boolean).join('\n');
 
         window.open(`https://wa.me/${shopPhone}?text=${encodeURIComponent(msg)}`, '_blank');
@@ -1336,7 +1348,7 @@ export default function ShopPage() {
             ``,
             `🔗 Boutique : ${shopUrl}`,
             ``,
-            `_Via velmo.market_`
+            `_Via velmo.org_`
         ].filter(Boolean).join('\n');
         window.open(`https://wa.me/${shopPhone}?text=${encodeURIComponent(msg)}`, '_blank');
     };
@@ -1396,29 +1408,99 @@ export default function ShopPage() {
                 photo_url: item.product.photo_url || null
             }));
 
+            // items_json stocké en TEXT dans la DB → stringify obligatoire
             const { data, error } = await supabase
                 .from('customer_orders')
                 .insert({
                     shop_id: shop.id,
                     customer_name: customerInfo.name || 'Client WhatsApp',
                     customer_phone: customerInfo.phone || null,
-                    items_json: items_json,
-                    items_count: cart.length, // ✅ Fix: On ajoute le nombre d'articles
+                    items_json: JSON.stringify(items_json),
+                    items_count: cart.length,
                     total_amount: currentTotal,
                     status: 'pending',
                     delivery_method: deliveryMethod || 'pickup',
-                    customer_address: customerInfo.address,
-                    customer_location: customerInfo.location ? JSON.stringify(customerInfo.location) : null
+                    customer_address: customerInfo.address || null,
                 })
-                .select('id, short_ref')
+                .select('id')
                 .single();
 
-            if (error) throw error;
+            if (error) {
+                console.error('❌ Insert order error:', JSON.stringify(error));
+                throw error;
+            }
 
+            // Récupérer order_number après insertion (colonne ajoutée par trigger CMD-XXXX)
+            let orderRef: string | null = null;
+            try {
+                const { data: numData } = await supabase
+                    .from('customer_orders')
+                    .select('order_number')
+                    .eq('id', data.id)
+                    .single();
+                orderRef = numData?.order_number || null;
+            } catch (_) { /* migration pas encore appliquée → fallback ci-dessous */ }
+
+            if (!orderRef) orderRef = 'CMD-' + data.id.replace(/-/g, '').slice(-6).toUpperCase();
             trackEvent('checkout_success', undefined, undefined, undefined, { orderId: data?.id, total: currentTotal });
 
+            // 🔔 Notification Telegram directe (fiable, sans dépendre du trigger DB)
+            try {
+                const { data: tgSub } = await supabase
+                    .from('telegram_subscribers')
+                    .select('chat_id')
+                    .eq('shop_id', shop.id)
+                    .eq('status', 'active')
+                    .order('created_at', { ascending: false })
+                    .limit(1)
+                    .single();
+
+                if (tgSub?.chat_id) {
+                    const tgItemsList = cart.map(item =>
+                        `  • ${item.product.name} ×${item.quantity} — ${((item.product.price_sale || 0) * item.quantity).toLocaleString('fr-FR')} GNF`
+                    ).join('\n');
+                    const tgText = [
+                        `🛍️ *NOUVELLE COMMANDE — ${shop.name}* 🚨`,
+                        `━━━━━━━━━━━━━━━━━━`,
+                        `🔖 *N° :* \`${orderRef}\``,
+                        ``,
+                        `👤 *Client :* ${customerInfo.name || 'Anonyme'}`,
+                        customerInfo.phone ? `📱 *Tél :* ${customerInfo.phone}` : null,
+                        ``,
+                        deliveryMethod === 'delivery' ? `🚚 *Livraison*` : `🏪 *Retrait en boutique*`,
+                        customerInfo.address ? `📍 *Adresse :* ${customerInfo.address}` : null,
+                        ``,
+                        `📦 *Articles commandés :*`,
+                        tgItemsList,
+                        ``,
+                        `💰 *TOTAL : ${currentTotal.toLocaleString('fr-FR')} GNF*`,
+                        null,
+                        `━━━━━━━━━━━━━━━━━━`,
+                        `⏳ _En attente de confirmation_`,
+                    ].filter(Boolean).join('\n');
+
+                    await supabase.functions.invoke('telegram-notify', {
+                        body: {
+                            chat_id: tgSub.chat_id,
+                            text: tgText,
+                            parse_mode: 'Markdown',
+                            reply_markup: {
+                                inline_keyboard: [
+                                    [
+                                        { text: '✅ Confirmer', callback_data: `order:validate:${data.id}` },
+                                        { text: '❌ Annuler', callback_data: `order:decline:${data.id}` },
+                                    ],
+                                    [{ text: '📋 Voir les détails complets', callback_data: `order_detail:${data.id}` }],
+                                    [{ text: '🛒 Toutes mes commandes', callback_data: 'menu:orders' }],
+                                ]
+                            }
+                        }
+                    });
+                }
+            } catch (_) { /* Silencieux — ne bloque pas le checkout */ }
+
             // 2. Générer le ticket image
-            const blob = await generateOrderTicketImage(data?.id);
+            const blob = await generateOrderTicketImage(orderRef);
             if (blob) {
                 const url = URL.createObjectURL(blob);
                 setTicketImageUrl(url);
@@ -1426,23 +1508,23 @@ export default function ShopPage() {
             }
 
             // 3. Ouvrir WhatsApp
-            openWhatsApp(data?.id);
+            openWhatsApp(orderRef);
 
             // 3.1 Téléchargement automatique du ticket (OPTIONNEL, mais demandé par utilisateur)
             if (blob) {
-                downloadTicket(blob, data?.short_ref || data?.id?.slice(0, 8));
+                downloadTicket(blob, orderRef);
             }
 
             // 4. Nettoyage
             setSubmittedOrderId(data?.id || null);
-            setSubmittedOrderRef(data?.short_ref || (data?.id ? data.id.slice(0, 8).toUpperCase() : null));
+            setSubmittedOrderRef(orderRef);
             setOrderSuccess(true);
             setCart([]);
             localStorage.removeItem('velmo_cart');
 
         } catch (err) {
             console.warn('Checkout error:', err);
-            const fallbackRef = `WA-${Date.now().toString(36).toUpperCase()}`;
+            const fallbackRef = `CMD-${Date.now().toString(36).slice(-6).toUpperCase()}`;
             setSubmittedOrderRef(fallbackRef);
             setOrderSuccess(true);
             openWhatsApp(); // Fallback direct WhatsApp sans DB
@@ -1459,7 +1541,7 @@ export default function ShopPage() {
         const url = URL.createObjectURL(b);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `ticket-velmo-${orderId?.slice(0, 6) || 'cmd'}.png`;
+        a.download = `ticket-velmo-${orderId || 'cmd'}.png`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -1567,7 +1649,7 @@ export default function ShopPage() {
                 <meta property="og:description" content={selectedProduct ? (selectedProduct.description || '') : (shop.description || '')} />
                 <meta property="og:image" content={selectedProduct ? getPublicImageUrl(selectedProduct.photo_url) : (getPublicImageUrl(getShopLogo()) || '')} />
                 <meta property="og:type" content="product" />
-                <meta name="keywords" content={`${shop.name}, ${shop.location || 'Conakry'}, Guinée, boutique en ligne, ${categories.join(', ')}, velmo market, ${selectedProduct ? selectedProduct.name : ''}`} />
+                <meta name="keywords" content={`${shop.name}, ${shop.location || 'Conakry'}, Guinée, boutique en ligne, ${categories.join(', ')}, velmo.org, ${selectedProduct ? selectedProduct.name : ''}`} />
                 <link rel="canonical" href={`https://velmo.org/s/${shop.slug}${selectedProduct ? `/p/${selectedProduct.id}` : ''}`} />
 
                 {/* 🛡️ STRUCTURED DATA: JSON-LD */}
@@ -2011,7 +2093,7 @@ export default function ShopPage() {
                                     const isFav = favorites.includes(product.id);
                                     const isNew = product.created_at &&
                                         (Date.now() - new Date(product.created_at).getTime()) < 7 * 86400000;
-                                    const inCart = cart.find(i => i.product.id === product.id);
+                                    const inCart = cartMap.has(product.id);
 
                                     return (
                                         <motion.div
@@ -2358,7 +2440,7 @@ export default function ShopPage() {
                     </svg>
                 </div>
                 <p className="footer-text">
-                    Propulsé par <a href="https://velmo.market" target="_blank" rel="noopener noreferrer">Velmo</a>
+                    Propulsé par <a href="https://velmo.org" target="_blank" rel="noopener noreferrer">Velmo</a>
                 </p>
             </footer>
 
@@ -2465,8 +2547,8 @@ export default function ShopPage() {
                                                 background: 'linear-gradient(90deg, var(--primary), #ff8c00)'
                                             }} />
                                             <div className="summary-ref" style={{ borderBottom: '1px dashed #2a2a3a', paddingBottom: '12px' }}>
-                                                <span style={{ color: '#888' }}>RÉFÉRENCE TICKET</span>
-                                                <strong style={{ color: 'var(--primary)', fontSize: '1.2rem' }}>#{submittedOrderRef || 'VEL-ERROR'}</strong>
+                                                <span style={{ color: '#888' }}>N° DE COMMANDE</span>
+                                                <strong style={{ color: 'var(--primary)', fontSize: '1.4rem', letterSpacing: '0.05em' }}>{submittedOrderRef || 'VEL-ERROR'}</strong>
                                             </div>
                                             <div className="summary-amount" style={{ paddingTop: '12px' }}>
                                                 <span style={{ color: '#888' }}>TOTAL À PAYER</span>
@@ -2769,6 +2851,12 @@ export default function ShopPage() {
                                                 <strong>{formatPrice(totalAmount)}</strong>
                                             </div>
                                         </div>
+                                        {shop.is_online_active === false ? (
+                                            <div style={{ padding: '16px', borderRadius: '14px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', textAlign: 'center' }}>
+                                                <p style={{ fontWeight: 800, color: '#EF4444', margin: 0, fontSize: '14px' }}>🔴 Boutique temporairement fermée</p>
+                                                <p style={{ color: '#888', margin: '4px 0 0', fontSize: '12px' }}>Les commandes sont suspendues. Revenez plus tard.</p>
+                                            </div>
+                                        ) : (
                                         <button
                                             type="submit"
                                             className="btn-checkout-premium"
@@ -2777,6 +2865,7 @@ export default function ShopPage() {
                                             <MessageCircle size={22} fill="white" />
                                             {isSubmitting ? 'Envoi en cours...' : 'Envoyer la commande (WhatsApp)'}
                                         </button>
+                                        )}
                                         <p className="checkout-note">
                                             Paiement à la livraison ou selon les conditions du marchand.
                                         </p>
@@ -2823,18 +2912,68 @@ export default function ShopPage() {
                                     {copiedLink ? <Check size={18} /> : <Share2 size={18} />}
                                 </button>
 
-                                <div className="product-modal-img">
-                                    {selectedProduct.photo_url ? (
-                                        <img
-                                            src={getPublicImageUrl(selectedProduct.photo_url) || ''}
-                                            alt={selectedProduct.name}
-                                        />
-                                    ) : (
-                                        <div style={{ ...getProductPlaceholderStyle(selectedProduct.name), position: 'absolute', inset: 0, borderRadius: '0' }}>
-                                            <span style={{ fontSize: '4rem' }}>{getProductInitials(selectedProduct.name)}</span>
+                                {/* ── Image Gallery ── */}
+                                {(() => {
+                                    const extras: string[] = (() => {
+                                        try { return JSON.parse(selectedProduct.images_json || '[]'); } catch { return []; }
+                                    })();
+                                    const allImages = [
+                                        ...(selectedProduct.photo_url ? [selectedProduct.photo_url] : []),
+                                        ...extras,
+                                    ];
+                                    const safeIdx = Math.min(galleryIndex, Math.max(0, allImages.length - 1));
+                                    const currentImg = allImages[safeIdx];
+                                    return (
+                                        <div className="product-modal-img" style={{ position: 'relative' }}>
+                                            {currentImg ? (
+                                                <img
+                                                    src={getPublicImageUrl(currentImg) || ''}
+                                                    alt={`${selectedProduct.name} ${safeIdx + 1}`}
+                                                    style={{ transition: 'opacity 0.2s' }}
+                                                />
+                                            ) : (
+                                                <div style={{ ...getProductPlaceholderStyle(selectedProduct.name), position: 'absolute', inset: 0, borderRadius: '0' }}>
+                                                    <span style={{ fontSize: '4rem' }}>{getProductInitials(selectedProduct.name)}</span>
+                                                </div>
+                                            )}
+                                            {/* Nav arrows */}
+                                            {allImages.length > 1 && (
+                                                <>
+                                                    <button
+                                                        onClick={() => setGalleryIndex(i => (i - 1 + allImages.length) % allImages.length)}
+                                                        style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.4)', border: 'none', borderRadius: '50%', width: 32, height: 32, color: '#fff', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                                    >‹</button>
+                                                    <button
+                                                        onClick={() => setGalleryIndex(i => (i + 1) % allImages.length)}
+                                                        style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.4)', border: 'none', borderRadius: '50%', width: 32, height: 32, color: '#fff', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                                    >›</button>
+                                                    {/* Dot indicators */}
+                                                    <div style={{ position: 'absolute', bottom: 10, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 6 }}>
+                                                        {allImages.map((_, i) => (
+                                                            <button
+                                                                key={i}
+                                                                onClick={() => setGalleryIndex(i)}
+                                                                style={{ width: i === safeIdx ? 20 : 7, height: 7, borderRadius: 4, background: i === safeIdx ? '#fff' : 'rgba(255,255,255,0.5)', border: 'none', cursor: 'pointer', padding: 0, transition: 'all 0.2s' }}
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                    {/* Thumbnails strip */}
+                                                    <div style={{ position: 'absolute', bottom: 30, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 6, padding: '0 12px' }}>
+                                                        {allImages.map((url, i) => (
+                                                            <button
+                                                                key={i}
+                                                                onClick={() => setGalleryIndex(i)}
+                                                                style={{ width: 44, height: 44, borderRadius: 8, overflow: 'hidden', border: i === safeIdx ? '2px solid #fff' : '2px solid rgba(255,255,255,0.3)', cursor: 'pointer', padding: 0, background: 'none', flexShrink: 0 }}
+                                                            >
+                                                                <img src={getPublicImageUrl(url) || ''} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </>
+                                            )}
                                         </div>
-                                    )}
-                                </div>
+                                    );
+                                })()}
 
                                 <div className="product-modal-info">
                                     <div className="modal-badges">
@@ -2847,10 +2986,37 @@ export default function ShopPage() {
                                     </div>
 
                                     <h2 className="product-modal-name">{selectedProduct.name}</h2>
-                                    <p className="product-modal-price">{formatPrice(selectedProduct.price_sale)}</p>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                                        <p className="product-modal-price" style={{ margin: 0 }}>
+                                            {formatPrice(selectedProduct.promo_price && selectedProduct.promo_price < selectedProduct.price_sale
+                                                ? selectedProduct.promo_price
+                                                : selectedProduct.price_sale
+                                            )}
+                                        </p>
+                                        {selectedProduct.promo_price && selectedProduct.promo_price < selectedProduct.price_sale && (
+                                            <>
+                                                <span style={{ textDecoration: 'line-through', color: '#9CA3AF', fontSize: '1.1rem' }}>
+                                                    {formatPrice(selectedProduct.price_sale)}
+                                                </span>
+                                                <span style={{ background: '#FEF3C7', color: '#D97706', fontWeight: 800, fontSize: '0.8rem', padding: '2px 8px', borderRadius: 20 }}>
+                                                    -{Math.round(((selectedProduct.price_sale - selectedProduct.promo_price) / selectedProduct.price_sale) * 100)}%
+                                                </span>
+                                            </>
+                                        )}
+                                    </div>
 
                                     {selectedProduct.description && (
-                                        <p className="product-modal-description">{selectedProduct.description}</p>
+                                        <div style={{ marginTop: 12, marginBottom: 8 }}>
+                                            <p style={{
+                                                fontSize: '0.92rem',
+                                                lineHeight: 1.65,
+                                                color: 'var(--text-secondary, #6B7280)',
+                                                margin: 0,
+                                                whiteSpace: 'pre-line',
+                                            }}>
+                                                {selectedProduct.description}
+                                            </p>
+                                        </div>
                                     )}
 
                                     {selectedProduct.is_active && (

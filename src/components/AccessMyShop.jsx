@@ -41,7 +41,7 @@ export default function AccessMyShop({ variant = 'button' }) {
       setChecking(true);
       const { data } = await supabase
         .from('shops')
-        .select('id,name,slug,logo_url,logo,city,category,is_verified,description')
+        .select('id,name,slug,logo,location,category,is_verified,description')
         .eq('slug', val)
         .eq('is_public', true)
         .maybeSingle();
@@ -69,7 +69,7 @@ export default function AccessMyShop({ variant = 'button' }) {
     }
   };
 
-  const logo = preview?.logo_url || preview?.logo;
+  const logo = preview?.logo;
 
   return (
     <>
@@ -195,7 +195,7 @@ export default function AccessMyShop({ variant = 'button' }) {
                             {preview.is_verified && <span className="text-orange-400 text-xs">✓</span>}
                           </p>
                           <p className="text-slate-500 text-xs">
-                            {preview.category}{preview.city ? ` · ${preview.city}` : ''}
+                            {preview.category}{preview.location ? ` · ${preview.location}` : ''}
                           </p>
                         </div>
                         <span className="text-emerald-400 text-xs font-bold flex-shrink-0">Trouvée !</span>

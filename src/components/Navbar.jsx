@@ -92,6 +92,14 @@ export default function Navbar() {
                 </button>
               </div>
 
+              {/* Marketplace Button */}
+              <button
+                onClick={() => window.location.href = '/market/index.html'}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-orange-500 text-white text-[12px] font-black shadow-md shadow-orange-500/25 hover:bg-orange-600 hover:scale-[1.02] active:scale-95 transition-all"
+              >
+                🛍️ Marketplace
+              </button>
+
               {/* Shop Icon */}
               <button
                 onClick={() => navigate('/join')}
@@ -171,6 +179,14 @@ export default function Navbar() {
                   {isDark ? (lang === 'fr' ? 'Clair' : 'Light') : (lang === 'fr' ? 'Sombre' : 'Dark')}
                 </button>
               </div>
+
+              {/* ── Marketplace ── */}
+              <button
+                onClick={() => { setMenuOpen(false); window.location.href = '/market/index.html'; }}
+                className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-orange-500 text-white font-black shadow-lg shadow-orange-500/20 hover:bg-orange-600 transition-all"
+              >
+                🛍️ Explorer le Marketplace
+              </button>
 
               {/* ── Accéder à ma boutique ── */}
               <button

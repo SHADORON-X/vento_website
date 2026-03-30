@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -13,9 +13,10 @@ import { useGeoSearch } from '../hooks/useGeoSearch';
 import { useSite } from '../context/SiteContext';
 import Navbar from '../components/Navbar';
 import AppMockup from '../components/AppMockup';
-import SellersFeed from '../components/SellersFeed';
-import FeaturedShops from '../components/FeaturedShops';
-import FAQSection from '../components/FAQSection';
+// Lazy-load : composants sous le fold — chargés seulement quand le scroll approche
+const SellersFeed = lazy(() => import('../components/SellersFeed'));
+const FeaturedShops = lazy(() => import('../components/FeaturedShops'));
+const FAQSection = lazy(() => import('../components/FAQSection'));
 import Footer from '../components/Footer';
 import AccessMyShop from '../components/AccessMyShop';
 
@@ -1205,8 +1206,9 @@ const StatsSectionMemo = React.memo(StatsSection);
 const ProblemSectionMemo = React.memo(ProblemSection);
 const HowItWorksMemo = React.memo(HowItWorks);
 const VisionSectionMemo = React.memo(VisionSection);
-const SellersFeedMemo = React.memo(SellersFeed);
-const FAQSectionMemo = React.memo(FAQSection);
+// lazy() n'est pas compatible avec React.memo — on les utilise directement avec Suspense
+const SellersFeedMemo = SellersFeed;
+const FAQSectionMemo = FAQSection;
 const DownloadSectionMemo = React.memo(DownloadSection);
 const FooterMemo = React.memo(Footer);
 
@@ -1306,7 +1308,7 @@ export default function Landing() {
             </motion.p>
 
             {/* Main Action Group */}
-            <motion.div variants={heroItem} className="flex flex-col sm:flex-row justify-center gap-4 mb-20 w-full px-6">
+            <motion.div variants={heroItem} className="flex flex-col sm:flex-row justify-center gap-4 mb-8 w-full px-6">
               <a href="/velmomobile/index.html#/signup" target="_blank" rel="noopener noreferrer" className="velmo-btn-premium group flex items-center justify-center gap-3 py-4">
                 <Zap size={20} className="group-hover:rotate-12 transition-transform" />
                 <span className="text-base">{t.features.tryFree}</span>
@@ -1320,6 +1322,23 @@ export default function Landing() {
                 Découvrir la solution
                 <ArrowRight size={18} />
               </button>
+            </motion.div>
+
+            {/* Marketplace CTA */}
+            <motion.div variants={heroItem} className="mb-14 px-6">
+              <button
+                onClick={() => window.location.href = '/market/index.html'}
+                className="group mx-auto flex items-center gap-3 px-7 py-3.5 rounded-full border-2 border-orange-500/40 bg-orange-500/10 hover:bg-orange-500/20 hover:border-orange-500/60 transition-all"
+              >
+                <span className="text-xl">🛍️</span>
+                <span className={`text-sm font-black ${isDark ? 'text-orange-400' : 'text-orange-600'}`}>
+                  Explorer le Marketplace Velmo
+                </span>
+                <ArrowRight size={16} className={`group-hover:translate-x-1 transition-transform ${isDark ? 'text-orange-400' : 'text-orange-600'}`} />
+              </button>
+              <p className={`text-center text-xs mt-2 font-medium ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                30+ vendeurs vérifiés · Livraison à Conakry
+              </p>
             </motion.div>
 
             {/* Quick Access */}
@@ -1405,7 +1424,9 @@ export default function Landing() {
 
       {/* ════ FEATURED SHOPS ════ */}
       <div className="pb-24">
-        <FeaturedShops />
+        <Suspense fallback={<div className="h-64" />}>
+          <FeaturedShops />
+        </Suspense>
       </div>
 
       {/* ════ VISION ════ */}
@@ -1413,12 +1434,16 @@ export default function Landing() {
 
       {/* ════ SELLERS FEED ════ */}
       <div>
-        <SellersFeedMemo />
+        <Suspense fallback={<div className="h-64" />}>
+          <SellersFeedMemo />
+        </Suspense>
       </div>
 
       {/* ════ FAQ ════ */}
       <div className="bg-slate-50 dark:bg-slate-900/10 py-12">
-        <FAQSectionMemo />
+        <Suspense fallback={<div className="h-32" />}>
+          <FAQSectionMemo />
+        </Suspense>
       </div>
 
       {/* ════ DOWNLOAD ════ */}

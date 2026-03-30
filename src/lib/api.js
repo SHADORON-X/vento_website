@@ -33,7 +33,7 @@ export async function getPublicShops({ limit = 100, force = false } = {}) {
   }
 
   // Colonnes garanties d'exister
-  const columns = 'id,name,slug,category,logo_url,logo,cover_url,cover,' +
+  const columns = 'id,name,slug,category,logo,cover,' +
     'is_verified,orders_count,description,phone,whatsapp,' +
     'facebook_url,instagram_url,tiktok_url,website_url,opening_hours';
 
@@ -80,7 +80,7 @@ export async function searchShops(query, city, { limit = 12 } = {}) {
   // On demande les colonnes de base sûres d'exister
   // Note: city et country sont ajoutés s'ils existent, sinon Supabase ignorera l'erreur si on fait gaffe
   // Mais ici, on va être pragmatique pour stopper l'erreur 400 illico.
-  const columns = 'id,name,slug,category,logo_url,logo,is_verified,orders_count,description,is_public';
+  const columns = 'id,name,slug,category,logo,is_verified,orders_count,description,is_public';
 
   const { data, error } = await supabase
     .from('shops')
@@ -101,8 +101,8 @@ export async function searchShops(query, city, { limit = 12 } = {}) {
   if (city?.trim() && results.length > 0) {
     const c = city.trim().toLowerCase();
     results.sort((a, b) => {
-      const aCity = (a.city || '').toLowerCase();
-      const bCity = (b.city || '').toLowerCase();
+      const aCity = (a.location || '').toLowerCase();
+      const bCity = (b.location || '').toLowerCase();
       const aM = aCity.includes(c) ? 0 : 1;
       const bM = bCity.includes(c) ? 0 : 1;
       return aM - bM;
@@ -220,7 +220,7 @@ export async function getTopProducts({ limit = 12 } = {}) {
   const shopIds = [...new Set(prods.map((p) => p.shop_id).filter(Boolean))];
   const { data: shopsData } = await supabase
     .from('shops')
-    .select('id,name,slug,logo_url,logo,is_verified')
+    .select('id,name,slug,logo,is_verified')
     .in('id', shopIds)
     .eq('is_active', true);
 
@@ -323,7 +323,7 @@ export async function getAvailableCategories() {
 export async function getShopsByCategory(category, { limit = 12 } = {}) {
   const { data, error } = await supabase
     .from('shops')
-    .select('id,name,slug,category,city,logo_url,is_verified,orders_count,description')
+    .select('id,name,slug,category,location,logo,is_verified,orders_count,description')
     .eq('is_public', true)
     .eq('is_active', true)
     .ilike('category', `%${category}%`)
