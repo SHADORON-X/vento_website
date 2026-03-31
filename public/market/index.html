@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=5" />
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#ff6b00">
 </head>
@@ -188,19 +188,32 @@
   <!-- ===== HERO SLIDER ===== -->
   <section class="hero-v2">
     <div class="hero-bg-slider" id="hero-slides">
-      <div class="hero-bg-slide active" style="background-image:url('./images/electronique-tech.png')" onclick="filterByCategory('electronique');scrollToProducts();"></div>
-      <div class="hero-bg-slide" style="background-image:url('./images/elctronique-tech.png')" onclick="filterByCategory('electronique');scrollToProducts();"></div>
-      <div class="hero-bg-slide" style="background-image:url('./images/mode-femme-moderne.png')" onclick="filterByCategory('mode');scrollToProducts();"></div>
-      <div class="hero-bg-slide" style="background-image:url('./images/mode-femme.png')" onclick="filterByCategory('mode');scrollToProducts();"></div>
-      <div class="hero-bg-slide" style="background-image:url('./images/mode-africain.png')" onclick="filterByCategory('mode');scrollToProducts();"></div>
-      <div class="hero-bg-slide" style="background-image:url('./images/mode-jeune.png')" onclick="filterByCategory('mode');scrollToProducts();"></div>
-      <div class="hero-bg-slide" style="background-image:url('./images/mode-jeune-montres.png')" onclick="filterByCategory('mode');scrollToProducts();"></div>
-      <div class="hero-bg-slide" style="background-image:url('./images/cometique.png')" onclick="filterByCategory('beaute');scrollToProducts();"></div>
-      <div class="hero-bg-slide" style="background-image:url('./images/cosmetique-me.png')" onclick="filterByCategory('beaute');scrollToProducts();"></div>
-      <div class="hero-bg-slide" style="background-image:url('./images/electromenager-femmes.png')" onclick="filterByCategory('maison');scrollToProducts();"></div>
-      <div class="hero-bg-slide" style="background-image:url('./images/electromenager-f.png')" onclick="filterByCategory('maison');scrollToProducts();"></div>
-      <div class="hero-bg-slide" style="background-image:url('./images/electrmenager-femme.png')" onclick="filterByCategory('maison');scrollToProducts();"></div>
-      <div class="hero-bg-slide" style="background-image:url('./images/electromenager.png')" onclick="filterByCategory('maison');scrollToProducts();"></div>
+      <div class="hero-bg-slide active" style="background-image:url('./images/electronique-tech.png')"
+        onclick="filterByCategory('electronique');scrollToProducts();"></div>
+      <div class="hero-bg-slide" style="background-image:url('./images/elctronique-tech.png')"
+        onclick="filterByCategory('electronique');scrollToProducts();"></div>
+      <div class="hero-bg-slide" style="background-image:url('./images/mode-femme-moderne.png')"
+        onclick="filterByCategory('mode');scrollToProducts();"></div>
+      <div class="hero-bg-slide" style="background-image:url('./images/mode-femme.png')"
+        onclick="filterByCategory('mode');scrollToProducts();"></div>
+      <div class="hero-bg-slide" style="background-image:url('./images/mode-africain.png')"
+        onclick="filterByCategory('mode');scrollToProducts();"></div>
+      <div class="hero-bg-slide" style="background-image:url('./images/mode-jeune.png')"
+        onclick="filterByCategory('mode');scrollToProducts();"></div>
+      <div class="hero-bg-slide" style="background-image:url('./images/mode-jeune-montres.png')"
+        onclick="filterByCategory('mode');scrollToProducts();"></div>
+      <div class="hero-bg-slide" style="background-image:url('./images/cometique.png')"
+        onclick="filterByCategory('beaute');scrollToProducts();"></div>
+      <div class="hero-bg-slide" style="background-image:url('./images/cosmetique-me.png')"
+        onclick="filterByCategory('beaute');scrollToProducts();"></div>
+      <div class="hero-bg-slide" style="background-image:url('./images/electromenager-femmes.png')"
+        onclick="filterByCategory('maison');scrollToProducts();"></div>
+      <div class="hero-bg-slide" style="background-image:url('./images/electromenager-f.png')"
+        onclick="filterByCategory('maison');scrollToProducts();"></div>
+      <div class="hero-bg-slide" style="background-image:url('./images/electrmenager-femme.png')"
+        onclick="filterByCategory('maison');scrollToProducts();"></div>
+      <div class="hero-bg-slide" style="background-image:url('./images/electromenager.png')"
+        onclick="filterByCategory('maison');scrollToProducts();"></div>
     </div>
     <button class="hero-arrow hero-arrow-left" onclick="prevSlide()">&#8249;</button>
     <button class="hero-arrow hero-arrow-right" onclick="nextSlide()">&#8250;</button>
@@ -736,8 +749,61 @@
     </div>
   </div>
 
-  <script src="analytics.js"></script>
-  <script src="app.js"></script>
+  <!-- ===== PWA INSTALL BANNER ===== -->
+  <div id="pwa-banner" style="display:none">
+    <div class="pwa-banner-inner">
+      <div class="pwa-banner-icon">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="8" fill="#ff6b00" />
+          <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" fill="#fff" font-size="18"
+            font-weight="900" font-family="Arial">V</text>
+        </svg>
+      </div>
+      <div class="pwa-banner-text">
+        <div class="pwa-banner-title">Installer Velmo Market</div>
+        <div class="pwa-banner-sub">Accédez à l'app en un tap, même sans réseau</div>
+      </div>
+      <button class="pwa-banner-btn" id="pwa-install-btn">Installer</button>
+      <button class="pwa-banner-close" id="pwa-close-btn" aria-label="Fermer">✕</button>
+    </div>
+  </div>
+
+  <!-- ===== PWA INSTALL MODAL (iOS guide) ===== -->
+  <div class="modal" id="modal-pwa-ios">
+    <div class="modal-content" style="max-width:360px;text-align:center">
+      <button class="modal-close" onclick="closeModal('modal-pwa-ios')">✕</button>
+      <div style="font-size:2.5rem;margin-bottom:12px">📱</div>
+      <h3 style="margin-bottom:8px;font-size:1.1rem">Installer sur iPhone / iPad</h3>
+      <p style="font-size:.85rem;color:var(--text2);line-height:1.6;margin-bottom:18px">
+        Sur iOS, appuyez sur <strong>le bouton Partager</strong>
+        <span
+          style="display:inline-block;background:#007aff;color:#fff;border-radius:5px;padding:2px 7px;font-size:.8rem;margin:0 3px">⬆
+          Partager</span>
+        puis choisissez<br><strong>« Sur l'écran d'accueil »</strong>
+      </p>
+      <div style="display:flex;flex-direction:column;gap:10px;align-items:center;margin-bottom:18px">
+        <div
+          style="background:var(--gray);border-radius:12px;padding:12px 20px;font-size:.82rem;display:flex;align-items:center;gap:10px;width:100%">
+          <span style="font-size:1.4rem">⬆️</span>
+          <span>Appuyez sur <strong>Partager</strong> en bas</span>
+        </div>
+        <div
+          style="background:var(--gray);border-radius:12px;padding:12px 20px;font-size:.82rem;display:flex;align-items:center;gap:10px;width:100%">
+          <span style="font-size:1.4rem">➕</span>
+          <span>Choisissez <strong>Sur l'écran d'accueil</strong></span>
+        </div>
+        <div
+          style="background:var(--gray);border-radius:12px;padding:12px 20px;font-size:.82rem;display:flex;align-items:center;gap:10px;width:100%">
+          <span style="font-size:1.4rem">✅</span>
+          <span>Appuyez sur <strong>Ajouter</strong></span>
+        </div>
+      </div>
+      <button class="btn-primary full-width" onclick="closeModal('modal-pwa-ios')">Compris !</button>
+    </div>
+  </div>
+
+  <script src="analytics.js?v=2"></script>
+  <script src="app.js?v=2"></script>
 </body>
 
 </html>

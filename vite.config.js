@@ -4,6 +4,10 @@ import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [react()],
+  optimizeDeps: {
+    // Exclure les assets statiques dans public/ du scan de dépendances
+    entries: ['src/**/*.{jsx,tsx,js,ts}'],
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),

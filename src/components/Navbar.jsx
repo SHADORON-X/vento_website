@@ -102,14 +102,13 @@ export default function Navbar() {
 
               {/* Shop Icon */}
               <button
-                onClick={() => navigate('/join')}
+                onClick={() => window.open('/velmomobile/index.html', '_blank')}
                 className={`p-2.5 rounded-2xl transition-all ${isDark ? 'bg-white/5 text-orange-500 border border-white/10 hover:bg-white/10' : 'bg-orange-50 text-orange-600 border border-orange-100 hover:bg-orange-100'}`}
               >
                 <Store size={18} />
               </button>
 
-              {/* Download Button */}
-              <button
+              {/* Download Button */}              <button
                 onClick={() => scrollTo('download')}
                 className={`flex items-center gap-2 px-6 py-3 rounded-full text-[13px] font-black transition-all border ${isDark ? 'bg-white/5 border-white/10 text-white hover:bg-white/10' : 'bg-slate-800 border-slate-700 text-white hover:bg-slate-900'}`}
               >
@@ -190,15 +189,14 @@ export default function Navbar() {
 
               {/* ── Accéder à ma boutique ── */}
               <button
-                onClick={() => { setMenuOpen(false); navigate('/b/create'); }}
+                onClick={() => { setMenuOpen(false); window.open('/velmomobile/index.html', '_blank'); }}
                 className={`flex items-center justify-center gap-2 w-full py-4 rounded-2xl font-bold border transition-all ${isDark ? 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:text-white' : 'bg-gray-50 border-gray-200 text-slate-700 hover:bg-gray-100'}`}
               >
                 <Store size={18} className="text-orange-500" />
                 {t.nav.accessMyShop}
               </button>
 
-              {/* ── Télécharger ── */}
-              <button
+              {/* ── Télécharger ── */}              <button
                 onClick={() => { setMenuOpen(false); scrollTo('download'); }}
                 className={`flex items-center justify-center gap-2 w-full py-4 rounded-2xl font-bold border ${isDark ? 'bg-white/5 border-white/10 text-white' : 'bg-gray-50 border-gray-200 text-slate-900'}`}
               >

@@ -194,6 +194,91 @@ function initPremium() {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(() => { });
   }
+
+  // ===== PWA INSTALL BANNER =====
+  initPWABanner();
+}
+
+// ─── PWA Install Banner ──────────────────────────────────────
+let _pwaPrompt = null;
+
+function initPWABanner() {
+  // Ne pas afficher si déjà installée en standalone
+  if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) return;
+
+  // Cooldown : ne pas réafficher avant 3 jours si l'user a fermé
+  const dismissed = localStorage.getItem('velmo_pwa_dismissed');
+  if (dismissed && Date.now() - parseInt(dismissed) < 3 * 24 * 3600 * 1000) return;
+
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+
+  // Capture l'event Chrome/Android
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    _pwaPrompt = e;
+    // Afficher après 4 secondes
+    setTimeout(() => showPWABanner(), 4000);
+  });
+
+  // iOS : afficher manuellement après 5 secondes (pas de beforeinstallprompt)
+  if (isIOS) {
+    setTimeout(() => showPWABanner(true), 5000);
+  }
+
+  // Bouton Installer
+  const installBtn = document.getElementById('pwa-install-btn');
+  if (installBtn) {
+    installBtn.addEventListener('click', async () => {
+      hidePWABanner();
+      if (_pwaPrompt) {
+        _pwaPrompt.prompt();
+        const { outcome } = await _pwaPrompt.userChoice;
+        _pwaPrompt = null;
+        if (outcome === 'accepted') {
+          showToast('✅ Velmo Market installé sur votre écran d\'accueil !');
+        }
+      } else if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
+        openModal('modal-pwa-ios');
+      }
+    });
+  }
+
+  // Bouton Fermer
+  const closeBtn = document.getElementById('pwa-close-btn');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      hidePWABanner();
+      localStorage.setItem('velmo_pwa_dismissed', Date.now().toString());
+    });
+  }
+
+  // Masquer si l'app est installée
+  window.addEventListener('appinstalled', () => {
+    hidePWABanner();
+    showToast('🎉 Velmo Market est maintenant sur votre écran d\'accueil !');
+  });
+}
+
+function showPWABanner(isIOS = false) {
+  const banner = document.getElementById('pwa-banner');
+  if (!banner) return;
+  // Adapter le texte pour iOS
+  if (isIOS) {
+    const btn = document.getElementById('pwa-install-btn');
+    if (btn) btn.textContent = 'Comment faire ?';
+  }
+  banner.classList.add('pwa-visible');
+}
+
+function hidePWABanner() {
+  const banner = document.getElementById('pwa-banner');
+  if (banner) {
+    banner.style.animation = 'none';
+    banner.style.transition = 'opacity 0.3s, transform 0.3s';
+    banner.style.opacity = '0';
+    banner.style.transform = 'translateX(-50%) translateY(80px)';
+    setTimeout(() => { banner.classList.remove('pwa-visible'); banner.style.display = 'none'; }, 320);
+  }
 }
 
 function toggleDarkMode() {
@@ -208,7 +293,7 @@ function toggleDarkMode() {
 // ===== HELPERS =====
 function getImgUrl(url) {
   if (!url) return null;
-  if (url.startsWith('http') || url.startsWith('blob:') || url.startsWith('data:')) return url;
+  if (url.startsWith('http') || url.startsWith('blob:') || url.startsWith('data:') || url.startsWith('./')) return url;
   return STORAGE + url;
 }
 
@@ -235,9 +320,9 @@ function formatPrice(n) { return Math.round(n).toLocaleString('fr-FR') + ' GNF';
 // Génère l'URL boutique : slug en priorité, id en fallback
 // Chemin RELATIF pour fonctionner en local (file://) et en prod
 function shopUrl(slug, id) {
-  if (slug && slug.trim()) return `/b/${encodeURIComponent(slug.trim())}`;
-  // Pas de slug → pas de page publique encore
-  return null;
+  if (slug && typeof slug === 'string' && slug.trim()) return `./shop.html?s=${encodeURIComponent(slug.trim())}`;
+  if (id) return `./shop.html?id=${encodeURIComponent(id)}`;
+  return `./shop.html`; // ⚡ Force absolue du clic, on retourne toujours un lien public
 }
 function shopLink(slug, id, label, cls = '', style = '') {
   const url = shopUrl(slug, id);
@@ -568,6 +653,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     en.classList.add('active'); fr && fr.classList.remove('active');
     showToast('🌐 English version coming soon!');
   });
+
+  // Handle incoming query params (Redirections from React app)
+  const queryParams = new URLSearchParams(window.location.search);
+  const trackId = queryParams.get('track');
+  const receiptId = queryParams.get('receipt');
+
+  if (trackId) {
+    const trackInput = document.getElementById('track-ref');
+    if (trackInput) {
+      trackInput.value = trackId;
+      openModal('modal-track');
+      if (typeof trackOrder === 'function') trackOrder();
+    }
+  } else if (receiptId) {
+    // Si c'est un reçu, on essaie de charger les détails de la commande
+    showToast(`🧾 Affichage du reçu : ${receiptId}`);
+    // On pourrait ici appeler une fonction spécifique pour le reçu si elle existe
+    // Pour l'instant on ouvre juste le tracking qui affiche les détails
+    const trackInput = document.getElementById('track-ref');
+    if (trackInput) {
+      trackInput.value = receiptId;
+      openModal('modal-track');
+      if (typeof trackOrder === 'function') trackOrder();
+    }
+  }
 });
 
 // Chargement produits indépendant de shops (parallel fallback)
@@ -1167,10 +1277,8 @@ function renderShops() {
       ? '✓ Vérifié'
       : (prodCount > 0 ? `${prodCount} produit${prodCount > 1 ? 's' : ''}` : (s.category || 'Boutique'));
     const shopHref = shopUrl(s.slug, s.id);
-    const chipTag = shopHref ? `a href="${shopHref}"` : 'div';
-    const chipClose = shopHref ? 'a' : 'div';
     return `
-    <${chipTag} class="shop-chip"${!shopHref ? ' style="cursor:default;opacity:.7"' : ''}>
+    <a href="${shopHref}" class="shop-chip" style="box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
       <div class="shop-chip-avatar" style="background:${shopColor(s.name)}">
         ${logo
         ? `<img src="${logo}" alt="${s.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span style="display:none">${initial}</span>`
@@ -1181,7 +1289,7 @@ function renderShops() {
         <div class="shop-chip-name">${s.name}</div>
         <div class="shop-chip-badge">${subLabel}</div>
       </div>
-    </${chipClose}>`;
+    </a>`;
   }).join('');
 }
 
@@ -1717,13 +1825,13 @@ function stopTrackPolling() {
 }
 
 const ORDER_STATUS_MAP = {
-  'pending':   { icon: '⏳', label: 'EN ATTENTE',           color: '#888',    desc: 'Le vendeur a reçu votre commande et va la traiter.' },
-  'confirmed': { icon: '✅', label: 'CONFIRMÉE',             color: '#00a849', desc: 'Votre commande a été acceptée par le vendeur.' },
-  'preparing': { icon: '📦', label: 'EN PRÉPARATION',        color: '#ff6b00', desc: 'Nous préparons vos articles avec soin.' },
-  'ready':     { icon: '🏷️', label: 'PRÊTE',                color: '#0ea5e9', desc: 'Votre commande est prête, en attente du livreur.' },
-  'shipped':   { icon: '🚚', label: 'EN COURS DE LIVRAISON', color: '#2563eb', desc: 'Le livreur est en route vers chez vous !' },
-  'delivered': { icon: '🎉', label: 'LIVRÉE',                color: '#00a849', desc: 'Commande livrée avec succès. Merci !' },
-  'cancelled': { icon: '❌', label: 'ANNULÉE',               color: '#dc2626', desc: 'Cette commande a été annulée.' },
+  'pending': { icon: '⏳', label: 'EN ATTENTE', color: '#888', desc: 'Le vendeur a reçu votre commande et va la traiter.' },
+  'confirmed': { icon: '✅', label: 'CONFIRMÉE', color: '#00a849', desc: 'Votre commande a été acceptée par le vendeur.' },
+  'preparing': { icon: '📦', label: 'EN PRÉPARATION', color: '#ff6b00', desc: 'Nous préparons vos articles avec soin.' },
+  'ready': { icon: '🏷️', label: 'PRÊTE', color: '#0ea5e9', desc: 'Votre commande est prête, en attente du livreur.' },
+  'shipped': { icon: '🚚', label: 'EN COURS DE LIVRAISON', color: '#2563eb', desc: 'Le livreur est en route vers chez vous !' },
+  'delivered': { icon: '🎉', label: 'LIVRÉE', color: '#00a849', desc: 'Commande livrée avec succès. Merci !' },
+  'cancelled': { icon: '❌', label: 'ANNULÉE', color: '#dc2626', desc: 'Cette commande a été annulée.' },
 };
 
 function renderTrackResult(o, ref) {
@@ -1733,7 +1841,7 @@ function renderTrackResult(o, ref) {
   const isFinal = o.status === 'delivered' || o.status === 'cancelled';
 
   // Stepper visuel
-  const steps = ['pending','confirmed','preparing','ready','shipped','delivered'];
+  const steps = ['pending', 'confirmed', 'preparing', 'ready', 'shipped', 'delivered'];
   const currentIdx = steps.indexOf(o.status);
   const stepperHtml = steps.map((st, i) => {
     const sm = ORDER_STATUS_MAP[st];
@@ -1742,7 +1850,7 @@ function renderTrackResult(o, ref) {
     const col = active ? s.color : done ? '#00a84966' : 'rgba(0,0,0,0.08)';
     const txtCol = active ? s.color : done ? '#00a849' : '#aaa';
     return `<div style="flex:1;text-align:center">
-      <div style="width:28px;height:28px;border-radius:50%;background:${col};margin:0 auto 4px;display:flex;align-items:center;justify-content:center;font-size:.85rem;border:2px solid ${active||done?col:'rgba(0,0,0,0.1)'}">
+      <div style="width:28px;height:28px;border-radius:50%;background:${col};margin:0 auto 4px;display:flex;align-items:center;justify-content:center;font-size:.85rem;border:2px solid ${active || done ? col : 'rgba(0,0,0,0.1)'}">
         ${done ? '✓' : sm.icon}
       </div>
       <div style="font-size:.55rem;font-weight:700;color:${txtCol};text-transform:uppercase;line-height:1.2">${sm.label.split(' ')[0]}</div>

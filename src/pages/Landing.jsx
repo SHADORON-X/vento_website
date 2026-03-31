@@ -100,7 +100,11 @@ function ProductTicker({ products }) {
           return (
             <div
               key={`${p.id}-${i}`}
-              onClick={() => p.shops?.slug && navigate(`/b/${p.shops.slug}?p=${p.id}`)}
+              onClick={() => {
+                if (p.shops?.slug) {
+                  window.location.href = `/market/shop.html?s=${encodeURIComponent(p.shops.slug)}&p=${p.id}`;
+                }
+              }}
               className={`flex-shrink-0 w-36 rounded-2xl overflow-hidden cursor-pointer transition-all duration-200 group ${isDark
                 ? 'bg-white/[0.04] border border-white/[0.07] hover:border-orange-500/40 hover:bg-white/[0.07]'
                 : 'bg-white border border-gray-200 hover:border-orange-400/50 shadow-sm hover:shadow-md'
@@ -323,7 +327,11 @@ function HeroSearch({ stats }) {
                   </div>
                   {results.shops.map((shop) => (
                     <button key={shop.id}
-                      onClick={() => { navigate(`/b/${shop.slug}`); setOpen(false); setQuery(''); }}
+                      onClick={() => {
+                        window.location.href = `/market/shop.html?s=${encodeURIComponent(shop.slug)}`;
+                        setOpen(false);
+                        setQuery('');
+                      }}
                       className={`w-full flex items-center gap-3 px-4 py-3 transition-colors text-left border-b last:border-0 ${isDark ? 'hover:bg-white/[0.04] border-white/[0.04]' : 'hover:bg-gray-50 border-gray-100'}`}
                     >
                       <div className="w-9 h-9 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center text-white font-bold text-xs" style={{ background: shop.logo_url ? undefined : 'linear-gradient(135deg,#f97316,#ea580c)' }}>
@@ -347,7 +355,11 @@ function HeroSearch({ stats }) {
                   </div>
                   {results.products.map((prod) => (
                     <button key={prod.id}
-                      onClick={() => { navigate(`/b/${prod.shops?.slug}?p=${prod.id}`); setOpen(false); setQuery(''); }}
+                      onClick={() => {
+                        window.location.href = `/market/shop.html?s=${encodeURIComponent(prod.shops?.slug)}&p=${prod.id}`;
+                        setOpen(false);
+                        setQuery('');
+                      }}
                       className={`w-full flex items-center gap-3 px-4 py-3 transition-colors text-left border-b last:border-0 ${isDark ? 'hover:bg-white/[0.04] border-white/[0.04]' : 'hover:bg-gray-50 border-gray-100'}`}
                     >
                       <div className={`w-9 h-9 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center ${isDark ? 'bg-white/[0.04]' : 'bg-gray-100'}`}>
@@ -556,7 +568,11 @@ function BestProducts({ products, loading }) {
                   transition={{ delay: i * 0.02 }}
                   className={`group rounded-xl overflow-hidden cursor-pointer flex flex-col transition-all duration-300 border ${isDark ? 'bg-[#0e1218] border-white/5 hover:border-orange-500/30' : 'bg-white border-gray-100 hover:border-orange-200 shadow-sm'
                     }`}
-                  onClick={() => p.shops?.slug && navigate(`/b/${p.shops.slug}?p=${p.id}`)}
+                  onClick={() => {
+                    if (p.shops?.slug) {
+                      window.location.href = `/market/shop.html?s=${encodeURIComponent(p.shops.slug)}&p=${p.id}`;
+                    }
+                  }}
                 >
                   <div className="aspect-square relative overflow-hidden bg-gray-50/10">
                     <img src={p.photo_url} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />

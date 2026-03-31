@@ -57,18 +57,17 @@ export default function AccessMyShop({ variant = 'button' }) {
     e?.preventDefault();
     const val = slug.trim().toLowerCase().replace(/\s+/g, '-');
     if (!val) return;
+    
+    // Redirect via React Router to trigger VanillaShopRedirect
     if (preview) {
       navigate(`/b/${preview.slug}`);
-      setOpen(false);
-      setSlug('');
     } else {
-      // Aller quand même
       navigate(`/b/${val}`);
-      setOpen(false);
-      setSlug('');
     }
+    
+    setOpen(false);
+    setSlug('');
   };
-
   const logo = preview?.logo;
 
   return (

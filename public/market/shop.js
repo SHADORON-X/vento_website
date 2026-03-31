@@ -1,7 +1,7 @@
 /* =============================================
-   VELMO MARKET — shop.js
-   Page boutique individuelle (vanilla JS)
-   ============================================= */
+ VELMO MARKET — shop.js
+ Page boutique individuelle (vanilla JS)
+ ============================================= */
 
 // ─── CONFIGURATION SUPABASE ──────────────────────────────────
 const SB_URL = 'https://cqpcwqqjbcgklrvnqpxr.supabase.co';
@@ -107,6 +107,77 @@ function initPremium() {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(() => { });
   }
+  initPWABanner();
+}
+
+// ─── PWA Install Banner ──────────────────────────────────────
+let _pwaPrompt = null;
+
+function initPWABanner() {
+  if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) return;
+  const dismissed = localStorage.getItem('velmo_pwa_dismissed');
+  if (dismissed && Date.now() - parseInt(dismissed) < 3 * 24 * 3600 * 1000) return;
+
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    _pwaPrompt = e;
+    setTimeout(() => showPWABanner(), 5000);
+  });
+
+  if (isIOS) {
+    setTimeout(() => showPWABanner(true), 6000);
+  }
+
+  const installBtn = document.getElementById('pwa-install-btn');
+  if (installBtn) {
+    installBtn.addEventListener('click', async () => {
+      hidePWABanner();
+      if (_pwaPrompt) {
+        _pwaPrompt.prompt();
+        const { outcome } = await _pwaPrompt.userChoice;
+        _pwaPrompt = null;
+        if (outcome === 'accepted') showToast('✅ Velmo Market installé !');
+      } else if (isIOS) {
+        openModal('modal-pwa-ios');
+      }
+    });
+  }
+
+  const closeBtn = document.getElementById('pwa-close-btn');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      hidePWABanner();
+      localStorage.setItem('velmo_pwa_dismissed', Date.now().toString());
+    });
+  }
+
+  window.addEventListener('appinstalled', () => {
+    hidePWABanner();
+    showToast('🎉 Velmo Market est sur votre écran d\'accueil !');
+  });
+}
+
+function showPWABanner(isIOS = false) {
+  const banner = document.getElementById('pwa-banner');
+  if (!banner) return;
+  if (isIOS) {
+    const btn = document.getElementById('pwa-install-btn');
+    if (btn) btn.textContent = 'Comment faire ?';
+  }
+  banner.classList.add('pwa-visible');
+}
+
+function hidePWABanner() {
+  const banner = document.getElementById('pwa-banner');
+  if (banner) {
+    banner.style.animation = 'none';
+    banner.style.transition = 'opacity 0.3s, transform 0.3s';
+    banner.style.opacity = '0';
+    banner.style.transform = 'translateX(-50%) translateY(80px)';
+    setTimeout(() => { banner.classList.remove('pwa-visible'); banner.style.display = 'none'; }, 320);
+  }
 }
 
 function toggleDarkMode() {
@@ -138,7 +209,7 @@ async function loadShop(slug, id) {
   try {
     // Colonnes réelles en DB (logo_url/cover_url n'existent pas → logo/cover)
     const cols = 'id,name,slug,description,category,logo,cover,' +
-      'is_verified,is_active,is_public,orders_count,phone,whatsapp,email,' +
+      'is_verified,is_active,is_public,is_online_active,orders_count,phone,whatsapp,email,' +
       'address,location,opening_hours,facebook_url,instagram_url,tiktok_url,' +
       'twitter_url,website_url,delivery_info,return_policy';
 
@@ -150,14 +221,24 @@ async function loadShop(slug, id) {
       filter = `id=eq.${encodeURIComponent(id)}`;
     }
 
-    const data = await sbGet('shops', `${filter}&is_public=eq.true&is_active=eq.true&select=${cols}&limit=1`);
+    const data = await sbGet('shops', `${filter}&is_active=eq.true&select=${cols}&limit=1`);
 
-    // Si non trouvé par slug, retry par id (slug parfois mal renseigné)
+    // Fallbacks si slug ne matche pas (slug vide ou nom utilisé comme slug)
     let shopData = data;
     if ((!shopData || !shopData.length) && slug) {
-      // Essaie par nom partiel ou par id si le slug ne matche pas
-      const byId = await sbGet('shops', `slug=ilike.${encodeURIComponent(slug)}&is_public=eq.true&is_active=eq.true&select=${cols}&limit=1`);
-      shopData = byId;
+      // 1. ilike sur slug (tolérance casse)
+      const bySlugIlike = await sbGet('shops', `slug=ilike.${encodeURIComponent(slug)}&is_active=eq.true&select=${cols}&limit=1`);
+      shopData = bySlugIlike;
+    }
+    if ((!shopData || !shopData.length) && slug) {
+      // 2. Recherche par nom exact (cas où le slug dans l'URL = nom de la boutique)
+      const byName = await sbGet('shops', `name=ilike.${encodeURIComponent(slug)}&is_active=eq.true&select=${cols}&limit=1`);
+      shopData = byName;
+    }
+    if ((!shopData || !shopData.length) && slug) {
+      // 3. Fallback sans filtre is_active (au cas où la boutique existe mais le flag n'est pas mis)
+      const anyShop = await sbGet('shops', `name=ilike.${encodeURIComponent(slug)}&select=${cols}&limit=1`);
+      shopData = anyShop;
     }
 
     if (!shopData || !shopData.length) {
@@ -179,7 +260,20 @@ async function loadShop(slug, id) {
     renderActionBar();
     renderAboutTab();
     renderContactTab();
+
+    // 🔴 Boutique temporairement fermée
+    if (SHOP.is_online_active === false) {
+      renderClosedBanner();
+    }
+
     await loadProducts(SHOP.id);
+
+    // Gérer l'ouverture automatique d'un produit via l'URL (redirection React)
+    const pid = new URLSearchParams(window.location.search).get('p');
+    if (pid && typeof openProduct === 'function') {
+      setTimeout(() => openProduct(pid), 400); // Petit délai le temps que tout soit prêt
+    }
+
     if (typeof vaTrack === 'function') vaTrack('view_shop', { shopId: SHOP.id });
   } catch (e) {
     console.error('loadShop error:', e);
@@ -952,7 +1046,35 @@ function toggleWishlistPanel() {
 }
 
 // ===== CHECKOUT =====
+function renderClosedBanner() {
+  // Insère une bannière rouge sous le hero
+  const hero = document.getElementById('sh-hero');
+  if (!hero) return;
+  const existing = document.getElementById('sh-closed-banner');
+  if (existing) return;
+  const banner = document.createElement('div');
+  banner.id = 'sh-closed-banner';
+  banner.innerHTML = `
+    <div style="background:rgba(239,68,68,0.12);border:1.5px solid rgba(239,68,68,0.35);border-radius:14px;margin:16px;padding:14px 18px;display:flex;align-items:center;gap:12px">
+      <div style="width:10px;height:10px;border-radius:50%;background:#ef4444;flex-shrink:0;box-shadow:0 0 8px #ef4444aa"></div>
+      <div>
+        <p style="font-weight:800;color:#ef4444;margin:0;font-size:14px">Boutique temporairement fermée</p>
+        <p style="color:#94a3b8;margin:4px 0 0;font-size:12px">Les commandes sont suspendues. Revenez plus tard.</p>
+      </div>
+    </div>`;
+  hero.after(banner);
+
+  // Désactiver le bouton Commander
+  const btn = document.querySelector('.btn-primary[onclick="checkout()"]');
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = '🔴 Commandes suspendues';
+    btn.style.cssText = 'background:#334155;color:#64748b;cursor:not-allowed;opacity:0.7;width:100%;padding:12px;border:none;border-radius:10px;font-weight:700;font-size:14px';
+  }
+}
+
 function checkout() {
+  if (SHOP && SHOP.is_online_active === false) { showToast('🔴 Cette boutique ne prend pas de commandes pour le moment'); return; }
   if (!cart.length) { showToast('⚠️ Votre panier est vide'); return; }
   const summary = document.getElementById('order-summary');
   const total = cart.reduce((s, i) => s + i.price * i.qty, 0);

@@ -25,11 +25,10 @@ export default function Footer() {
       title: t.footer.marketplace,
       links: [
         { label: t.footer.links.allShops, href: '/search' },
-        { label: t.footer.links.createShop, href: '/velmomobile/index.html' },
+        { label: t.footer.links.createShop, href: '/velmomobile/index.html#/signup' },
         { label: t.footer.links.howToSell, id: 'features' },
       ],
-    },
-    {
+    },    {
       title: t.footer.support,
       links: [
         { label: t.footer.links.whatsapp, href: 'https://wa.me/224663639000' },
