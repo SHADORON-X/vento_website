@@ -26,14 +26,7 @@ export default defineConfig({
       },
     },
     chunkSizeWarningLimit: 600,
-    // Minification agressive en prod
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-        pure_funcs: ['console.log', 'console.debug', 'console.info'],
-      },
-    },
+    // esbuild est intégré à Vite — pas besoin d'installer terser
+    minify: 'esbuild',
   },
 })

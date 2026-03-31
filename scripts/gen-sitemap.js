@@ -1,9 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-const SUPABASE_URL = 'https://cqpcwqqjbcgklrvnqpxr.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNxcGN3cXFqYmNna2xydm5xcHhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM2NzE4NDEsImV4cCI6MjA3OTI0Nzg0MX0.klx0G4gOHm_vwxIXBPSOTm-V4ax_v9RSacBpDSP3Mgs';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL || 'https://cqpcwqqjbcgklrvnqpxr.supabase.co';
+const SUPABASE_KEY = process.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNxcGN3cXFqYmNna2xydm5xcHhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM2NzE4NDEsImV4cCI6MjA3OTI0Nzg0MX0.klx0G4gOHm_vwxIXBPSOTm-V4ax_v9RSacBpDSP3Mgs';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -16,7 +20,6 @@ async function generateSitemap() {
   ];
 
   try {
-    // 1. Fetch all public shops
     const { data: shops, error: shopsError } = await supabase
       .from('shops')
       .select('slug, updated_at')
@@ -37,16 +40,9 @@ async function generateSitemap() {
       });
     }
 
-    // 2. Fetch all active products
     const { data: products, error: productsError } = await supabase
       .from('products')
-      .select(`
-        id,
-        updated_at,
-        shop:shops (
-          slug
-        )
-      `)
+      .select('id, updated_at, shop:shops(slug)')
       .eq('is_active', true);
 
     if (productsError) throw productsError;
@@ -66,7 +62,6 @@ async function generateSitemap() {
       });
     }
 
-    // Generate XML
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map(url => `  <url>
@@ -77,11 +72,17 @@ ${urls.map(url => `  <url>
   </url>`).join('\n')}
 </urlset>`;
 
-    const sitemapPath = 'c:/Users/shad/Documents/Vento/packages/vento_website/public/sitemap.xml';
+    // ✅ Chemin relatif — fonctionne sur Netlify (Linux) ET en local
+    const sitemapPath = path.resolve(__dirname, '../public/sitemap.xml');
+    const sitemapDir = path.dirname(sitemapPath);
+    if (!fs.existsSync(sitemapDir)) fs.mkdirSync(sitemapDir, { recursive: true });
+
     fs.writeFileSync(sitemapPath, xml);
     console.log(`✅ Sitemap created at: ${sitemapPath}`);
   } catch (err) {
     console.error('💥 Error generating sitemap:', err.message);
+    // Ne pas bloquer le build si le sitemap échoue
+    process.exit(0);
   }
 }
 
