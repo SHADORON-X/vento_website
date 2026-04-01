@@ -7,18 +7,18 @@
   position: sticky;
   top: 0;
   z-index: 300;
-  background: #0f1117;
+  background: #131921;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
+  padding: 0 16px;
   height: 58px;
   box-shadow: 0 2px 20px rgba(0, 0, 0, .35);
   transition: background .3s;
 }
 
 .sh-topbar.scrolled {
-  background: rgba(15, 17, 23, .97);
+  background: rgba(19, 25, 33, .97);
   backdrop-filter: blur(12px);
 }
 
@@ -62,48 +62,78 @@
   gap: 8px;
 }
 
-.sh-icon-btn {
+.sh-icon-btn,
+.sh-nav-btn {
   position: relative;
   width: 40px;
   height: 40px;
-  background: rgba(255, 255, 255, .08);
-  border: none;
+  background: rgba(255, 255, 255, .12);
+  border: 1px solid rgba(255, 255, 255, .18);
   border-radius: 10px;
-  color: rgba(255, 255, 255, .8);
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: .2s;
+  flex-shrink: 0;
 }
 
-.sh-icon-btn:hover {
-  background: rgba(255, 255, 255, .15);
+.sh-icon-btn:hover,
+.sh-nav-btn:hover {
+  background: #f97316;
+  border-color: #f97316;
   color: #fff;
 }
 
-.sh-icon-badge {
+.sh-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Cart badge on sh-nav-btn */
+.sh-badge {
   position: absolute;
-  top: -4px;
-  right: -4px;
+  top: -5px;
+  right: -5px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 3px;
   background: #f97316;
   color: #fff;
-  border-radius: 50%;
-  width: 17px;
-  height: 17px;
-  font-size: .58rem;
+  border-radius: 999px;
+  font-size: 10px;
   font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0;
-  transition: opacity .2s;
+  line-height: 1;
+  border: 2px solid #131921;
+  transition: transform .15s;
+}
+.sh-badge.show { transform: scale(1.2); }
+
+.sh-icon-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 3px;
+  background: #f97316;
+  color: #fff;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  border: 2px solid #131921;
 }
 
-.sh-icon-badge.show,
-.sh-icon-badge:not(:empty)[style*=""] {
-  opacity: 1;
-}
+.sh-icon-badge.show { display: flex; }
 
 .sh-cart-btn {
   display: flex;

@@ -93,7 +93,7 @@ function vaTrack(eventType, { shopId = null, productId = null, meta = {} } = {})
     const type = eventType === 'view_product' ? 'view'
                 : eventType === 'add_cart'    ? 'cart'
                 : eventType === 'add_wish'    ? 'wish' : null;
-    if (type) trackInteraction(productId, type); // from app.js
+    if (type && typeof trackInteraction === 'function') trackInteraction(productId, type); // from app.js (marketplace only)
   }
 
   // Debounce flush — envoie par batch toutes les 3s

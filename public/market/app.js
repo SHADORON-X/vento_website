@@ -181,23 +181,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initPremium() {
-  const saved = localStorage.getItem('velmo_theme');
-  const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-  if (saved === 'dark' || (!saved && systemDark)) {
-    document.documentElement.setAttribute('data-theme', 'dark');
-  } else {
-    document.documentElement.setAttribute('data-theme', 'light');
-  }
-
   // Register SW
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(() => { });
   }
-
-  // ===== PWA INSTALL BANNER =====
   initPWABanner();
 }
+
+// dark mode removed — light only
+function toggleDarkMode() { }
 
 // ─── PWA Install Banner ──────────────────────────────────────
 let _pwaPrompt = null;
@@ -279,15 +271,6 @@ function hidePWABanner() {
     banner.style.transform = 'translateX(-50%) translateY(80px)';
     setTimeout(() => { banner.classList.remove('pwa-visible'); banner.style.display = 'none'; }, 320);
   }
-}
-
-function toggleDarkMode() {
-  const root = document.documentElement;
-  const isDark = root.getAttribute('data-theme') === 'dark';
-  const newTheme = isDark ? 'light' : 'dark';
-  root.setAttribute('data-theme', newTheme);
-  localStorage.setItem('velmo_theme', newTheme);
-  showToast(newTheme === 'dark' ? '🌙 Mode sombre activé' : '☀️ Mode clair activé');
 }
 
 // ===== HELPERS =====
@@ -379,21 +362,20 @@ async function loadProducts() {
       shopFilter = `&shop_id=in.(${ids})`;
     }
     // colonnes réelles Supabase (superset du schema WatermelonDB)
-    const params = `select=id,name,description,category,price_sale,price_regular,promo_price,photo_url,photo,quantity,shop_id&is_active=eq.true&is_published=eq.true&order=created_at.desc&limit=150${shopFilter}`;
+    const params = `select=id,name,description,category,price_sale,price_regular,promo_price,photo_url,photo,quantity,shop_id&is_active=eq.true&is_published=eq.true&order=created_at.desc&limit=1000${shopFilter}`;
     const data = await sbGet('products', params, true); // ⚡ avec cache 5 min
 
     PRODUCTS = data.map((p, idx) => {
       const shop = SHOPS.find(s => s.id === p.shop_id);
       const cat = mapCategory(p.category);
 
-      // photo_url en priorité, fallback sur photo, fallback sur image catégorie
+      // photo_url en priorité, fallback sur photo — on garde seulement les vraies images produit
       let pUrl = p.photo_url || p.photo || null;
-      if (!pUrl || pUrl.includes('placeholder') || pUrl.includes('default')) {
-        const list = PREMIUM_IMAGES[cat] || PREMIUM_IMAGES['electronique'];
-        pUrl = list[idx % list.length];
-      } else if (!pUrl.startsWith('http') && !pUrl.startsWith('data:') && !pUrl.startsWith('./')) {
+      const _hasRealImg = !!(pUrl && !pUrl.includes('placeholder') && !pUrl.includes('default'));
+      if (_hasRealImg && !pUrl.startsWith('http') && !pUrl.startsWith('data:') && !pUrl.startsWith('./')) {
         pUrl = STORAGE + pUrl;
       }
+      if (!_hasRealImg) pUrl = null;
 
       // promo_price = prix soldé (priorité) sinon price_regular = ancien prix barré
       const hasPromo = p.promo_price && p.promo_price > 0 && p.promo_price < p.price_sale;
@@ -408,6 +390,7 @@ async function loadProducts() {
         oldPrice: hasPromo ? p.price_sale : (hasRegular ? p.price_regular : null),
         qty_stock: p.quantity ?? null,
         photo_url: pUrl,
+        _hasRealImg,
         emoji: catEmoji(cat),
         shop_name: shop?.name || 'Boutique Velmo',
         shop_slug: shop?.slug || null,
@@ -415,7 +398,9 @@ async function loadProducts() {
         is_verified: shop?.is_verified || false,
       };
     });
-    console.log(`✅ ${PRODUCTS.length} produits chargés`);
+    // Afficher uniquement les produits avec une vraie photo
+    PRODUCTS = PRODUCTS.filter(p => p._hasRealImg);
+    console.log(`✅ ${PRODUCTS.length} produits avec image chargés`);
   } catch (e) {
     console.error('❌ Produits:', e.message);
     PRODUCTS = [];
@@ -702,7 +687,7 @@ function doSearch() {
   );
   // Search results = flat grid (not category rows)
   const grid = document.getElementById('products-grid');
-  if (grid) grid.classList.remove('cat-mode');
+  // cat-mode removed
   renderProductsData(results);
   scrollToProducts();
   if (typeof vaTrackSearch === 'function') vaTrackSearch(q, results.length, null);
@@ -791,424 +776,150 @@ const CAT_PHRASES = {
 const CAT_ORDER = ['electronique', 'mode', 'beaute', 'maison', 'cuisine', 'sport', 'autre'];
 
 // ===== RENDER PRODUCTS =====
-// Retourne tous les produits qui matchent une catégorie (supporte les alias fashion/mode/style)
 function getCatProducts(cat) {
   if (!cat || cat === 'all') return PRODUCTS;
-  // Alias : 'mode' attrape aussi tout ce que mapCategory a mis dans 'mode'
-  // (fashion, style, etc. ont déjà été normalisés en 'mode' lors du chargement)
   return PRODUCTS.filter(p => p.cat === cat);
 }
 
+function showGrid() {
+  const loader = document.getElementById('products-loader');
+  const grid = document.getElementById('products-grid');
+  if (loader) loader.style.display = 'none';
+  if (grid) grid.classList.remove('hidden');
+}
+
 function renderProducts() {
+  showGrid();
   const grid = document.getElementById('products-grid');
   if (!grid) return;
   if (currentTab === 'all') {
-    grid.classList.add('cat-mode');
     renderCategoryRows(PRODUCTS, grid);
   } else {
-    grid.classList.remove('cat-mode');
     renderProductsData(getCatProducts(currentTab));
   }
 }
 
-// filterByCategory : accepte 'mode', 'fashion', 'style' → tous redirigent vers 'mode'
 function filterByCategory(rawCat) {
-  if (!rawCat || rawCat === 'all') {
-    currentTab = 'all';
-    renderProducts();
-    return;
-  }
-  // Normaliser la catégorie en utilisant le même système de mapping
+  if (!rawCat || rawCat === 'all') { currentTab = 'all'; renderProducts(); scrollToProducts(); return; }
   const normalised = mapCategory(rawCat);
   currentTab = normalised;
-  // Mettre à jour les tabs visuellement
   document.querySelectorAll('.ftab').forEach(b => {
-    b.classList.toggle('active', b.getAttribute('onclick')?.includes(`'${normalised}'`) || b.getAttribute('onclick')?.includes(`"${normalised}"`) || (normalised === 'all' && b.getAttribute('onclick')?.includes("'all'")));
+    b.classList.toggle('active',
+      b.getAttribute('onclick')?.includes(`'${normalised}'`) ||
+      b.getAttribute('onclick')?.includes(`"${normalised}"`) ||
+      (normalised === 'all' && b.getAttribute('onclick')?.includes("'all'")));
   });
   renderProducts();
+  scrollToProducts();
 }
 
 function renderProductsData(data) {
+  showGrid();
   const grid = document.getElementById('products-grid');
   if (!grid) return;
-  grid.classList.remove('cat-mode');
   if (!data.length) {
     const isSearch = (document.getElementById('search-input')?.value || '').trim().length > 0;
     grid.innerHTML = `
-      <div style="grid-column:1/-1;text-align:center;padding:80px 20px;color:var(--text2)">
+      <div style="text-align:center;padding:60px 20px;color:#6b7280;grid-column:1/-1">
         <p style="font-size:3rem">${isSearch ? '🔍' : '🛍️'}</p>
-        <p style="margin-top:14px;font-size:1.1rem;font-weight:600;color:var(--text)">${isSearch ? 'Aucun résultat pour votre recherche' : 'Aucun produit disponible pour le moment'}</p>
-        <p style="margin-top:6px;font-size:.88rem">${isSearch ? 'Essayez avec d\'autres mots-clés' : 'Les boutiques partenaires ajoutent de nouveaux produits chaque jour'}</p>
-        ${isSearch ? `<button onclick="document.getElementById('search-input').value='';renderProducts()" style="margin-top:18px;padding:10px 24px;background:var(--orange);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600">Voir tous les produits</button>` : ''}
+        <p style="margin-top:14px;font-size:1rem;font-weight:600;color:#111827">${isSearch ? 'Aucun résultat' : 'Aucun produit disponible'}</p>
+        <p style="margin-top:6px;font-size:.85rem">${isSearch ? 'Essayez avec d\'autres mots-clés' : 'Revenez bientôt !'}</p>
+        ${isSearch ? `<button onclick="document.getElementById('search-input').value='';renderProducts()" style="margin-top:16px;padding:10px 20px;background:#f97316;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600">Voir tous les produits</button>` : ''}
       </div>`;
     return;
   }
-  grid.innerHTML = data.map(p => productCardHTML(p)).join('');
+  grid.innerHTML = `<div class="prod-grid">${data.map(p => productCardHTML(p)).join('')}</div>`;
+  observeImages();
 }
 
-// ===== CATEGORY ROWS (Amazon/Takealot layout) =====
+// ===== CATEGORY SECTIONS (Amazon-style vertical grid) =====
+function catSectionHTML(title, prods, cat) {
+  const viewAll = cat ? `<button class="see-all" onclick="filterByCategory('${cat}');scrollToProducts()">Voir tout →</button>` : '';
+  return `
+  <div class="cat-section">
+    <div class="cat-section-header">
+      <h2 class="cat-title">${title}</h2>
+      ${viewAll}
+    </div>
+    <div class="prod-grid">${prods.map(p => productCardHTML(p)).join('')}</div>
+  </div>`;
+}
+
 function renderCategoryRows(products, container) {
   if (!products.length) {
     container.innerHTML = `
-      <div style="text-align:center;padding:80px 20px;color:var(--text2)">
+      <div style="text-align:center;padding:60px 20px;color:#6b7280">
         <p style="font-size:3rem">🛍️</p>
-        <p style="margin-top:14px;font-size:1.1rem;font-weight:600;color:var(--text)">Aucun produit disponible pour le moment</p>
-        <p style="margin-top:6px;font-size:.88rem">Les boutiques partenaires ajoutent de nouveaux produits chaque jour</p>
+        <p style="margin-top:14px;font-size:1rem;font-weight:600;color:#111827">Aucun produit disponible pour le moment</p>
+        <p style="margin-top:6px;font-size:.85rem">Les boutiques partenaires ajoutent de nouveaux produits chaque jour</p>
       </div>`;
     return;
   }
 
   // Group by category
   const groups = {};
-  products.forEach(p => {
-    if (!groups[p.cat]) groups[p.cat] = [];
-    groups[p.cat].push(p);
-  });
-
-  // Also build shop spotlight sections (shops with 3+ products)
-  const byShop = {};
-  products.forEach(p => {
-    if (!p.shop_id) return;
-    if (!byShop[p.shop_id]) byShop[p.shop_id] = { name: p.shop_name, slug: p.shop_slug, id: p.shop_id, is_verified: p.is_verified, items: [] };
-    byShop[p.shop_id].items.push(p);
-  });
-  const spotlightShops = Object.values(byShop).filter(s => s.items.length >= 3).slice(0, 2);
+  products.forEach(p => { if (!groups[p.cat]) groups[p.cat] = []; groups[p.cat].push(p); });
 
   let html = '';
 
-  // ── 🔥 TENDANCES (toujours en premier) ──────────────────────
-  const trending = getTrending(16);
-  if (trending.length >= 3) {
-    html += `
-    <div class="cat-row-section" style="--row-accent:#ff6b00">
-      <div class="cat-row-header" style="background:linear-gradient(135deg,#1a0a00,#3d1800);color:#fff;border-bottom:2px solid #ff6b0055">
-        <div class="cat-row-title-block">
-          <div class="cat-row-title" style="color:#fff;font-size:1.05rem">🔥 Tendances du moment</div>
-          <div class="cat-row-sub" style="color:rgba(255,180,80,0.85)">Les produits les plus populaires en ce moment</div>
-        </div>
-        <div class="cat-row-actions">
-          <button class="cat-arrow-btn" style="background:rgba(255,107,0,.25);border-color:rgba(255,107,0,.4);color:#ff8c00" onclick="scrollCatRow('trending',-1)">&#8249;</button>
-          <button class="cat-arrow-btn" style="background:rgba(255,107,0,.25);border-color:rgba(255,107,0,.4);color:#ff8c00" onclick="scrollCatRow('trending',1)">&#8250;</button>
-        </div>
-      </div>
-      <div class="cat-row-scroll" id="catrow-trending">
-        ${buildCatRowCards(trending)}
-      </div>
-    </div>`;
-  }
+  // 🔥 Trending first (promos + popular)
+  const trending = getTrending(8);
+  if (trending.length >= 2) html += catSectionHTML('🔥 Tendances du moment', trending, null);
 
-  // ── ✨ POUR VOUS (si l'utilisateur a un historique) ───────────
-  const forYou = getForYou(10);
-  if (forYou.length >= 3) {
-    const topCat = getPreferredCats()[0];
-    const catPhrase = CAT_PHRASES[topCat] || { title: catLabel(topCat), sub: '' };
-    html += `
-    <div class="cat-row-section">
-      <div class="cat-row-header" style="background:linear-gradient(135deg,#0a0a1a,#111132);color:#fff">
-        <div class="cat-row-title-block">
-          <div class="cat-row-title" style="color:#fff">✨ Sélectionné pour vous</div>
-          <div class="cat-row-sub" style="color:rgba(160,180,255,0.8)">Basé sur vos préférences · ${catPhrase.title.replace(/^[^ ]+ /, '')}</div>
-        </div>
-        <div class="cat-row-actions">
-          <button class="cat-arrow-btn" style="background:rgba(99,102,241,.25);border-color:rgba(99,102,241,.4);color:#a5b4fc" onclick="scrollCatRow('foryou',-1)">&#8249;</button>
-          <button class="cat-arrow-btn" style="background:rgba(99,102,241,.25);border-color:rgba(99,102,241,.4);color:#a5b4fc" onclick="scrollCatRow('foryou',1)">&#8250;</button>
-        </div>
-      </div>
-      <div class="cat-row-scroll" id="catrow-foryou">
-        ${buildCatRowCards(forYou)}
-      </div>
-    </div>`;
-  }
-
-  // Category rows
+  // Per-category sections (max 8 products each, "see all" to view more)
   for (const cat of CAT_ORDER) {
     const prods = groups[cat];
-    if (!prods || !prods.length) continue;
-    const phrase = CAT_PHRASES[cat] || { title: catLabel(cat), sub: '', color: '#f0f0f0' };
-    html += `
-    <div class="cat-row-section">
-      <div class="cat-row-header" style="background:${phrase.color}">
-        <div class="cat-row-title-block">
-          <div class="cat-row-title">${phrase.title}</div>
-          <div class="cat-row-sub">${phrase.sub}</div>
-        </div>
-        <div class="cat-row-actions">
-          <button class="cat-row-viewmore" onclick="filterByCategory('${cat}');scrollToProducts()">Voir plus →</button>
-          <button class="cat-arrow-btn" onclick="scrollCatRow('${cat}',-1)" title="Précédent">&#8249;</button>
-          <button class="cat-arrow-btn" onclick="scrollCatRow('${cat}',1)" title="Suivant">&#8250;</button>
-        </div>
-      </div>
-      <div class="cat-row-scroll" id="catrow-${cat}">
-        ${buildCatRowCards(prods)}
-      </div>
-    </div>`;
+    if (!prods?.length) continue;
+    const phrase = CAT_PHRASES[cat] || { title: catLabel(cat) };
+    html += catSectionHTML(phrase.title, prods.slice(0, 8), cat);
   }
 
-  // Shop spotlight rows (after category rows)
-  for (const shop of spotlightShops) {
-    // Skip shops without a usable identifier
-    if (!shop.slug && !shop.id) continue;
-    const sColor = shopColor(shop.name);
-    const shopLogoData = SHOPS.find(s => s.id === shop.id);
-    const logoUrl = shopLogoData ? getImgUrl(shopLogoData.logo) : null;
-    const initial = (shop.name || '?')[0].toUpperCase();
-    // Use slug if available, fallback to id to avoid null crash
-    const slugOrId = (shop.slug || shop.id || 'shop').toString();
-    const rowId = 'catrow-shop-' + slugOrId.replace(/[^a-z0-9]/g, '');
-    html += `
-    <div class="cat-row-section">
-      <div class="cat-row-shop-header">
-        <div class="cat-row-shop-avatar" style="background:${sColor}">
-          ${logoUrl ? `<img src="${logoUrl}" alt="${shop.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span style="display:none">${initial}</span>` : `<span>${initial}</span>`}
-        </div>
-        <div style="flex:1;min-width:0">
-          <div class="cat-row-shop-name">${shop.name}${shop.is_verified ? ' <span style="color:var(--orange);font-size:.8rem">✓ Vérifié</span>' : ''}</div>
-          <div class="cat-row-shop-tag">Les coups de cœur de ${shop.name}</div>
-        </div>
-        <div class="cat-row-actions">
-          ${shopLink(shop.slug, shop.id, 'Voir la boutique →', 'cat-row-viewmore')}
-          <button class="cat-arrow-btn" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:#fff" onclick="scrollCatRow('${rowId.replace('catrow-', '')}',-1)">&#8249;</button>
-          <button class="cat-arrow-btn" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:#fff" onclick="scrollCatRow('${rowId.replace('catrow-', '')}',1)">&#8250;</button>
-        </div>
-      </div>
-      <div class="cat-row-scroll" id="${rowId}">
-        ${buildCatRowCards(shop.items)}
-      </div>
-    </div>`;
-  }
-
-  container.innerHTML = html;
+  container.innerHTML = html || '<div style="text-align:center;padding:60px 20px;color:#6b7280">🛍️ Aucun produit</div>';
+  observeImages();
 }
 
-// ─── SMART CARD COMPOSITION ─────────────────────────────────
-// Pattern: hero | std | std | QUAD(4) | std | std | DUO(2) | ...
-function buildCatRowCards(prods) {
-  if (!prods.length) return '';
-  let html = '';
-  let i = 0;
-  let comboIdx = 0; // 0→quad, 1→duo, alternates
+// ─── Legacy stubs (referenced in some places) ─────────────
+function buildCatRowCards(prods) { return prods.map(p => productCardHTML(p)).join(''); }
+// Legacy stubs (no longer used but kept for safety)
+function stdCardHTML(p) { return productCardHTML(p); }
+function heroCardHTML(p) { return productCardHTML(p); }
+function quadCardHTML(prods) { return prods.map(p => productCardHTML(p)).join(''); }
+function duoCardHTML(p1, p2) { return productCardHTML(p1) + productCardHTML(p2); }
+function catRowCardHTML(p) { return productCardHTML(p); }
+function scrollCatRow() { }
 
-  // First card: always a hero
-  html += heroCardHTML(prods[i++]);
-
-  // Then: 2 std cards, then a combo, repeat
-  while (i < prods.length) {
-    const rem = prods.length - i;
-
-    // 2 standard cards before each combo
-    const stdBefore = Math.min(2, rem);
-    for (let s = 0; s < stdBefore && i < prods.length; s++) {
-      html += stdCardHTML(prods[i++]);
-    }
-
-    // Insert combo if still have products
-    if (i >= prods.length) break;
-    const remAfterStd = prods.length - i;
-
-    if (comboIdx % 2 === 0 && remAfterStd >= 4) {
-      html += quadCardHTML(prods.slice(i, i + 4));
-      i += 4;
-    } else if (remAfterStd >= 2) {
-      html += duoCardHTML(prods[i], prods[i + 1]);
-      i += 2;
-    } else {
-      html += stdCardHTML(prods[i++]);
-    }
-    comboIdx++;
-  }
-  return html;
-}
-
-// ─── TYPE 1: STANDARD CARD ───────────────────────────────────
-function stdCardHTML(p) {
-  const disc = discount(p.price, p.oldPrice);
-  const inWish = wishlist.includes(p.id);
-  const img = getImgUrl(p.photo_url);
-  const oos = p.qty_stock !== null && p.qty_stock <= 0;
-  const low = p.qty_stock !== null && p.qty_stock > 0 && p.qty_stock <= 3;
-  const imgEl = img ? `<img src="${img}" alt="${p.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : '';
-  const emojiEl = `<div class="crc-emoji" style="display:${img ? 'none' : 'flex'}">${p.emoji}</div>`;
-  return `
-  <div class="crc" ${oos ? 'style="opacity:.65"' : ''} onclick="${oos ? '' : `openProduct('${p.id}')`}">
-    <div class="crc-img" style="background:${catColor(p.cat)}">
-      ${imgEl}${emojiEl}
-      ${disc > 0 ? `<span class="crc-badge">-${disc}%</span>` : ''}
-      ${oos ? `<span class="crc-oos">Rupture</span>` : ''}
-      <button class="crc-wish ${inWish ? 'active' : ''}" id="crwish-${p.id}" onclick="event.stopPropagation();toggleWish('${p.id}')">${inWish ? '❤️' : '🤍'}</button>
-    </div>
-    <div class="crc-info">
-      <div class="crc-name">${p.name}</div>
-      <div class="crc-shop">🏪 ${p.shop_name}${p.is_verified ? ' <span class="crc-verified">✓</span>' : ''}</div>
-      <div class="crc-price">
-        <span class="crc-current">${formatPrice(p.price)}</span>
-        ${p.oldPrice ? `<span class="crc-old">${formatPrice(p.oldPrice)}</span>` : ''}
-      </div>
-      ${low ? `<div style="font-size:.65rem;color:#e53935;font-weight:700;margin-bottom:4px">⚠️ Plus que ${p.qty_stock} en stock</div>` : ''}
-    </div>
-    <div class="crc-footer">
-      <button class="crc-add ${cart.some(i => i.id === p.id) ? 'in-cart' : ''}" onclick="event.stopPropagation();${oos ? '' : `addToCart('${p.id}')`}" ${oos ? 'disabled' : ''}>
-        ${oos ? '❌ Indisponible' : (cart.some(i => i.id === p.id) ? '✓ Dans le panier' : '🛒 Ajouter')}
-      </button>
-    </div>
-  </div>`;
-}
-
-// ─── TYPE 2: HERO CARD (premier de chaque rangée) ─────────────
-function heroCardHTML(p) {
-  const disc = discount(p.price, p.oldPrice);
-  const inWish = wishlist.includes(p.id);
-  const img = getImgUrl(p.photo_url);
-  const oos = p.qty_stock !== null && p.qty_stock <= 0;
-  const imgEl = img ? `<img src="${img}" alt="${p.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : '';
-  const emojiEl = `<div class="crc-hero-emoji" style="display:${img ? 'none' : 'flex'};background:${catColor(p.cat)}">${p.emoji}</div>`;
-  return `
-  <div class="crc-hero" onclick="${oos ? '' : `openProduct('${p.id}')`}">
-    <div class="crc-hero-img" style="background:${catColor(p.cat)}">
-      ${imgEl}${emojiEl}
-      <div class="crc-hero-overlay">
-        <div class="crc-hero-cat">${catLabel(p.cat)}</div>
-        <div class="crc-hero-name">${p.name}</div>
-        <div style="display:flex;align-items:baseline;gap:0;flex-wrap:wrap">
-          <span class="crc-hero-price">${formatPrice(p.price)}</span>
-          ${p.oldPrice ? `<span class="crc-hero-old">${formatPrice(p.oldPrice)}</span>` : ''}
-        </div>
-      </div>
-      ${disc > 0 ? `<span class="crc-badge">-${disc}%</span>` : ''}
-      ${oos ? `<span class="crc-oos">Rupture de stock</span>` : ''}
-      <button class="crc-wish ${inWish ? 'active' : ''}" id="crwish-${p.id}" onclick="event.stopPropagation();toggleWish('${p.id}')">${inWish ? '❤️' : '🤍'}</button>
-    </div>
-    <div class="crc-hero-footer">
-      <span class="crc-hero-shop">🏪 ${p.shop_name}${p.is_verified ? ' <span class="crc-verified">✓</span>' : ''}</span>
-      <button class="crc-hero-btn ${cart.some(i => i.id === p.id) ? 'in-cart' : ''}" onclick="event.stopPropagation();${oos ? '' : `addToCart('${p.id}')`}" ${oos ? 'disabled' : ''}>
-        ${oos ? 'Indisponible' : (cart.some(i => i.id === p.id) ? '✓ Dans le panier' : '🛒 Ajouter')}
-      </button>
-    </div>
-  </div>`;
-}
-
-// ─── TYPE 3: QUAD CARD (4 mini-produits en 2×2) ─────────────
-function quadCardHTML(prods4) {
-  const items = prods4.map(p => {
-    const img = getImgUrl(p.photo_url);
-    const disc = discount(p.price, p.oldPrice);
-    return `
-    <div class="crc-quad-item" onclick="openProduct('${p.id}')">
-      <div class="crc-quad-img" style="background:${catColor(p.cat)}">
-        ${img ? `<img src="${img}" alt="${p.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : ''}
-        <span style="display:${img ? 'none' : 'flex'}">${p.emoji}</span>
-        ${disc > 0 ? `<span class="crc-quad-disc">-${disc}%</span>` : ''}
-      </div>
-      <div class="crc-quad-name" title="${p.name}">${p.name}</div>
-      <div class="crc-quad-price">${formatPrice(p.price)}</div>
-    </div>`;
-  }).join('');
-  const cats = [...new Set(prods4.map(p => p.cat))];
-  const label = cats.length === 1 ? catLabel(cats[0]) : 'Sélection';
-  return `
-  <div class="crc-quad">
-    <div class="crc-quad-header">
-      <span class="crc-quad-title">${label}</span>
-      <span class="crc-quad-count">4 produits</span>
-    </div>
-    <div class="crc-quad-grid">${items}</div>
-  </div>`;
-}
-
-// ─── TYPE 4: DUO CARD (2 produits empilés) ──────────────────
-function duoCardHTML(p1, p2) {
-  function duoItem(p) {
-    const img = getImgUrl(p.photo_url);
-    return `
-    <div class="crc-duo-item" onclick="openProduct('${p.id}')">
-      <div class="crc-duo-img" style="background:${catColor(p.cat)}">
-        ${img ? `<img src="${img}" alt="${p.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : ''}
-        <span style="display:${img ? 'none' : 'flex'}">${p.emoji}</span>
-      </div>
-      <div class="crc-duo-info">
-        <div class="crc-duo-name">${p.name}</div>
-        <div>
-          <span class="crc-duo-price">${formatPrice(p.price)}</span>
-          ${p.oldPrice ? `<span class="crc-duo-old">${formatPrice(p.oldPrice)}</span>` : ''}
-        </div>
-      </div>
-    </div>`;
-  }
-  const oos1 = p1.qty_stock !== null && p1.qty_stock <= 0;
-  const oos2 = p2.qty_stock !== null && p2.qty_stock <= 0;
-  return `
-  <div class="crc-duo">
-    <div class="crc-duo-header">
-      <span class="crc-duo-header-dot"></span> Duo Sélection
-    </div>
-    ${duoItem(p1)}
-    <div class="crc-duo-divider"></div>
-    ${duoItem(p2)}
-    <div class="crc-duo-footer">
-      <button class="crc-duo-btn ${cart.some(i => i.id === p1.id) ? 'in-cart' : ''}" onclick="${oos1 ? '' : `addToCart('${p1.id}')`}" ${oos1 ? 'disabled' : ''}>
-        ${oos1 ? '❌' : (cart.some(i => i.id === p1.id) ? '✓ Panier' : '🛒 Ajouter')}
-      </button>
-      <button class="crc-duo-btn ${cart.some(i => i.id === p2.id) ? 'in-cart' : ''}" onclick="${oos2 ? '' : `addToCart('${p2.id}')`}" ${oos2 ? 'disabled' : ''}>
-        ${oos2 ? '❌' : (cart.some(i => i.id === p2.id) ? '✓ Panier' : '🛒 Ajouter')}
-      </button>
-    </div>
-  </div>`;
-}
-
-// Legacy alias used in recently viewed / search results
-function catRowCardHTML(p) { return stdCardHTML(p); }
-
-// Scroll a category row by N cards
-function scrollCatRow(rowId, dir) {
-  const row = document.getElementById('catrow-' + rowId);
-  if (!row) return;
-  const firstCard = row.querySelector('.crc-hero, .crc, .crc-quad, .crc-duo');
-  const cardW = firstCard ? firstCard.offsetWidth : 200;
-  row.scrollBy({ left: dir * (cardW + 14) * 3, behavior: 'smooth' });
-}
-
+// ── CLEAN PRODUCT CARD (Amazon-style) ──────────────────────────
 function productCardHTML(p) {
   const disc = discount(p.price, p.oldPrice);
-  const inWish = wishlist.includes(p.id);
+  const oos = p.qty_stock !== null && p.qty_stock <= 0;
+  const inCart = cart.some(i => i.id === p.id);
   const img = getImgUrl(p.photo_url);
-  const outOfStock = p.qty_stock !== null && p.qty_stock <= 0;
-  const lowStock = p.qty_stock !== null && p.qty_stock > 0 && p.qty_stock <= 3;
 
-  const imgEl = img
-    ? `<img src="${img}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+  const imgContent = img
+    ? `<img data-src="${img}" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'/%3E" alt="${p.name.replace(/"/g,"'")}\" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
     : '';
-  const emojiEl = `<div style="display:${img ? 'none' : 'flex'};font-size:3.5rem;align-items:center;justify-content:center;height:100%;width:100%">${p.emoji}</div>`;
+  const emojiContent = `<div class="pcard-emoji" style="display:${img ? 'none' : 'flex'};align-items:center;justify-content:center;width:100%;height:100%">${p.emoji}</div>`;
 
-  const stars = p.id % 2 === 0 ? '⭐⭐⭐⭐⭐' : '⭐⭐⭐⭐';
-  const reviews = 5 + (p.id % 15);
+  const btnLabel = oos ? 'Indisponible' : (inCart ? '✓ Dans le panier' : 'Ajouter au panier');
 
   return `
-  <div class="product-card" id="pcard-${p.id}" ${outOfStock ? 'style="opacity:.6"' : ''}>
-    <div class="product-img" style="background:${catColor(p.cat)};position:relative;overflow:hidden;cursor:pointer" onclick="${outOfStock ? '' : `openProduct('${p.id}')`}">
-      ${imgEl}${emojiEl}
-      ${disc > 0 ? `<span class="product-badge-disc">-${disc}%</span>` : ''}
-      ${outOfStock ? `<span style="position:absolute;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.85rem;font-weight:700">Rupture de stock</span>` : ''}
-      <button class="product-wishlist ${inWish ? 'active' : ''}" id="wish-${p.id}" onclick="event.stopPropagation();toggleWish('${p.id}')" title="Favoris">
-        ${inWish ? '❤️' : '🤍'}
-      </button>
-    </div>
-    <div class="product-info">
-      <div class="product-category">${catLabel(p.cat)}</div>
-      <div style="font-size:0.7rem;margin-bottom:4px;display:flex;align-items:center;gap:4px">
-        <span style="color:#fbbf24">${stars}</span>
-        <span style="color:#aaa">(${reviews})</span>
-      </div>
-      ${p.shop_name ? `<div style="font-size:.72rem;color:var(--text2);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">🏪 ${p.shop_name}${p.is_verified ? ' <span style="color:#00c853;font-weight:700">✓</span>' : ''}</div>` : ''}
-      <div class="product-name">${p.name}</div>
-      <div class="product-price">
-        <span class="price-current">${formatPrice(p.price)}</span>
-        ${p.oldPrice ? `<span class="price-old">${formatPrice(p.oldPrice)}</span>` : ''}
-      </div>
-      ${lowStock ? `<div style="font-size:.7rem;color:#e53935;font-weight:600;margin-bottom:6px">⚠️ Plus que ${p.qty_stock} en stock !</div>` : `<div style="font-size:.72rem;color:#00a849;margin-bottom:8px">🚚 Livraison disponible</div>`}
-      <button class="product-add-btn ${cart.some(i => i.id === p.id) ? 'in-cart' : ''}" onclick="${outOfStock ? '' : `addToCart('${p.id}')`}" ${outOfStock ? 'disabled style="opacity:.5;cursor:not-allowed"' : ''}>
-        ${outOfStock ? '❌ Indisponible' : (cart.some(i => i.id === p.id) ? '✓ Dans le panier' : '🛒 Ajouter au panier')}
-      </button>
-    </div>
-  </div>`;
+<div class="pcard" id="pcard-${p.id}" ${oos ? 'style="opacity:.65"' : ''}>
+  <div class="pcard-img" onclick="${oos ? '' : `openProduct('${p.id}')`}">
+    ${imgContent}${emojiContent}
+    ${disc > 0 ? `<span class="pcard-disc">-${disc}%</span>` : ''}
+    ${oos ? `<div class="pcard-oos">Rupture</div>` : ''}
+  </div>
+  <div class="pcard-body">
+    <p class="pcard-name">${p.name}</p>
+    <p class="pcard-price">${formatPrice(p.price)}</p>
+    ${p.oldPrice ? `<p class="pcard-old">${formatPrice(p.oldPrice)}</p>` : ''}
+    <button class="pcard-btn ${inCart ? 'in-cart' : ''}"
+      onclick="event.stopPropagation();${oos ? '' : `addToCart('${p.id}')`}"
+      ${oos ? 'disabled' : ''}>
+      ${btnLabel}
+    </button>
+  </div>
+</div>`;
 }
 
 
@@ -1218,16 +929,12 @@ function renderFlashDeals() {
   const section = document.getElementById('flash-section');
   if (!grid) return;
 
-  // Prendre les produits avec promo (price_regular > price_sale), min 5% de réduction
   const deals = PRODUCTS
     .filter(p => p.oldPrice && p.oldPrice > p.price && discount(p.price, p.oldPrice) >= 5)
     .sort((a, b) => discount(b.price, b.oldPrice) - discount(a.price, a.oldPrice))
-    .slice(0, 8);
+    .slice(0, 10);
 
-  if (!deals.length) {
-    if (section) section.style.display = 'none';
-    return;
-  }
+  if (!deals.length) { if (section) section.style.display = 'none'; return; }
   if (section) section.style.display = '';
 
   grid.innerHTML = deals.map(p => {
@@ -1235,20 +942,14 @@ function renderFlashDeals() {
     const img = getImgUrl(p.photo_url);
     return `
     <div class="flash-card" onclick="openProduct('${p.id}')">
-      <div style="position:relative;aspect-ratio:1;background:${catColor(p.cat)};overflow:hidden;display:flex;align-items:center;justify-content:center">
-        ${img
-        ? `<img src="${img}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-        : ''}
-        <span style="${img ? 'display:none' : 'display:flex'};font-size:2.8rem;align-items:center;justify-content:center;width:100%;height:100%">${p.emoji}</span>
+      <div class="flash-img">
+        ${img ? `<img src="${img}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">` : `<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:2.4rem">${p.emoji}</div>`}
         <span class="flash-badge">-${disc}%</span>
       </div>
       <div class="flash-info">
         <div class="flash-name">${p.name}</div>
-        <div style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap">
-          <span class="flash-price">${formatPrice(p.price)}</span>
-          <span class="flash-old">${formatPrice(p.oldPrice)}</span>
-        </div>
-        ${p.shop_name ? `<div style="font-size:.68rem;color:var(--text2);margin-top:4px">🏪 ${p.shop_name}</div>` : ''}
+        <span class="flash-price">${formatPrice(p.price)}</span>
+        <span class="flash-old">${formatPrice(p.oldPrice)}</span>
       </div>
     </div>`;
   }).join('');
@@ -1259,38 +960,33 @@ function renderShops() {
   const container = document.getElementById('shops-scroll');
   const section = document.querySelector('.shops-section');
   if (!container) return;
-  if (!SHOPS.length) {
-    if (section) section.style.display = 'none';
-    return;
-  }
+  if (!SHOPS.length) { if (section) section.style.display = 'none'; return; }
   if (section) section.style.display = '';
-  // Compte les produits par boutique depuis le state PRODUCTS déjà chargé
+
   const prodCountByShop = {};
   PRODUCTS.forEach(p => { prodCountByShop[p.shop_id] = (prodCountByShop[p.shop_id] || 0) + 1; });
 
-  container.innerHTML = SHOPS.map(s => {
+  // Keep the "Boutiques" label chip, then append shop chips
+  const label = container.querySelector('div.text-xs');
+  const chipsHTML = SHOPS.map(s => {
     const logo = getImgUrl(s.logo);
     const initial = (s.name || '?')[0].toUpperCase();
     const prodCount = prodCountByShop[s.id] || 0;
-    const orderCount = s.orders_count || 0;
-    const subLabel = s.is_verified
-      ? '✓ Vérifié'
-      : (prodCount > 0 ? `${prodCount} produit${prodCount > 1 ? 's' : ''}` : (s.category || 'Boutique'));
-    const shopHref = shopUrl(s.slug, s.id);
+    const sub = s.is_verified ? '✓ Vérifié' : (prodCount > 0 ? `${prodCount} produit${prodCount > 1 ? 's' : ''}` : (s.category || 'Boutique'));
+    const href = shopUrl(s.slug, s.id);
     return `
-    <a href="${shopHref}" class="shop-chip" style="box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+    <a href="${href}" class="shop-chip">
       <div class="shop-chip-avatar" style="background:${shopColor(s.name)}">
-        ${logo
-        ? `<img src="${logo}" alt="${s.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span style="display:none">${initial}</span>`
-        : `<span>${initial}</span>`
-      }
+        ${logo ? `<img src="${logo}" alt="${s.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span style="display:none">${initial}</span>` : `<span>${initial}</span>`}
       </div>
-      <div class="shop-chip-info">
+      <div>
         <div class="shop-chip-name">${s.name}</div>
-        <div class="shop-chip-badge">${subLabel}</div>
+        <div class="shop-chip-badge">${sub}</div>
       </div>
     </a>`;
   }).join('');
+
+  container.innerHTML = `<div class="text-xs text-gray-400 font-semibold uppercase tracking-wide flex-shrink-0 self-center">Boutiques</div>${chipsHTML}`;
 }
 
 function shopColor(name) {
@@ -1306,16 +1002,6 @@ function setTab(el, cat) {
   if (el) el.classList.add('active');
   currentTab = cat;
   renderProducts();
-}
-
-function filterByCategory(cat) {
-  currentTab = cat;
-  document.querySelectorAll('.ftab').forEach(b => {
-    const label = b.textContent.trim().toLowerCase();
-    b.classList.toggle('active', label === 'tous' ? cat === 'all' : label.includes(catLabel(cat).split(' ')[0].toLowerCase()));
-  });
-  renderProducts();
-  scrollToProducts();
 }
 
 // ===== PRODUCT MODAL =====
@@ -1421,14 +1107,29 @@ function addToCart(id, silent = false) {
   saveCart();
   updateCartBadge();
   renderCart();
-  renderProducts(); // Refresh buttons
+  refreshCartButtons(); // Refresh add-to-cart button states
   if (!silent) { showToast(`✅ "${p.name}" ajouté !`); animateBadge('cart-badge'); }
+}
+
+// Light update: just toggle button state without re-rendering the full grid
+function refreshCartButtons() {
+  document.querySelectorAll('[id^="pcard-"]').forEach(card => {
+    const id = card.id.replace('pcard-', '');
+    const btn = card.querySelector('.pcard-btn');
+    if (!btn) return;
+    const inCart = cart.some(i => i.id === id);
+    const oos = btn.disabled;
+    if (!oos) {
+      btn.classList.toggle('in-cart', inCart);
+      btn.textContent = inCart ? '✓ Dans le panier' : 'Ajouter au panier';
+    }
+  });
 }
 
 function removeFromCart(id) {
   cart = cart.filter(i => i.id !== id);
   saveCart(); updateCartBadge(); renderCart();
-  renderProducts(); // Refresh buttons
+  refreshCartButtons(); // Refresh add-to-cart button states
 }
 
 function changeQty(id, d) {
@@ -1552,7 +1253,7 @@ function renderWishlist() {
         <div class="cart-item-name">${p.name}</div>
         <div class="cart-item-price">${formatPrice(p.price)}</div>
       </div>
-      <button class="product-add-btn" style="padding:6px 10px;font-size:.75rem;width:auto" onclick="addToCart('${p.id}')">🛒</button>
+      <button class="pcard-btn" style="padding:6px 10px;font-size:.75rem;width:auto;margin-top:0" onclick="addToCart('${p.id}')">🛒</button>
       <button class="cart-item-remove" onclick="toggleWish('${p.id}')">🗑️</button>
     </div>`;
   }).join('');
@@ -2054,7 +1755,7 @@ function showNewItems() {
   // Prendre les 30 premiers produits (déjà triés par created_at.desc depuis Supabase)
   const newProducts = PRODUCTS.slice(0, 30);
   const grid = document.getElementById('products-grid');
-  if (grid) grid.classList.remove('cat-mode');
+  // cat-mode removed
   renderProductsData(newProducts);
   scrollToProducts();
   showToast('🆕 Affichage des derniers produits ajoutés');
