@@ -186,6 +186,32 @@ function initPremium() {
     navigator.serviceWorker.register('./sw.js').catch(() => { });
   }
   initPWABanner();
+  init3DCards();
+}
+
+// ─── 3D Card Tilt Effect ──────────────────────────────────────
+function init3DCards() {
+  let cur = null;
+  document.addEventListener('mousemove', (e) => {
+    const card = e.target.closest('.pcard');
+    if (cur && cur !== card) {
+      cur.style.transform = '';
+      cur.style.boxShadow = '';
+      cur.style.zIndex = '';
+      cur = null;
+    }
+    if (!card) return;
+    cur = card;
+    const r = card.getBoundingClientRect();
+    const rx = -(((e.clientY - r.top) / r.height) - 0.5) * 12;
+    const ry = (((e.clientX - r.left) / r.width) - 0.5) * 16;
+    card.style.transform = `perspective(700px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.04)`;
+    card.style.boxShadow = '0 20px 40px rgba(0,0,0,0.18)';
+    card.style.zIndex = '5';
+  });
+  document.addEventListener('mouseleave', () => {
+    if (cur) { cur.style.transform = ''; cur.style.boxShadow = ''; cur.style.zIndex = ''; cur = null; }
+  });
 }
 
 // dark mode removed — light only
@@ -361,9 +387,16 @@ async function loadProducts() {
       const ids = SHOPS.map(s => s.id).join(',');
       shopFilter = `&shop_id=in.(${ids})`;
     }
-    // colonnes réelles Supabase (superset du schema WatermelonDB)
-    const params = `select=id,name,description,category,price_sale,price_regular,promo_price,photo_url,photo,quantity,shop_id&is_active=eq.true&is_published=eq.true&order=created_at.desc&limit=1000${shopFilter}`;
-    const data = await sbGet('products', params, true); // ⚡ avec cache 5 min
+    // colonnes réelles Supabase — video_url optionnel (colonne ajoutée via migration)
+    const baseSelect = 'id,name,description,category,price_sale,price_regular,promo_price,photo_url,photo,quantity,shop_id';
+    const baseParams = `is_active=eq.true&is_published=eq.true&order=created_at.desc&limit=1000${shopFilter}`;
+    let data;
+    try {
+      data = await sbGet('products', `select=${baseSelect},video_url&${baseParams}`, true);
+    } catch (_) {
+      // video_url n'existe pas encore en DB → fallback sans la colonne
+      data = await sbGet('products', `select=${baseSelect}&${baseParams}`, true);
+    }
 
     PRODUCTS = data.map((p, idx) => {
       const shop = SHOPS.find(s => s.id === p.shop_id);
@@ -390,6 +423,7 @@ async function loadProducts() {
         oldPrice: hasPromo ? p.price_sale : (hasRegular ? p.price_regular : null),
         qty_stock: p.quantity ?? null,
         photo_url: pUrl,
+        video_url: p.video_url || null,
         _hasRealImg,
         emoji: catEmoji(cat),
         shop_name: shop?.name || 'Boutique Velmo',
@@ -398,8 +432,8 @@ async function loadProducts() {
         is_verified: shop?.is_verified || false,
       };
     });
-    // Afficher uniquement les produits avec une vraie photo
-    PRODUCTS = PRODUCTS.filter(p => p._hasRealImg);
+    // Afficher uniquement les produits avec une vraie photo ou une vidéo
+    PRODUCTS = PRODUCTS.filter(p => p._hasRealImg || p.video_url);
     console.log(`✅ ${PRODUCTS.length} produits avec image chargés`);
   } catch (e) {
     console.error('❌ Produits:', e.message);
@@ -813,8 +847,21 @@ function filterByCategory(rawCat) {
   scrollToProducts();
 }
 
+// ===== INFINITE SCROLL =====
+const INF_PAGE = 24;
+let _infData = [];
+let _infShown = 0;
+let _infLoading = false;
+let _infDone = false;
+
 function renderProductsData(data) {
   showGrid();
+  _infData = data;
+  _infShown = 0;
+  _infLoading = false;
+  _infDone = false;
+  _infDetach();
+
   const grid = document.getElementById('products-grid');
   if (!grid) return;
   if (!data.length) {
@@ -828,8 +875,65 @@ function renderProductsData(data) {
       </div>`;
     return;
   }
-  grid.innerHTML = `<div class="prod-grid">${data.map(p => productCardHTML(p)).join('')}</div>`;
-  observeImages();
+  grid.innerHTML = `
+    <div class="prod-grid" id="inf-grid"></div>
+    <div id="inf-footer" style="text-align:center;padding:28px 0 16px;display:none">
+      <div id="inf-spinner" style="display:none;margin:0 auto 10px;width:28px;height:28px;border:3px solid #f3f4f6;border-top-color:#f97316;border-radius:50%;animation:spin .7s linear infinite"></div>
+      <button id="inf-more-btn" onclick="_infAppend()" style="display:none;padding:10px 28px;background:#f97316;color:#fff;border:none;border-radius:24px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 12px rgba(249,115,22,.3)">Charger plus de produits ↓</button>
+      <p id="inf-end-msg" style="display:none;color:#9ca3af;font-size:13px">✓ Tous les produits sont affichés</p>
+    </div>`;
+  _infAppend();
+  _infAttach();
+}
+
+function _infAttach() {
+  if (window._infScrollFn) window.removeEventListener('scroll', window._infScrollFn);
+  window._infScrollFn = () => {
+    if (_infDone || _infLoading) return;
+    const dist = document.documentElement.scrollHeight - window.scrollY - window.innerHeight;
+    if (dist < 500) _infAppend();
+  };
+  window.addEventListener('scroll', window._infScrollFn, { passive: true });
+}
+
+function _infDetach() {
+  if (window._infScrollFn) { window.removeEventListener('scroll', window._infScrollFn); window._infScrollFn = null; }
+}
+
+function _infAppend() {
+  if (_infLoading || _infDone) return;
+  const igrid = document.getElementById('inf-grid');
+  const footer = document.getElementById('inf-footer');
+  const spinner = document.getElementById('inf-spinner');
+  const moreBtn = document.getElementById('inf-more-btn');
+  const endMsg = document.getElementById('inf-end-msg');
+  if (!igrid) return;
+
+  const slice = _infData.slice(_infShown, _infShown + INF_PAGE);
+  if (!slice.length) { _infDone = true; return; }
+
+  _infLoading = true;
+  if (footer) footer.style.display = 'block';
+  if (spinner) spinner.style.display = 'block';
+  if (moreBtn) moreBtn.style.display = 'none';
+
+  setTimeout(() => {
+    igrid.insertAdjacentHTML('beforeend', slice.map(p => productCardHTML(p)).join(''));
+    _infShown += slice.length;
+    observeImages();
+    _infLoading = false;
+
+    if (spinner) spinner.style.display = 'none';
+    if (_infShown >= _infData.length) {
+      _infDone = true;
+      _infDetach();
+      if (endMsg) endMsg.style.display = 'block';
+      if (moreBtn) moreBtn.style.display = 'none';
+    } else {
+      // Show fallback "Charger plus" button after 2s if user hasn't scrolled
+      if (moreBtn) setTimeout(() => { if (!_infDone && !_infLoading) moreBtn.style.display = 'inline-block'; }, 2000);
+    }
+  }, 150);
 }
 
 // ===== CATEGORY SECTIONS (Amazon-style vertical grid) =====
@@ -895,17 +999,19 @@ function productCardHTML(p) {
   const inCart = cart.some(i => i.id === p.id);
   const img = getImgUrl(p.photo_url);
 
-  const imgContent = img
-    ? `<img data-src="${img}" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'/%3E" alt="${p.name.replace(/"/g,"'")}\" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-    : '';
-  const emojiContent = `<div class="pcard-emoji" style="display:${img ? 'none' : 'flex'};align-items:center;justify-content:center;width:100%;height:100%">${p.emoji}</div>`;
+  const media = p.video_url
+    ? `<video src="${p.video_url}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'"></video>
+       <span class="pcard-video-badge">▶ Vidéo</span>`
+    : img
+      ? `<img data-src="${img}" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'/%3E" alt="${p.name.replace(/"/g,"'")}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">`
+      : `<div class="pcard-emoji" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%">${p.emoji}</div>`;
 
   const btnLabel = oos ? 'Indisponible' : (inCart ? '✓ Dans le panier' : 'Ajouter au panier');
 
   return `
 <div class="pcard" id="pcard-${p.id}" ${oos ? 'style="opacity:.65"' : ''}>
   <div class="pcard-img" onclick="${oos ? '' : `openProduct('${p.id}')`}">
-    ${imgContent}${emojiContent}
+    ${media}
     ${disc > 0 ? `<span class="pcard-disc">-${disc}%</span>` : ''}
     ${oos ? `<div class="pcard-oos">Rupture</div>` : ''}
   </div>
@@ -1020,10 +1126,15 @@ function openProduct(id) {
 
   document.getElementById('product-modal-body').innerHTML = `
     <div class="pm-grid">
-      <div class="pm-img" style="background:${catColor(p.cat)};overflow:hidden;border-radius:12px;display:flex;align-items:center;justify-content:center;min-height:220px;position:relative">
-        ${img ? `<img src="${img}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;border-radius:12px" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : ''}
-        <span style="${img ? 'display:none' : 'display:flex'};font-size:4rem;align-items:center;justify-content:center;width:100%;height:100%">${p.emoji}</span>
-        ${disc > 0 ? `<span style="position:absolute;top:12px;left:12px;background:#ff3b30;color:#fff;font-size:.8rem;font-weight:800;padding:4px 10px;border-radius:6px">-${disc}%</span>` : ''}
+      <div class="pm-img" id="pm-img-wrap" ${img && !p.video_url ? `onclick="openLightbox('${img}')"` : ''}>
+        ${p.video_url
+          ? `<video src="${p.video_url}" autoplay muted loop playsinline controls style="width:100%;height:100%;object-fit:contain;border-radius:12px;max-height:300px"></video>`
+          : img
+            ? `<img id="pm-zoom-img" src="${img}" alt="${p.name}" onerror="this.style.display='none'">`
+            : `<span style="font-size:5rem">${p.emoji}</span>`
+        }
+        ${disc > 0 ? `<span style="position:absolute;top:10px;left:10px;background:#ff3b30;color:#fff;font-size:.8rem;font-weight:800;padding:4px 10px;border-radius:6px">-${disc}%</span>` : ''}
+        ${img && !p.video_url ? `<span class="pm-img-hint">🔍 Cliquer pour agrandir</span>` : ''}
       </div>
       <div class="pm-info">
         <div class="product-category">${catLabel(p.cat)}</div>
@@ -1063,6 +1174,37 @@ function openProduct(id) {
     </div>`;
   openModal('modal-product');
   addToRecent(id);
+  // Init mouse-tracking zoom on the image
+  requestAnimationFrame(() => {
+    const wrap = document.getElementById('pm-img-wrap');
+    const zimg = document.getElementById('pm-zoom-img');
+    if (!wrap || !zimg) return;
+    wrap.addEventListener('mousemove', (e) => {
+      const r = wrap.getBoundingClientRect();
+      const xPct = ((e.clientX - r.left) / r.width) * 100;
+      const yPct = ((e.clientY - r.top) / r.height) * 100;
+      zimg.style.transformOrigin = `${xPct}% ${yPct}%`;
+      zimg.style.transform = 'scale(2)';
+    });
+    wrap.addEventListener('mouseleave', () => {
+      zimg.style.transform = 'scale(1)';
+      zimg.style.transformOrigin = 'center center';
+    });
+  });
+}
+
+function openLightbox(src) {
+  const lb = document.getElementById('pm-lightbox');
+  const lbImg = document.getElementById('pm-lightbox-img');
+  if (!lb || !lbImg) return;
+  lbImg.src = src;
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  const lb = document.getElementById('pm-lightbox');
+  if (lb) lb.classList.remove('open');
+  document.body.style.overflow = '';
 }
 
 function pmQty(d) {

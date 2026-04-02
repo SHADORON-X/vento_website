@@ -108,6 +108,32 @@ function initPremium() {
     navigator.serviceWorker.register('./sw.js').catch(() => { });
   }
   initPWABanner();
+  init3DCards();
+}
+
+// ─── 3D Card Tilt Effect ──────────────────────────────────────
+function init3DCards() {
+  let cur = null;
+  document.addEventListener('mousemove', (e) => {
+    const card = e.target.closest('.pcard');
+    if (cur && cur !== card) {
+      cur.style.transform = '';
+      cur.style.boxShadow = '';
+      cur.style.zIndex = '';
+      cur = null;
+    }
+    if (!card) return;
+    cur = card;
+    const r = card.getBoundingClientRect();
+    const rx = -(((e.clientY - r.top) / r.height) - 0.5) * 12;
+    const ry = (((e.clientX - r.left) / r.width) - 0.5) * 16;
+    card.style.transform = `perspective(700px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.04)`;
+    card.style.boxShadow = '0 20px 40px rgba(0,0,0,0.18)';
+    card.style.zIndex = '5';
+  });
+  document.addEventListener('mouseleave', () => {
+    if (cur) { cur.style.transform = ''; cur.style.boxShadow = ''; cur.style.zIndex = ''; cur = null; }
+  });
 }
 
 // ─── PWA Install Banner ──────────────────────────────────────
@@ -208,7 +234,7 @@ async function initShop() {
 async function loadShop(slug, id) {
   try {
     // Colonnes réelles en DB (logo_url/cover_url n'existent pas → logo/cover)
-    const cols = 'id,name,slug,description,category,logo,cover,' +
+    const cols = 'id,name,slug,description,category,logo,cover,owner_id,' +
       'is_verified,is_active,is_public,is_online_active,orders_count,phone,whatsapp,email,' +
       'address,location,opening_hours,facebook_url,instagram_url,tiktok_url,' +
       'twitter_url,website_url,delivery_info,return_policy';
@@ -246,6 +272,16 @@ async function loadShop(slug, id) {
       return;
     }
     SHOP = shopData[0];
+
+    // Fallback : si la boutique n'a pas de whatsapp/phone, utiliser le téléphone du propriétaire
+    if (!SHOP.whatsapp && !SHOP.phone && SHOP.owner_id) {
+      try {
+        const ownerData = await sbGet('users', `id=eq.${SHOP.owner_id}&select=phone&limit=1`);
+        if (ownerData && ownerData[0] && ownerData[0].phone) {
+          SHOP.whatsapp = ownerData[0].phone;
+        }
+      } catch (_) { /* silencieux */ }
+    }
 
     // 🛡️ SPRINT 5: PANIER ISOLÉ - Utiliser une clé spécifique à cette boutique
     CART_KEY = `velmo_cart_${SHOP.id}`;
@@ -476,10 +512,15 @@ async function loadProducts(shopId) {
   const gridLoader = document.getElementById('sh-grid-loader');
   if (gridLoader) gridLoader.style.display = 'block';
   try {
-    const cols = 'id,name,description,category,price_sale,price_regular,photo_url,photo,quantity';
-    const data = await sbGet('products',
-      `shop_id=eq.${shopId}&is_active=eq.true&is_published=eq.true&select=${cols}&order=name.asc&limit=2000`
-    );
+    const baseCols = 'id,name,description,category,price_sale,price_regular,photo_url,photo,quantity';
+    const baseQuery = `shop_id=eq.${shopId}&is_active=eq.true&is_published=eq.true&order=name.asc&limit=2000`;
+    let data;
+    try {
+      data = await sbGet('products', `select=${baseCols},video_url&${baseQuery}`);
+    } catch (_) {
+      // video_url n'existe pas encore → fallback
+      data = await sbGet('products', `select=${baseCols}&${baseQuery}`);
+    }
     PRODUCTS = (data || []).map(p => {
       const rawUrl = p.photo_url || p.photo || null;
       const hasRealImg = !!(rawUrl && !rawUrl.includes('placeholder') && !rawUrl.includes('default'));
@@ -497,6 +538,7 @@ async function loadProducts(shopId) {
         oldPrice: (p.price_regular && p.price_regular > p.price_sale) ? p.price_regular : null,
         qty_stock: p.quantity ?? null,
         photo_url: pUrl,
+        video_url: p.video_url || null,
         _hasRealImg: hasRealImg,
         emoji: catEmoji(mapCategory(p.category)),
         shop_name: SHOP?.name || '',
@@ -504,7 +546,7 @@ async function loadProducts(shopId) {
         shop_id: SHOP?.id || null,
         is_verified: SHOP?.is_verified || false,
       };
-    }).filter(p => p._hasRealImg);
+    }).filter(p => p._hasRealImg || p.video_url);
 
     // Update stats after loading products
     renderStats();
@@ -634,8 +676,39 @@ function renderShopProducts() {
   if (currentCat === 'all') {
     renderShopCategoryRows(data, grid);
   } else {
-    grid.innerHTML = `<div class="prod-grid">${data.map(p => shopCardHTML(p)).join('')}</div>`;
-    observeShopImages();
+    _shopInfData = data;
+    _shopInfShown = 0;
+    if (_shopInfObs) { _shopInfObs.disconnect(); _shopInfObs = null; }
+    grid.innerHTML = '<div class="prod-grid" id="sh-inf-grid"></div><div id="sh-inf-sentinel" style="height:1px;margin-top:20px"></div>';
+    _shopInfAppend();
+    if (typeof IntersectionObserver !== 'undefined') {
+      _shopInfObs = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) _shopInfAppend();
+      }, { rootMargin: '300px' });
+      const s = document.getElementById('sh-inf-sentinel');
+      if (s) _shopInfObs.observe(s);
+    }
+  }
+}
+
+// ===== SHOP INFINITE SCROLL =====
+const SHOP_PAGE = 24;
+let _shopInfData = [];
+let _shopInfShown = 0;
+let _shopInfObs = null;
+
+function _shopInfAppend() {
+  const igrid = document.getElementById('sh-inf-grid');
+  if (!igrid) return;
+  const slice = _shopInfData.slice(_shopInfShown, _shopInfShown + SHOP_PAGE);
+  if (!slice.length) return;
+  igrid.insertAdjacentHTML('beforeend', slice.map(p => shopCardHTML(p)).join(''));
+  _shopInfShown += slice.length;
+  observeShopImages();
+  const sentinel = document.getElementById('sh-inf-sentinel');
+  if (sentinel && _shopInfShown >= _shopInfData.length) {
+    sentinel.style.display = 'none';
+    if (_shopInfObs) { _shopInfObs.disconnect(); _shopInfObs = null; }
   }
 }
 
@@ -694,10 +767,18 @@ function shopCardHTML(p) {
   const inCart = cart.some(i => String(i.id) === String(p.id));
   const img = getImgUrl(p.photo_url);
   const btnLabel = inCart ? '✓ Dans le panier' : 'Ajouter au panier';
+
+  const media = p.video_url
+    ? `<video src="${p.video_url}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'"></video>
+       <span class="pcard-video-badge">▶ Vidéo</span>`
+    : img
+      ? `<img src="${img}" alt="${p.name.replace(/"/g, "'")}" style="width:100%;height:100%;object-fit:cover" loading="lazy" onerror="this.style.display='none'">`
+      : `<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:2.5rem">${p.emoji}</div>`;
+
   return `
 <div class="pcard" id="pcard-${p.id}">
   <div class="pcard-img" onclick="openProduct('${p.id}')">
-    ${img ? `<img src="${img}" alt="${p.name.replace(/"/g, "'")}" style="width:100%;height:100%;object-fit:cover" loading="lazy" onerror="this.style.display='none'">` : `<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:2.5rem">${p.emoji}</div>`}
+    ${media}
     ${disc > 0 ? `<span class="pcard-disc">-${disc}%</span>` : ''}
   </div>
   <div class="pcard-body">
@@ -733,10 +814,15 @@ function openProduct(id) {
 
   document.getElementById('product-modal-body').innerHTML = `
     <div class="pm-grid">
-      <div class="pm-img" style="background:${catColor(p.cat)};overflow:hidden;border-radius:12px;display:flex;align-items:center;justify-content:center;min-height:220px;position:relative">
-        ${img ? `<img src="${img}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;border-radius:12px" onerror="this.style.display='none'">` : ''}
-        <span style="${img ? 'display:none' : 'display:flex'};font-size:4rem;align-items:center;justify-content:center;width:100%;height:100%">${p.emoji}</span>
-        ${disc > 0 ? `<span style="position:absolute;top:12px;left:12px;background:#ff3b30;color:#fff;font-size:.8rem;font-weight:800;padding:4px 10px;border-radius:6px">-${disc}%</span>` : ''}
+      <div class="pm-img" id="pm-img-wrap" ${img && !p.video_url ? `onclick="openLightbox('${img}')"` : ''}>
+        ${p.video_url
+          ? `<video src="${p.video_url}" autoplay muted loop playsinline controls style="width:100%;height:100%;object-fit:contain;border-radius:12px;max-height:300px"></video>`
+          : img
+            ? `<img id="pm-zoom-img" src="${img}" alt="${p.name}" onerror="this.style.display='none'">`
+            : `<span style="font-size:5rem">${p.emoji}</span>`
+        }
+        ${disc > 0 ? `<span style="position:absolute;top:10px;left:10px;background:#ff3b30;color:#fff;font-size:.8rem;font-weight:800;padding:4px 10px;border-radius:6px">-${disc}%</span>` : ''}
+        ${img && !p.video_url ? `<span class="pm-img-hint">🔍 Cliquer pour agrandir</span>` : ''}
       </div>
       <div class="pm-info">
         <div class="product-category">${catLabel(p.cat)}</div>
@@ -774,7 +860,39 @@ function openProduct(id) {
       </div>
     </div>`;
   openModal('modal-product');
+  // Init mouse-tracking zoom on the image
+  requestAnimationFrame(() => {
+    const wrap = document.getElementById('pm-img-wrap');
+    const zimg = document.getElementById('pm-zoom-img');
+    if (!wrap || !zimg) return;
+    wrap.addEventListener('mousemove', (e) => {
+      const r = wrap.getBoundingClientRect();
+      const xPct = ((e.clientX - r.left) / r.width) * 100;
+      const yPct = ((e.clientY - r.top) / r.height) * 100;
+      zimg.style.transformOrigin = `${xPct}% ${yPct}%`;
+      zimg.style.transform = 'scale(2)';
+    });
+    wrap.addEventListener('mouseleave', () => {
+      zimg.style.transform = 'scale(1)';
+      zimg.style.transformOrigin = 'center center';
+    });
+  });
 }
+
+function openLightbox(src) {
+  const lb = document.getElementById('pm-lightbox');
+  const lbImg = document.getElementById('pm-lightbox-img');
+  if (!lb || !lbImg) return;
+  lbImg.src = src;
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  const lb = document.getElementById('pm-lightbox');
+  if (lb) lb.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
 function pmQty(d) { window._pmQty = Math.max(1, (window._pmQty || 1) + d); const el = document.getElementById('pm-qty'); if (el) el.textContent = window._pmQty; }
 function addToCartQty(id) {
   const qty = window._pmQty || 1;
