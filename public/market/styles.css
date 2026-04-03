@@ -1141,24 +1141,47 @@ img {
 }
 
 .modal-close {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  width: 30px;
-  height: 30px;
+  position: sticky;
+  top: 4px;
+  display: block;
+  width: 36px;
+  height: 36px;
+  line-height: 36px;
+  text-align: center;
+  margin-left: auto;     /* pousse à droite sans float */
+  margin-bottom: 10px;
   border-radius: 50%;
-  background: #f3f4f6;
+  background: rgba(0, 0, 0, 0.08);
   border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
+  font-size: 16px;
   cursor: pointer;
   color: #374151;
+  z-index: 10;
+  /* taille tactile confortable */
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .modal-close:hover {
   background: #e5e7eb;
+}
+
+/* Sur desktop → position absolue classique */
+@media (min-width: 640px) {
+  .modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    background: #f3f4f6;
+  }
 }
 
 /* Product modal grid */

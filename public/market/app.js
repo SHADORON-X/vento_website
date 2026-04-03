@@ -76,11 +76,11 @@ async function sbGet(table, query = '', useCache = false) {
   }
   const url = `${SB_URL}/rest/v1/${table}?${query}`;
   return sbRetry(async () => {
-    const res = await fetch(url, { 
-      headers: { 
-        'apikey': SB_KEY, 
-        'Authorization': `Bearer ${SB_KEY}` 
-      } 
+    const res = await fetch(url, {
+      headers: {
+        'apikey': SB_KEY,
+        'Authorization': `Bearer ${SB_KEY}`
+      }
     });
     if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
     const data = await res.json();
@@ -94,11 +94,11 @@ async function sbPost(table, data) {
   return sbRetry(async () => {
     const res = await fetch(url, {
       method: 'POST',
-      headers: { 
-        'apikey': SB_KEY, 
-        'Authorization': `Bearer ${SB_KEY}`, 
-        'Content-Type': 'application/json', 
-        'Prefer': 'return=representation' 
+      headers: {
+        'apikey': SB_KEY,
+        'Authorization': `Bearer ${SB_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
       },
       body: JSON.stringify(data)
     });
@@ -405,17 +405,17 @@ function mapCategory(category) {
 function updateSEO(title, desc = '', product = null) {
   const fullTitle = title ? `${title} — VELMO MARKET` : 'VELMO MARKET — La marketplace de Guinée';
   document.title = fullTitle;
-  
+
   const mDesc = document.getElementById('meta-desc');
   if (mDesc && desc) mDesc.content = desc;
-  
+
   // OpenGraph & Twitter
   const ogTitle = document.getElementById('og-title');
   const ogDesc = document.getElementById('og-desc');
   const ogImg = document.getElementById('og-image');
   const twTitle = document.getElementById('tw-title');
   const twImg = document.getElementById('tw-image');
-  
+
   if (ogTitle) ogTitle.content = fullTitle;
   if (ogDesc && desc) ogDesc.content = desc;
   if (twTitle) twTitle.content = fullTitle;
@@ -518,7 +518,7 @@ async function loadProducts() {
       shopFilter = `&shop_id=in.(${ids})`;
     }
     // colonnes réelles Supabase — video_url optionnel (colonne ajoutée via migration)
-    const baseSelect = 'id,name,description,category,price_sale,price_regular,promo_price,photo_url,photo,quantity,shop_id';
+    const baseSelect = 'id,name,description,category,price_sale,price_regular,promo_price,photo_url,photo,quantity,shop_id,images_json';
     const baseParams = `is_active=eq.true&is_published=eq.true&order=created_at.desc&limit=1000${shopFilter}`;
     let data;
     try {
@@ -544,6 +544,19 @@ async function loadProducts() {
       const hasPromo = p.promo_price && p.promo_price > 0 && p.promo_price < p.price_sale;
       const hasRegular = p.price_regular && p.price_regular > p.price_sale;
 
+      // Galerie d'images (angles multiples)
+      let gallery = [];
+      try {
+        if (p.images_json) {
+          const extra = typeof p.images_json === 'string' ? JSON.parse(p.images_json) : p.images_json;
+          if (Array.isArray(extra)) {
+            gallery = extra.map(img => getImgUrl(img)).filter(img => !!img);
+          }
+        }
+      } catch (e) {
+        console.warn('Gallery parse fail:', e);
+      }
+
       return {
         id: p.id,
         name: p.name,
@@ -554,6 +567,7 @@ async function loadProducts() {
         qty_stock: p.quantity ?? null,
         photo_url: pUrl,
         video_url: p.video_url || null,
+        images: gallery, // ✅ Galerie d'images
         _hasRealImg,
         emoji: catEmoji(cat),
         shop_name: shop?.name || 'Boutique Velmo',
@@ -564,7 +578,7 @@ async function loadProducts() {
     });
     // Afficher uniquement les produits avec une vraie photo ou une vidéo
     PRODUCTS = PRODUCTS.filter(p => p._hasRealImg || p.video_url);
-    
+
     // 🔥 VELMO-RANK : Stock d'abord, puis nouveautés
     PRODUCTS.sort((a, b) => {
       const aOos = a.qty_stock !== null && a.qty_stock <= 0;
@@ -583,7 +597,7 @@ async function loadProducts() {
     console.log(`✅ ${PRODUCTS.length} produits avec image chargés`);
   } catch (e) {
     console.error('❌ Produits:', e.message);
-    
+
     // SOLIDITY : Fallback sur le cache local en cas d'erreur réseau
     const cached = localStorage.getItem('velmo_products_cache');
     if (cached) {
@@ -608,13 +622,13 @@ async function loadProducts() {
 async function loadShops() {
   try {
     // is_online_active=eq.true : boutiques qui ont activé leur vitrine (is_public non requis)
-    const params = 'select=id,name,slug,logo,is_verified,category,orders_count&is_active=eq.true&is_online_active=eq.true&order=orders_count.desc&limit=30';
+    const params = 'select=id,name,slug,logo,is_verified,category,orders_count,phone,whatsapp&is_active=eq.true&is_online_active=eq.true&order=orders_count.desc&limit=30';
     SHOPS = await sbGet('shops', params, true); // ⚡ avec cache 5 min
     console.log(`✅ ${SHOPS.length} boutiques chargées`);
   } catch (e) {
     console.warn('⚠️ Retry shops sans orders_count...', e.message);
     try {
-      const params2 = 'select=id,name,slug,logo,is_verified,category&is_active=eq.true&is_online_active=eq.true&order=name.asc&limit=30';
+      const params2 = 'select=id,name,slug,logo,is_verified,category,phone,whatsapp&is_active=eq.true&is_online_active=eq.true&order=name.asc&limit=30';
       SHOPS = await sbGet('shops', params2, true);
       console.log(`✅ ${SHOPS.length} boutiques chargées (fallback)`);
     } catch (e2) {
@@ -713,7 +727,9 @@ async function submitOrder(orderData) {
       name: orderData.name,
       total: globalTotal,
       phone: orderData.phone,
-      shopCount: shopIds.length
+      shopCount: shopIds.length,
+      shopId: shopIds.length === 1 ? shopIds[0] : null,
+      shopIds: shopIds
     });
   }
 
@@ -840,8 +856,71 @@ document.addEventListener('DOMContentLoaded', async () => {
   const queryParams = new URLSearchParams(window.location.search);
   const trackId = queryParams.get('track');
   const receiptId = queryParams.get('receipt');
+  const productId = queryParams.get('p');
 
-  if (trackId) {
+  if (productId) {
+    showToast('⏳ Chargement du produit...');
+    // Attendre que SHOPS soient chargés car PRODUCTS en a besoin pour shop_name
+    let attempts = 0;
+    const checkP = setInterval(async () => {
+      attempts++;
+      if (PRODUCTS && PRODUCTS.length > 0) {
+        clearInterval(checkP);
+        
+        // Si le produit n'est pas dans la liste des 1000 derniers (rare mais possible via lien direct)
+        let p = PRODUCTS.find(x => String(x.id) === String(productId));
+        if (!p) {
+          try {
+            console.log('🔍 Produit absent de la liste, récupération directe...');
+            const select = 'id,name,description,category,price_sale,price_regular,photo_url,photo,quantity,shop_id,video_url,images_json';
+            const data = await sbGet('products', `select=${select}&id=eq.${productId}&limit=1`);
+            if (data && data.length) {
+              const res = data[0];
+              const shop = SHOPS.find(s => s.id === res.shop_id);
+              
+              let gallery = [];
+              try {
+                if (res.images_json) {
+                  const extra = typeof res.images_json === 'string' ? JSON.parse(res.images_json) : res.images_json;
+                  if (Array.isArray(extra)) gallery = extra.map(img => getImgUrl(img)).filter(img => !!img);
+                }
+              } catch (e) { }
+
+              const processed = {
+                id: res.id,
+                name: res.name,
+                desc: res.description || '',
+                cat: mapCategory(res.category),
+                price: res.price_sale,
+                oldPrice: (res.price_regular && res.price_regular > res.price_sale) ? res.price_regular : null,
+                qty_stock: res.quantity ?? null,
+                photo_url: getImgUrl(res.photo_url || res.photo),
+                video_url: res.video_url || null,
+                images: gallery,
+                _hasRealImg: true,
+                emoji: catEmoji(mapCategory(res.category)),
+                shop_name: shop?.name || 'Boutique',
+                shop_slug: shop?.slug || null,
+                shop_id: res.shop_id,
+              };
+              PRODUCTS.push(processed);
+              openProduct(productId);
+            } else {
+              showToast('⚠️ Produit introuvable');
+            }
+          } catch (err) {
+            console.error('Fetch specific product fail:', err);
+          }
+        } else {
+          openProduct(productId);
+        }
+      }
+      if (attempts > 30) {
+        clearInterval(checkP);
+        showToast('⚠️ Erreur de chargement');
+      }
+    }, 300);
+  } else if (trackId) {
     const trackInput = document.getElementById('track-ref');
     if (trackInput) {
       trackInput.value = trackId;
@@ -876,17 +955,17 @@ async function loadProductsParallel() {
 function doSearch() {
   const q = document.getElementById('search-input')?.value.trim().toLowerCase();
   if (!q) { currentTab = 'all'; renderProducts(); return; }
-  
+
   // SOLIDITY : Recherche Intelligente (champs multiples + mini fuzzy)
   const results = PRODUCTS.filter(p => {
     const name = (p.name || '').toLowerCase();
     const desc = (p.desc || '').toLowerCase();
     const cat = (p.cat || '').toLowerCase();
     const shop = (p.shop_name || '').toLowerCase();
-    
+
     // Match direct
     if (name.includes(q) || desc.includes(q) || cat.includes(q) || shop.includes(q)) return true;
-    
+
     // Mini-Fuzzy (tolérance 1 caractère si le mot est long)
     if (q.length > 4) {
       const parts = q.split(' ');
@@ -908,7 +987,7 @@ function doSearch() {
     }
     return;
   }
-  
+
   // Search results = flat grid (not category rows)
   renderProductsSorted(results);
   scrollToProducts();
@@ -931,7 +1010,7 @@ function renderProductsSorted(data) {
   if (currentSort === 'price_asc') sorted.sort((a, b) => a.price - b.price);
   else if (currentSort === 'price_desc') sorted.sort((a, b) => b.price - a.price);
   else if (currentSort === 'new') sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-  
+
   renderProductsData(sorted);
 }
 
@@ -1034,7 +1113,7 @@ function renderProducts() {
   showGrid();
   const grid = document.getElementById('products-grid');
   if (!grid) return;
-  
+
   // SEO Update
   const catName = currentTab === 'all' ? '' : catLabel(currentTab);
   updateSEO(catName, `Découvrez les meilleurs produits ${catName} en Guinée sur VELMO MARKET.`);
@@ -1350,7 +1429,7 @@ function setTab(el, cat) {
 function openProduct(id) {
   const p = PRODUCTS.find(x => String(x.id) === String(id));
   if (!p) return;
-  
+
   // 🔥 SEO & GOOGLE BOT (Point 6 + 🕸️)
   updateSEO(p.name, p.desc || p.name, p);
 
@@ -1362,34 +1441,59 @@ function openProduct(id) {
   }, 1500);
 
   const disc = discount(p.price, p.oldPrice);
-  const img = getImgUrl(p.photo_url);
+  const mainImg = getImgUrl(p.photo_url);
   window._pmId = id;
   window._pmQty = 1;
 
   const outOfStock = p.qty_stock !== null && p.qty_stock <= 0;
   const lowStock = p.qty_stock !== null && p.qty_stock > 0 && p.qty_stock <= 3;
+  
+  // Build Gallery
+  const allImgs = [];
+  if (mainImg) allImgs.push(mainImg);
+  if (p.images && Array.isArray(p.images)) {
+    p.images.forEach(img => { if (img && img !== mainImg) allImgs.push(img); });
+  }
 
   document.getElementById('product-modal-body').innerHTML = `
     <div class="pm-grid">
-      <div class="pm-img" id="pm-img-wrap" ${img && !p.video_url ? `onclick="openLightbox('${img}')"` : ''}>
-        ${p.video_url
-      ? `<video src="${p.video_url}" autoplay muted loop playsinline controls style="width:100%;height:100%;object-fit:contain;border-radius:12px;max-height:300px"></video>`
-      : img
-        ? `<img id="pm-zoom-img" src="${img}" alt="${p.name}" onerror="this.style.display='none'">`
+      <div class="pm-media-col">
+        <div class="pm-img" id="pm-img-wrap" ${mainImg && !p.video_url ? `onclick="openLightbox(this.querySelector('img').src)"` : ''}>
+          ${p.video_url
+      ? `<video src="${p.video_url}" autoplay muted loop playsinline controls style="width:100%;height:100%;object-fit:contain;border-radius:12px;max-height:350px"></video>`
+      : mainImg
+        ? `<img id="pm-main-img" src="${mainImg}" alt="${p.name}" onerror="this.style.display='none'">`
         : `<span style="font-size:5rem">${p.emoji}</span>`
     }
-        ${disc > 0 ? `<span style="position:absolute;top:10px;left:10px;background:#ff3b30;color:#fff;font-size:.8rem;font-weight:800;padding:4px 10px;border-radius:6px">-${disc}%</span>` : ''}
-        ${img && !p.video_url ? `<span class="pm-img-hint">🔍 Cliquer pour agrandir</span>` : ''}
+          ${disc > 0 ? `<span style="position:absolute;top:10px;left:10px;background:#ff3b30;color:#fff;font-size:.8rem;font-weight:800;padding:4px 10px;border-radius:6px">-${disc}%</span>` : ''}
+          ${mainImg && !p.video_url ? `<span class="pm-img-hint">🔍 Cliquer pour agrandir</span>` : ''}
+        </div>
+        
+        ${allImgs.length > 1 ? `
+        <div class="pm-gallery" style="display:flex;gap:8px;margin-top:10px;overflow-x:auto;padding-bottom:5px">
+          ${allImgs.map((img, i) => `
+            <div class="pm-thumb ${i===0?'active':''}" onclick="swapPmImg(this, '${img}')" style="flex:0 0 60px;height:60px;border-radius:8px;overflow:hidden;border:2px solid ${i===0?'var(--brand)':'transparent'};cursor:pointer;background:#f5f5f5">
+              <img src="${img}" style="width:100%;height:100%;object-fit:cover">
+            </div>
+          `).join('')}
+        </div>` : ''}
       </div>
+
       <div class="pm-info">
         <div class="product-category">${catLabel(p.cat)}</div>
         ${p.shop_name ? `<div style="font-size:.78rem;color:var(--text2);margin:4px 0">🏪 ${shopLink(p.shop_slug, p.shop_id, p.shop_name, '', 'color:var(--orange);font-weight:600')} ${p.is_verified ? '<span style="color:#00c853;font-weight:700">✓ Vérifié</span>' : ''}</div>` : ''}
-        <h2 style="margin:8px 0 6px;font-size:1.2rem">${p.name}</h2>
-        <div class="product-price" style="margin:10px 0">
-          <span class="price-current" style="font-size:1.5rem">${formatPrice(p.price)}</span>
-          ${p.oldPrice ? `<span class="price-old" style="font-size:1rem">${formatPrice(p.oldPrice)}</span>` : ''}
+        <h2 style="margin:8px 0 6px;font-size:1.3rem;font-weight:800">${p.name}</h2>
+        <div class="product-price" style="margin:12px 0">
+          <span class="price-current" style="font-size:1.6rem">${formatPrice(p.price)}</span>
+          ${p.oldPrice ? `<span class="price-old" style="font-size:1.1rem;margin-left:8px">${formatPrice(p.oldPrice)}</span>` : ''}
         </div>
-        ${p.desc ? `<p style="font-size:.85rem;color:var(--text2);line-height:1.6;margin-bottom:14px">${p.desc}</p>` : ''}
+        
+        ${p.desc ? `
+        <div style="margin-bottom:18px">
+          <label style="font-size:.75rem;text-transform:uppercase;color:var(--text2);font-weight:700;display:block;margin-bottom:6px">Description</label>
+          <div style="font-size:.9rem;color:var(--text);line-height:1.6;white-space:pre-wrap;background:var(--gray);padding:12px;border-radius:10px">${p.desc}</div>
+        </div>` : ''}
+
         ${lowStock ? `<div style="font-size:.82rem;color:#e53935;font-weight:700;margin-bottom:10px;padding:8px 12px;background:#fff5f5;border-radius:8px;border-left:3px solid #e53935">⚠️ Plus que ${p.qty_stock} unité${p.qty_stock > 1 ? 's' : ''} disponible${p.qty_stock > 1 ? 's' : ''} !</div>` : ''}
         ${outOfStock ? `<div style="font-size:.88rem;color:#e53935;font-weight:700;margin-bottom:10px;padding:10px 14px;background:#fff0f0;border-radius:8px;text-align:center">❌ Ce produit est actuellement en rupture de stock</div>` : `
         <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;font-size:.8rem;color:#00a849">
@@ -1412,30 +1516,99 @@ function openProduct(id) {
           </div>` : '';
       })()}
         <button class="btn-primary full-width" onclick="addToCartQty('${p.id}')" style="margin-top:14px;margin-bottom:10px">🛒 Ajouter au panier</button>`}
-        <button class="btn-ghost full-width" onclick="toggleWish('${p.id}')" style="color:var(--text);border-color:var(--gray2)">
-          ${wishlist.includes(id) ? '❤️ Retirer des favoris' : '🤍 Ajouter aux favoris'}
-        </button>
+        <div style="display:flex;gap:10px;margin-bottom:12px">
+          <button class="btn-ghost" onclick="toggleWish('${p.id}')" style="flex:1;color:var(--text);border-color:var(--gray2)">
+            ${wishlist.includes(id) ? '❤️ Favoris' : '🤍 Favoris'}
+          </button>
+          <button class="btn-ghost" onclick="shareProduct('${p.id}', '${p.shop_id || ''}', '${p.shop_slug || ''}', \`${p.name.replace(/['"`]/g, '')}\`, ${p.price})" style="flex:1;color:var(--text);border-color:var(--gray2);display:flex;align-items:center;justify-content:center;gap:6px">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            Partager
+          </button>
+        </div>
+        ${(() => {
+    const basePath = window.location.pathname.replace(/\/index\.html.*/i, '').replace(/\/$/, '');
+    const baseUrl = window.location.origin + basePath;
+    const shareUrl = encodeURIComponent(`${baseUrl}/shop.html?shop=${p.shop_slug || p.shop_id}&p=${p.id}`);
+    const shareText = encodeURIComponent(`Regarde ce produit sur Velmo : *${p.name}* à ${formatPrice(p.price)} !\n\nLien : `);
+    return `
+          <a href="https://wa.me/?text=${shareText}${shareUrl}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;border:none;border-radius:12px;padding:14px;font-weight:700;margin-top:0;text-decoration:none">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+            WhatsApp
+          </a>`;
+  })()}
       </div>
-    </div>`;
+    </div>
+  `;
+  openProductUI(id);
+}
+
+function swapPmImg(el, src) {
+  const main = document.getElementById('pm-main-img');
+  if (main) main.src = src;
+  document.querySelectorAll('.pm-thumb').forEach(t => {
+    t.classList.remove('active');
+    t.style.borderColor = 'transparent';
+  });
+  el.classList.add('active');
+  el.style.borderColor = 'var(--brand)';
+}
+
+function openProductUI(id) {
   openModal('modal-product');
   addToRecent(id);
   // Init mouse-tracking zoom on the image
   requestAnimationFrame(() => {
     const wrap = document.getElementById('pm-img-wrap');
-    const zimg = document.getElementById('pm-zoom-img');
+    const zimg = document.getElementById('pm-main-img');
     if (!wrap || !zimg) return;
     wrap.addEventListener('mousemove', (e) => {
       const r = wrap.getBoundingClientRect();
       const xPct = ((e.clientX - r.left) / r.width) * 100;
       const yPct = ((e.clientY - r.top) / r.height) * 100;
       zimg.style.transformOrigin = `${xPct}% ${yPct}%`;
-      zimg.style.transform = 'scale(2)';
+      zimg.style.transform = 'scale(2.5)';
     });
     wrap.addEventListener('mouseleave', () => {
       zimg.style.transform = 'scale(1)';
       zimg.style.transformOrigin = 'center center';
     });
   });
+}
+
+// ===== PRODUCT SHARING =====
+async function shareProduct(id, shopId, slug, name, price) {
+  const shopSlugOrId = slug || shopId;
+  if (!shopSlugOrId) {
+    showToast('Erreur: Lien introuvable');
+    return;
+  }
+  const basePath = window.location.pathname.replace(/\/index\.html.*/i, '').replace(/\/$/, '');
+  const baseUrl = window.location.origin + basePath;
+  const link = `${baseUrl}/shop.html?shop=${shopSlugOrId}&p=${id}`;
+  const text = `Regarde ce produit sur Velmo : ${name} à ${formatPrice(price)} !\n\nLien : `;
+  
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: name, text: text, url: link });
+      // Ne pas afficher de toast pour ne pas polluer l'UI native
+    } catch (e) {
+      if (e.name !== 'AbortError') {
+        copyToClip(link, 'Lien copié dans le presse-papier !');
+      }
+    }
+  } else {
+    copyToClip(link, 'Lien copié dans le presse-papier !');
+  }
+}
+
+function copyToClip(text, successMsg) {
+  const el = document.createElement('textarea');
+  el.value = text;
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand('copy');
+  document.body.removeChild(el);
+  showToast(successMsg);
 }
 
 function openLightbox(src) {
@@ -1531,18 +1704,26 @@ function saveCart() { localStorage.setItem('velmo_cart', JSON.stringify(cart)); 
 function updateCartBadge() {
   const count = cart.reduce((s, i) => s + i.qty, 0);
   const totalVal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  
+
   const b = document.getElementById('cart-badge');
   if (b) { b.textContent = count; b.classList.toggle('show', count > 0); }
 
-  const f = document.getElementById('cart-floating');
-  const ft = document.getElementById('cart-floating-total');
-  if (f) {
-    f.classList.toggle('show', count > 0);
-    if (ft) ft.textContent = formatPrice(totalVal);
-  }
+  updateFloatingCart(count, totalVal);
   const cc = document.getElementById('cart-count');
   if (cc) cc.textContent = count;
+}
+
+// Affiche/cache le bouton flottant — prend aussi en compte si un modal est ouvert
+function updateFloatingCart(count, totalVal) {
+  const f = document.getElementById('cart-floating');
+  const ft = document.getElementById('cart-floating-total');
+  if (!f) return;
+  // Cacher si un modal OU un drawer est ouvert
+  const modalOpen = document.querySelector('.modal.open') !== null;
+  const drawerOpen = document.querySelector('.cart-drawer.open') !== null;
+  const shouldShow = count > 0 && !modalOpen && !drawerOpen;
+  f.classList.toggle('show', shouldShow);
+  if (ft && totalVal !== null) ft.textContent = formatPrice(totalVal);
 }
 
 function renderCart() {
@@ -1594,6 +1775,8 @@ function toggleCart() {
   const isOpen = drawer.classList.toggle('open');
   overlay.classList.toggle('show', isOpen);
   if (isOpen) renderCart();
+  // Sync bouton flottant (caché quand drawer ouvert)
+  updateCartBadge();
 }
 
 // ===== WISHLIST =====
@@ -1697,16 +1880,16 @@ function checkout() {
     const sPhone = localStorage.getItem('velmo_co_phone');
     const sAddress = localStorage.getItem('velmo_co_address');
 
-    if (sName) { 
-      const el = document.getElementById('co-name'); 
+    if (sName) {
+      const el = document.getElementById('co-name');
       if (el) { el.value = sName; el.previousElementSibling.innerHTML += ' <span class="saved-badge">Mémorisé ⚡</span>'; }
     }
-    if (sPhone) { 
-      const el = document.getElementById('co-phone'); 
+    if (sPhone) {
+      const el = document.getElementById('co-phone');
       if (el) { el.value = sPhone; el.previousElementSibling.innerHTML += ' <span class="saved-badge">Mémorisé ⚡</span>'; }
     }
-    if (sAddress) { 
-      const el = document.getElementById('co-address'); 
+    if (sAddress) {
+      const el = document.getElementById('co-address');
       if (el) { el.value = sAddress; el.previousElementSibling.innerHTML += ' <span class="saved-badge">Mémorisé ⚡</span>'; }
     }
 
@@ -1770,7 +1953,7 @@ async function placeOrder() {
   // 🔥 SOLIDITY : Validation stricte
   if (!name || name.length < 3) { showToast('⚠️ Nom trop court'); return; }
   if (address.length < 5) { showToast('⚠️ Veuillez donner une adresse plus précise'); return; }
-  
+
   // Nettoyage (Sanitization)
   const cleanName = name.replace(/[<>]/g, '');
   const cleanAddress = address.replace(/[<>]/g, '');
@@ -1832,15 +2015,56 @@ async function placeOrder() {
   }
 }
 
-function showOrderSuccess({ ref, name, total, phone, shopCount = 1 }) {
+function showOrderSuccess({ ref, name, total, phone, shopCount = 1, shopId = null, shopIds = [] }) {
   const body = document.getElementById('success-modal-body');
   if (!body) return;
 
   const refsDisplay = ref.includes(',') ? ref.split(',').map(r => `<div style="font-family:monospace;color:var(--orange);font-weight:700;margin-bottom:2px">${r.trim()}</div>`).join('') : `<strong style="font-family:monospace;color:var(--orange)">${ref}</strong>`;
 
-  const shopLabel = shopCount > 1 ? `<p style="color:#666;font-size:0.88rem;margin-bottom:12px;font-style:italic">🛍️ Votre panier a été divisé en <b>${shopCount} commandes</b> distinctes.</p>` : '';
+  let buttonsHtml = '';
 
-  const waMsg = encodeURIComponent(`Bonjour VELMO MARKET !\nJ'ai passé une commande groupée (${shopCount} boutique(s)).\n👤 Client: ${name}\n📦 Réf(s): ${ref}\n💰 Total: ${formatPrice(total)}\n\nMerci de confirmer !`);
+  if (shopCount === 1 && shopId) {
+    const shop = SHOPS.find(s => s.id === shopId);
+    let waTarget = '224623531387';
+    let btnLabel = shop ? `Envoyer la commande à ${shop.name}` : 'Envoyer la commande via WhatsApp';
+    let waMsg = encodeURIComponent(`Bonjour${shop ? ' *' + shop.name + '*' : ''} ! 👋\nJe viens de commander sur votre vitrine Velmo.\n\n👤 Client: ${name}\n📞 Tél: ${phone}\n📦 Réf: ${ref}\n💰 Total: ${formatPrice(total)}\n\nMerci de confirmer !`);
+
+    if (shop) {
+      const rawWa = (shop.whatsapp || shop.phone || '').replace(/\D/g, '');
+      if (rawWa) waTarget = rawWa.startsWith('224') ? rawWa : '224' + rawWa;
+    }
+    buttonsHtml = `<a href="https://wa.me/${waTarget}?text=${waMsg}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;border:none;border-radius:12px;padding:14px;font-weight:700;margin-bottom:12px;text-decoration:none">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+      ${btnLabel}
+    </a>`;
+  } else {
+    // Plusieurs boutiques
+    let shopsButtons = [];
+
+    shopIds.forEach(sid => {
+      const shop = SHOPS.find(s => s.id === sid);
+      if (!shop) return;
+      const rawWa = (shop.whatsapp || shop.phone || '').replace(/\D/g, '');
+      const waTarget = rawWa ? (rawWa.startsWith('224') ? rawWa : '224' + rawWa) : '224623531387';
+      const waMsg = encodeURIComponent(`Bonjour *${shop.name}* ! 👋\nJe viens de commander des articles sur votre vitrine Velmo.\n\n👤 Client: ${name}\n📞 Tél: ${phone}\n📦 Réf(s): ${ref}\n\nMerci de traiter ma commande !`);
+
+      shopsButtons.push(`<a href="https://wa.me/${waTarget}?text=${waMsg}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;border:none;border-radius:12px;padding:14px;font-weight:700;margin-bottom:12px;text-decoration:none">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+        Envoyer à ${shop.name}
+      </a>`);
+    });
+
+    if (shopsButtons.length === 0) {
+      // Fallback au cas où les IDs ne sont pas passés correctement
+      const fallbackMsg = encodeURIComponent(`Bonjour VELMO MARKET !\nJ'ai passé une commande groupée (${shopCount} boutique(s)).\n👤 Client: ${name}\n📞 Tél: ${phone}\n📦 Réf(s): ${ref}\n💰 Total: ${formatPrice(total)}\n\nMerci !`);
+      buttonsHtml = `<a href="https://wa.me/224623531387?text=${fallbackMsg}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;border:none;border-radius:12px;padding:14px;font-weight:700;margin-bottom:12px;text-decoration:none">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+        Envoyer la commande via WhatsApp
+      </a>`;
+    } else {
+      buttonsHtml = shopsButtons.join('');
+    }
+  }
 
   body.innerHTML = `
     <div style="padding:40px 20px;text-align:center">
@@ -1848,7 +2072,7 @@ function showOrderSuccess({ ref, name, total, phone, shopCount = 1 }) {
       <h2 style="margin-bottom:10px;font-size:1.5rem;font-weight:900">Merci, ${name} !</h2>
       <p style="color:#666;font-size:0.95rem;margin-bottom:24px">Votre commande a été envoyée avec succès.</p>
       
-      ${shopLabel}
+      ${shopCount > 1 ? `<div style="background:#fff3cd;padding:14px;border-radius:12px;border:1px solid #ffe69c;margin-bottom:20px;text-align:left"><p style="color:#664d03;font-size:0.9rem;font-weight:600;margin:0">🛍️ Vous avez commandé chez <b>${shopCount} boutiques</b> différentes !<br/><br/>Vous pouvez prévenir chaque vendeur individuellement :</p></div>` : ''}
 
       <div style="background:#f8f9fa;border-radius:16px;padding:20px;margin-bottom:24px;border:1px solid #eee;text-align:left">
         <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:0.9rem">
@@ -1861,9 +2085,7 @@ function showOrderSuccess({ ref, name, total, phone, shopCount = 1 }) {
         </div>
       </div>
 
-      <a href="https://wa.me/224623531387?text=${waMsg}" target="_blank" class="btn-whatsapp">
-        Envoyer le récapitulatif sur WhatsApp
-      </a>
+      ${buttonsHtml}
 
       <button class="btn-ghost full-width" onclick="closeAll()" style="margin-top:12px;color:#888;font-weight:600;background:none;border:none;cursor:pointer">Continuer mes achats</button>
     </div>`;
@@ -1889,6 +2111,8 @@ function openModal(id) {
   if (el) el.classList.add('open');
   const ov = document.getElementById('overlay');
   if (ov) ov.classList.add('show');
+  // Cacher le bouton panier flottant quand un modal est ouvert
+  updateFloatingCart(cart.reduce((s, i) => s + i.qty, 0), null);
 }
 function closeModal(id) {
   const el = document.getElementById(id);
@@ -1901,11 +2125,15 @@ function closeModal(id) {
     const ov = document.getElementById('overlay');
     if (ov) ov.classList.remove('show');
   }
+  // Réafficher le bouton panier flottant si plus aucun modal ouvert et panier non vide
+  if (!anyOpen) updateCartBadge();
 }
 function closeAll() {
   document.querySelectorAll('.modal.open, .cart-drawer.open').forEach(el => el.classList.remove('open'));
   const ov = document.getElementById('overlay');
   if (ov) ov.classList.remove('show');
+  // Réafficher le bouton panier flottant
+  updateCartBadge();
 }
 
 // ===== AUTH =====
@@ -1970,12 +2198,12 @@ function processToastQueue() {
   if (toastQueue.length === 0) { isToastShowing = false; return; }
   isToastShowing = true;
   const msg = toastQueue.shift();
-  
+
   const t = document.getElementById('toast');
   if (!t) return;
   t.textContent = msg;
   t.classList.add('show');
-  
+
   setTimeout(() => {
     t.classList.remove('show');
     setTimeout(processToastQueue, 400); // Pause entre deux toasts
@@ -2039,14 +2267,14 @@ function renderTrackResult(o, ref) {
         <div style="position:absolute;top:13px;left:40px;right:40px;height:2px;background:#eee;z-index:0"></div>
         <div style="position:absolute;top:13px;left:40px;width:${(currentIdx / (steps.length - 1)) * 100}%;height:2px;background:#00a849;z-index:1;transition:width 1s ease"></div>
         ${steps.map((st, i) => {
-          const active = i <= currentIdx;
-          const isCurrent = i === currentIdx;
-          return `<div style="z-index:2;position:relative;text-align:center">
+    const active = i <= currentIdx;
+    const isCurrent = i === currentIdx;
+    return `<div style="z-index:2;position:relative;text-align:center">
             <div style="width:28px;height:28px;border-radius:50%;background:${active ? '#00a849' : '#fff'};border:2px solid ${active ? '#00a849' : '#eee'};display:flex;align-items:center;justify-content:center;font-size:.7rem;color:${active ? '#fff' : '#ccc'};transition:all .3s">
               ${active && i < currentIdx ? '✓' : ORDER_STATUS_MAP[st].icon}
             </div>
           </div>`;
-        }).join('')}
+  }).join('')}
       </div>` : ''}
 
       <div style="background:#f9fafb;border-radius:12px;padding:15px;text-align:left;margin-bottom:20px;border:1px solid #f0f0f0">
