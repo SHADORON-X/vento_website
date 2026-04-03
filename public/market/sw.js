@@ -1,4 +1,5 @@
-const CACHE_NAME = 'velmo-market-v3';
+// Updated: 4/3/2026, 8:41:38 AM
+const CACHE_NAME = 'velmo-market-v202604030641';
 const STATIC_ASSETS = [
     './',
     './index.html',
@@ -69,4 +70,8 @@ self.addEventListener('fetch', (e) => {
             });
         })
     );
+});self.addEventListener('message', (event) => {
+    if (event.data === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
 });
