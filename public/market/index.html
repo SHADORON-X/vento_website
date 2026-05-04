@@ -10,7 +10,7 @@
   <script>
     // ☢️ NUCLEAR RESET - Force la mise à jour immédiate du cache (v3.2)
     (function() {
-      const VERSION = '202604031147';
+      const VERSION = '202605041345';
       const lastV = localStorage.getItem('velmo_cache_v');
       if (lastV !== VERSION) {
         if ('serviceWorker' in navigator) {
@@ -51,65 +51,37 @@
   <meta name="twitter:description" id="tw-desc" content="Vendez et achetez en toute sécurité en Guinée." />
   <meta name="twitter:image" id="tw-image" content="https://vento-market.vercel.app/market/logo-social.png" />
   
-  <link rel="stylesheet" href="styles.css?v=202604031147" />
+  <link rel="stylesheet" href="styles.css?v=202605041345" />
 </head>
 
 <body class="bg-gray-100 font-sans text-gray-900 min-h-screen">
 
   <!-- ===== HEADER ===== -->
-  <header class="sticky top-0 z-50 bg-brand shadow-md">
-    <!-- Row 1 : Logo + Actions -->
-    <div class="max-w-6xl mx-auto px-3 flex items-center justify-between" style="height:48px">
-      <a href="/" class="flex-shrink-0 text-white font-black text-lg tracking-tight leading-none">
-        <span class="text-orange-500">V</span>ELMO<span class="text-orange-400 text-xs font-bold ml-0.5">MARKET</span>
+  <header class="sticky top-0 z-50">
+    <div class="hdr-main max-w-6xl mx-auto">
+      <a href="/" class="flex items-center text-white font-black text-xl tracking-tight">
+        <span class="logo-v">V</span>ELMO<span class="logo-market">MARKET</span>
       </a>
-      <div class="flex items-center gap-1">
+      <div class="hdr-actions">
         <button class="hdr-btn" onclick="openMyOrders()" title="Mes commandes">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path
-              d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
-            <path d="m3.3 7 8.7 5 8.7-5" />
-            <path d="M12 22V12" />
-          </svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
         </button>
         <button id="btn-wishlist" class="hdr-btn" onclick="toggleWishlistPanel()">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path
-              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-          </svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
           <span class="hdr-badge" id="wishlist-badge">0</span>
         </button>
         <button id="btn-cart" class="hdr-btn" onclick="toggleCart()">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <path d="M16 10a4 4 0 0 1-8 0" />
-          </svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
           <span class="hdr-badge" id="cart-badge">0</span>
         </button>
       </div>
     </div>
-    <!-- Row 2 : Search full-width -->
-    <div class="search-container container">
-      <div class="search-bar">
-        <input type="text" placeholder="Rechercher un produit, une marque, une boutique..." id="search-input" />
-        <button class="btn-search" id="search-btn">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        </button>
-      </div>
-      <div class="sort-bar">
-        <span class="sort-label">Trier par :</span>
-        <button class="sort-chip active" onclick="sortProducts('default', this)">🔥 Recommandé</button>
-        <button class="sort-chip" onclick="sortProducts('price_asc', this)">📉 Prix bas</button>
-        <button class="sort-chip" onclick="sortProducts('new', this)">🆕 Nouveautés</button>
-      </div>
-    </div>
   </header>
 
-  <!-- ===== CATEGORY FILTER CHIPS ===== -->
-  <nav class="sticky z-40 bg-white border-b border-gray-200 shadow-sm" style="top:94px">
-    <div class="flex items-center gap-1.5 px-3 py-2 overflow-x-auto no-scrollbar">
-      <button class="ftab active" onclick="setTab(this,'all')">Tous</button>
+  <!-- ===== SECONDARY NAV (Categories) ===== -->
+  <nav class="nav-secondary">
+    <div class="scroll-x no-scrollbar max-w-6xl mx-auto">
+      <button class="ftab active" onclick="setTab(this,'all')">✨ Tous</button>
       <button class="ftab" onclick="filterByCategory('electronique')">📱 Électronique</button>
       <button class="ftab" onclick="filterByCategory('mode')">👗 Mode</button>
       <button class="ftab" onclick="filterByCategory('beaute')">💄 Beauté</button>
@@ -121,11 +93,23 @@
   </nav>
 
   <!-- ===== SHOPS STRIP ===== -->
-  <section class="shops-section bg-white border-b border-gray-100">
-    <div class="flex items-center gap-2 px-3 py-2 overflow-x-auto no-scrollbar" id="shops-scroll">
-      <div class="text-xs text-gray-400 font-semibold uppercase tracking-wide flex-shrink-0">Boutiques</div>
+  <section class="bg-white border-b border-gray-100 py-3">
+    <div class="scroll-x no-scrollbar max-w-6xl mx-auto" id="shops-scroll">
+      <div class="text-xs text-gray-400 font-black uppercase tracking-widest self-center mr-2">Boutiques</div>
     </div>
   </section>
+
+  <!-- ===== FLOATING SEARCH (Mobile Style) ===== -->
+  <div class="search-floating">
+    <div class="search-floating-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    </div>
+    <input type="text" class="search-floating-input" placeholder="Que cherchez-vous ?" id="search-input" />
+    <div class="search-floating-actions">
+      <div class="search-floating-divider"></div>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-orange-500"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+    </div>
+  </div>
 
   <!-- ===== FLASH DEALS ===== -->
   <section id="flash-section" class="bg-white border-b border-gray-100" style="display:none">
@@ -324,8 +308,8 @@
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
   </button>
 
-  <script src="analytics.js?v=202604031147"></script>
-  <script src="app.js?v=202604031147"></script>
+  <script src="analytics.js?v=202605041345"></script>
+  <script src="app.js?v=202605041345"></script>
 </body>
 
 </html>

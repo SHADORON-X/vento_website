@@ -107,6 +107,26 @@ async function sbPost(table, data) {
   });
 }
 
+async function sbRpc(fn, params) {
+  const url = `${SB_URL}/rest/v1/rpc/${fn}`;
+  return sbRetry(async () => {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'apikey': SB_KEY,
+        'Authorization': `Bearer ${SB_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(params)
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || `${res.status} ${res.statusText}`);
+    }
+    return res.json();
+  });
+}
+
 // Requête PATCH REST Supabase
 async function sbPatch(table, id, data) {
   const url = `${SB_URL}/rest/v1/${table}?id=eq.${id}`;
@@ -129,6 +149,15 @@ let recentIds = JSON.parse(localStorage.getItem('velmo_recent') || '[]');
 let cart = JSON.parse(localStorage.getItem('velmo_cart') || '[]');
 let user = JSON.parse(localStorage.getItem('velmo_user') || null);
 let currentSort = 'default'; // default, price_asc, price_desc, new
+
+// ID Unique Persistant (UUID v4 - Format compatible base de données)
+let customerId = localStorage.getItem('velmo_customer_id');
+if (!customerId || customerId.startsWith('web-')) {
+  customerId = ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  );
+  localStorage.setItem('velmo_customer_id', customerId);
+}
 
 // ===== RECOMMENDATION ENGINE =====
 const BK = 'velmo_beh'; // behavior key (compact)
@@ -641,87 +670,88 @@ async function loadShops() {
 }
 
 async function submitOrder(orderData) {
-  // 🛡️ SPRINT 5: SPLIT CHECKOUT - Grouper le panier par shop_id
+  // 1. GPS (Optionnel, non-bloquant comme sur mobile)
+  let gpsCoords = null;
+  try {
+    if (navigator.geolocation) {
+      const pos = await new Promise((res, rej) => {
+        navigator.geolocation.getCurrentPosition(res, rej, { timeout: 3000 });
+      });
+      gpsCoords = JSON.stringify({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+    }
+  } catch (e) { console.warn("GPS skipped:", e.message); }
+
+  // 2. SPLIT CHECKOUT - Grouper le panier par shop_id
   const byShop = {};
   orderData.items.forEach(item => {
-    // Si shop_id manque, on essaie de le retrouver dans PRODUCTS, sinon fallback
     const sid = item.shop_id || PRODUCTS.find(p => p.id === item.id)?.shop_id || 'unknown';
     if (!byShop[sid]) byShop[sid] = [];
     byShop[sid].push(item);
   });
 
   const shopIds = Object.keys(byShop);
-  console.log(`📡 [Checkout] Splitting order into ${shopIds.length} shop(s)...`);
-
   const refs = [];
   const errors = [];
   let globalTotal = 0;
 
-  // 1. Envoyer les commandes boutique par boutique
+  // 3. Envoyer les commandes boutique par boutique via RPC
   for (const [shopId, items] of Object.entries(byShop)) {
     const shopTotal = items.reduce((s, i) => s + i.price * i.qty, 0);
     globalTotal += shopTotal;
-    const ref = randomRef();
+    const ref = 'VL-' + Math.floor(Math.random() * 90000 + 10000);
 
     try {
-      await sbPost('customer_orders', {
-        shop_id: shopId,
-        customer_name: orderData.name,
-        customer_phone: orderData.phone,
-        customer_address: orderData.address,
-        delivery_method: orderData.delivery,
-        notes: orderData.note || null,
-        total_amount: shopTotal,
-        status: 'pending',
-        short_ref: ref,
-        items_json: items.map(i => ({
-          id: i.id,
+      // Utilisation du RPC place_customer_order (LOGIQUE STRICTE MOBILE)
+      const result = await sbRpc('place_customer_order', {
+        p_shop_id: shopId,
+        p_customer_name: orderData.name,
+        p_customer_phone: orderData.phone,
+        p_total_amount: shopTotal,
+        p_items_json: JSON.stringify(items.map(i => ({
+          product_id: i.id, // Comme sur mobile
           name: i.name,
           price: i.price,
-          quantity: i.qty,
-          photo_url: i.photo_url || null,
-        })),
+          quantity: i.qty, // Comme sur mobile
+          photo: i.photo_url || null // Comme sur mobile
+        }))),
+        p_notes: orderData.note || null,
+        p_customer_address: orderData.address || null,
+        p_customer_id: customerId,
+        p_delivery_fee: 0,
+        p_payment_method: 'cash',
+        p_short_ref: ref,
+        p_delivery_method: orderData.delivery || 'delivery',
+        p_gps_location: gpsCoords
       });
 
-      refs.push(ref);
-      console.log(`✅ Commande ${ref} réussie pour boutique ${shopId}`);
-
-      // Notify shop via Telegram (non-bloquant)
-      const shopObj = SHOPS.find(s => s.id === shopId);
-      notifyOrderTelegram({
-        shopId, shopName: shopObj?.name || 'Boutique',
-        ref, name: orderData.name, phone: orderData.phone,
-        address: orderData.address, delivery: orderData.delivery,
-        payment: orderData.note || 'Paiement à la livraison',
-        total: shopTotal, items,
-      }).catch(() => { });
+      if (result && (result.success === true || result.order_id)) {
+        refs.push(ref);
+        console.log(`✅ Commande RPC ${ref} réussie pour boutique ${shopId}`);
+      } else {
+        throw new Error(result?.error || 'Erreur inconnue');
+      }
 
     } catch (e) {
-      console.error(`❌ Échec boutique ${shopId}:`, e.message);
-      errors.push(`Boutique ${shopId}: ${e.message}`);
-
-      // Fallback local
+      console.error(`❌ Échec RPC boutique ${shopId}:`, e.message);
+      errors.push(`${e.message}`);
+      
+      // Fallback local en cas d'erreur
       const localOrders = JSON.parse(localStorage.getItem('velmo_orders') || '[]');
       localOrders.push({ ref: ref + '(local)', shopId, items, total: shopTotal, name: orderData.name, phone: orderData.phone, date: new Date().toISOString() });
-      if (localOrders.length > 50) localOrders.splice(0, localOrders.length - 50);
       localStorage.setItem('velmo_orders', JSON.stringify(localOrders));
       refs.push(ref + '(local)');
     }
   }
 
-  // 2. Actions de fin de processus (UNE SEULE FOIS APRÈS TOUTES LES COMMANDES)
+  // 4. Finalisation
   if (refs.length > 0) {
-    // Vider le panier seulement si au moins une commande a réussi (ou été stockée localement)
     cart = [];
     saveCart();
     updateCartBadge();
     renderCart();
     closeAll();
-
-    // Célébration !
     fireConfetti();
 
-    // Afficher un succès global avec toutes les références
     showOrderSuccess({
       ref: refs.join(', '),
       name: orderData.name,
@@ -734,59 +764,14 @@ async function submitOrder(orderData) {
   }
 
   if (errors.length > 0) {
-    showToast(`⚠️ Certaines commandes ont été enregistrées localement (${errors.length} erreurs réseau)`);
+    showToast(`⚠️ Attention : ${errors.join(', ')}`);
   }
 
   return refs.join(', ');
 }
 
 // ───── TELEGRAM NOTIFY (marketplace orders) ──────────────────────────────
-async function notifyOrderTelegram({ shopId, shopName, ref, name, phone, address, delivery, payment, total, items }) {
-  const MAX_RETRIES = 3;
-  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-    try {
-      // Vérifier si la boutique a un abonné Telegram actif
-      const subs = await sbGet('telegram_subscribers', `shop_id=eq.${shopId}&status=eq.active&select=chat_id&limit=1`);
-      if (!subs || !subs.length) return; // Pas de Telegram configuré pour cette boutique
-
-      const chatId = subs[0].chat_id;
-      const delivLabel = delivery === 'pickup' ? 'Retrait boutique' : 'Livraison à domicile';
-      const itemLines = items.map(i => `  • ${i.name} ×${i.qty} — ${formatPrice(i.price * i.qty)}`).join('\n');
-
-      const text = [
-        `🛒 *Nouvelle commande — ${shopName}*`,
-        ``,
-        `📦 Réf: \`${ref}\``,
-        `👤 Client: *${name}*`,
-        `📞 Tél: ${phone}`,
-        ...(address ? [`📍 Adresse: ${address}`] : []),
-        `🚚 ${delivLabel}`,
-        `💳 ${payment}`,
-        ``,
-        `*Articles:*`,
-        itemLines,
-        ``,
-        `💰 *Total: ${formatPrice(total)}*`,
-        ``,
-        `_Répondez au client rapidement pour confirmer._`,
-      ].join('\n');
-
-      const res = await fetch(`${SB_URL}/functions/v1/telegram-notify`, {
-        method: 'POST',
-        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'Markdown' }),
-      });
-      if (res.ok || res.status === 400) return; // 400 = bad format, don't retry
-      throw new Error(`HTTP ${res.status}`);
-    } catch (e) {
-      if (attempt < MAX_RETRIES - 1) {
-        await new Promise(r => setTimeout(r, 1000 * Math.pow(2, attempt))); // backoff: 1s, 2s
-      } else {
-        console.warn('[Telegram] notify failed after retries:', e.message);
-      }
-    }
-  }
-}
+// Supprimé : Les notifications sont maintenant gérées par les Triggers de la base de données.
 
 // ===== EMOJI HELPER =====
 function catEmoji(cat) {
@@ -1309,36 +1294,43 @@ function duoCardHTML(p1, p2) { return productCardHTML(p1) + productCardHTML(p2);
 function catRowCardHTML(p) { return productCardHTML(p); }
 function scrollCatRow() { }
 
-// ── CLEAN PRODUCT CARD (Amazon-style) ──────────────────────────
+// ── CLEAN PRODUCT CARD (Mobile Premium Style) ──────────────────────────
 function productCardHTML(p) {
   const disc = discount(p.price, p.oldPrice);
   const oos = p.qty_stock !== null && p.qty_stock <= 0;
   const inCart = cart.some(i => i.id === p.id);
   const img = getImgUrl(p.photo_url);
+  const shopName = SHOPS.find(s => s.id === p.shop_id)?.name || 'Boutique';
 
   const media = p.video_url
-    ? `<video src="${p.video_url}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'"></video>
-       <span class="pcard-video-badge">▶ Vidéo</span>`
-    : (img ? lazyImg(img, p.name.replace(/"/g, "'"), '') : `<div class="pcard-emoji">${p.emoji || '📦'}</div>`);
-
-  const btnLabel = oos ? 'Indisponible' : (inCart ? '✓ Dans le panier' : 'Ajouter au panier');
+    ? `<video src="${p.video_url}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'"></video>`
+    : (img ? lazyImg(img, p.name.replace(/"/g, "'"), '') : `<div style="font-size:3rem;display:flex;align-items:center;justify-content:center;height:100%">${p.emoji || '📦'}</div>`);
 
   return `
 <div class="pcard" id="pcard-${p.id}" ${oos ? 'style="opacity:.65"' : ''}>
   <div class="pcard-img" onclick="${oos ? '' : `openProduct('${p.id}')`}">
     ${media}
-    ${disc > 0 ? `<span class="pcard-disc">-${disc}%</span>` : ''}
+    ${disc > 0 ? `<span class="pcard-badge">-${disc}%</span>` : ''}
     ${oos ? `<div class="pcard-oos">Rupture</div>` : ''}
+    
+    <!-- Floating Add Button -->
+    <div class="pcard-add ${inCart ? 'in-cart' : ''}" 
+         onclick="event.stopPropagation();${oos ? '' : `addToCart('${p.id}')`}">
+      ${inCart 
+        ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><path d="M20 6L9 17l-5-5"/></svg>' 
+        : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'}
+    </div>
   </div>
-  <div class="pcard-body">
+  <div class="pcard-body" onclick="${oos ? '' : `openProduct('${p.id}')`}">
     <p class="pcard-name">${p.name}</p>
-    <p class="pcard-price">${formatPrice(p.price)}</p>
-    ${p.oldPrice ? `<p class="pcard-old">${formatPrice(p.oldPrice)}</p>` : ''}
-    <button class="pcard-btn ${inCart ? 'in-cart' : ''}"
-      onclick="event.stopPropagation();${oos ? '' : `addToCart('${p.id}')`}"
-      ${oos ? 'disabled' : ''}>
-      ${btnLabel}
-    </button>
+    <div class="pcard-price-row" style="display:flex;align-items:center;gap:6px">
+      <span class="pcard-price">${formatPrice(p.price)}</span>
+      ${inCart ? '<span style="font-size:9px;font-weight:900;color:var(--success)">✓ AJOUTÉ</span>' : ''}
+    </div>
+    <div class="pcard-shop">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      ${shopName}
+    </div>
   </div>
 </div>`;
 }
@@ -1379,35 +1371,27 @@ function renderFlashDeals() {
 // ===== SHOPS =====
 function renderShops() {
   const container = document.getElementById('shops-scroll');
-  const section = document.querySelector('.shops-section');
+  const section = container?.closest('section');
   if (!container) return;
   if (!SHOPS.length) { if (section) section.style.display = 'none'; return; }
   if (section) section.style.display = '';
 
-  const prodCountByShop = {};
-  PRODUCTS.forEach(p => { prodCountByShop[p.shop_id] = (prodCountByShop[p.shop_id] || 0) + 1; });
-
-  // Keep the "Boutiques" label chip, then append shop chips
-  const label = container.querySelector('div.text-xs');
+  const labelHTML = '<div class="text-xs text-gray-400 font-black uppercase tracking-widest self-center mr-2">Boutiques</div>';
   const chipsHTML = SHOPS.map(s => {
     const logo = getImgUrl(s.logo);
     const initial = (s.name || '?')[0].toUpperCase();
-    const prodCount = prodCountByShop[s.id] || 0;
-    const sub = s.is_verified ? '✓ Vérifié' : (prodCount > 0 ? `${prodCount} produit${prodCount > 1 ? 's' : ''}` : (s.category || 'Boutique'));
     const href = shopUrl(s.slug, s.id);
     return `
-    <a href="${href}" class="shop-chip">
-      <div class="shop-chip-avatar" style="background:${shopColor(s.name)}">
-        ${logo ? `<img src="${logo}" alt="${s.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span style="display:none">${initial}</span>` : `<span>${initial}</span>`}
+    <a href="${href}" class="ftab" style="display:flex;align-items:center;gap:8px;padding:4px 14px 4px 6px">
+      <div style="width:28px;height:28px;border-radius:50%;background:${shopColor(s.name)};display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:12px;overflow:hidden">
+        ${logo ? `<img src="${logo}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span style="display:none">${initial}</span>` : `<span>${initial}</span>`}
       </div>
-      <div>
-        <div class="shop-chip-name">${s.name}</div>
-        <div class="shop-chip-badge">${sub}</div>
-      </div>
+      <span>${s.name}</span>
+      ${s.is_verified ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="var(--success)"><path d="M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>' : ''}
     </a>`;
   }).join('');
 
-  container.innerHTML = `<div class="text-xs text-gray-400 font-semibold uppercase tracking-wide flex-shrink-0 self-center">Boutiques</div>${chipsHTML}`;
+  container.innerHTML = labelHTML + chipsHTML;
 }
 
 function shopColor(name) {
@@ -1745,20 +1729,21 @@ function renderCart() {
     const img = getImgUrl(i.photo_url);
     return `
     <div class="cart-item">
-      <div class="cart-item-img" style="${img ? '' : 'font-size:1.8rem;display:flex;align-items:center;justify-content:center'}">
-        ${img ? `<img src="${img}" alt="${i.name}" style="width:100%;height:100%;object-fit:cover;border-radius:8px" onerror="this.outerHTML='<span style=font-size:1.8rem>${i.emoji}</span>'">` : i.emoji}
+      <div class="cart-item-img" style="background:#f1f5f9;display:flex;align-items:center;justify-content:center">
+        ${img ? `<img src="${img}" alt="${i.name}" style="width:100%;height:100%;object-fit:cover;border-radius:12px">` : `<span style="font-size:2rem">${i.emoji || '📦'}</span>`}
       </div>
       <div class="cart-item-info">
         <div class="cart-item-name">${i.name}</div>
-        ${i.shop_name ? `<div style="font-size:.7rem;color:var(--text2)">${i.shop_name}</div>` : ''}
         <div class="cart-item-price">${formatPrice(i.price)}</div>
-        <div class="qty-controls" style="margin-top:6px">
-          <button class="qty-btn" onclick="changeQty('${i.id}',-1)">−</button>
-          <span class="qty-val">${i.qty}</span>
-          <button class="qty-btn" onclick="changeQty('${i.id}',1)">+</button>
+        <div class="cart-item-actions">
+          <div class="qty-pill">
+            <button class="qty-btn" onclick="changeQty('${i.id}',-1)">−</button>
+            <span class="qty-val">${i.qty}</span>
+            <button class="qty-btn" onclick="changeQty('${i.id}',1)">+</button>
+          </div>
+          <button class="modal-close" style="position:static;width:28px;height:28px" onclick="removeFromCart('${i.id}')">🗑️</button>
         </div>
       </div>
-      <button class="cart-item-remove" onclick="removeFromCart('${i.id}')">🗑️</button>
     </div>`;
   }).join('');
   const sub = document.getElementById('cart-subtotal');
@@ -1814,7 +1799,7 @@ function renderWishlist() {
   const container = document.getElementById('wish-items');
   if (!container) return;
   if (!wishlist.length) {
-    container.innerHTML = `<div class="cart-empty"><span>💙</span><p>Aucun favori pour l'instant</p></div>`;
+    container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-muted)"><span style="font-size:3rem">💙</span><p style="margin-top:10px;font-weight:700">Aucun favori pour l'instant</p></div>`;
     return;
   }
   container.innerHTML = wishlist.map(id => {
@@ -1823,15 +1808,17 @@ function renderWishlist() {
     const img = getImgUrl(p.photo_url);
     return `
     <div class="cart-item">
-      <div class="cart-item-img" style="${img ? '' : 'font-size:1.8rem;display:flex;align-items:center;justify-content:center'}">
-        ${img ? `<img src="${img}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;border-radius:8px" onerror="this.outerHTML='<span>${p.emoji}</span>'">` : p.emoji}
+      <div class="cart-item-img" style="background:#f1f5f9;display:flex;align-items:center;justify-content:center">
+        ${img ? `<img src="${img}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;border-radius:12px">` : `<span style="font-size:1.8rem">${p.emoji || '📦'}</span>`}
       </div>
       <div class="cart-item-info">
         <div class="cart-item-name">${p.name}</div>
         <div class="cart-item-price">${formatPrice(p.price)}</div>
+        <div class="cart-item-actions">
+           <button class="btn-primary" style="height:32px;width:auto;font-size:11px;padding:0 12px;margin:0" onclick="addToCart('${p.id}')">📦 Ajouter</button>
+           <button class="modal-close" style="position:static;width:28px;height:28px" onclick="toggleWish('${p.id}')">🗑️</button>
+        </div>
       </div>
-      <button class="pcard-btn" style="padding:6px 10px;font-size:.75rem;width:auto;margin-top:0" onclick="addToCart('${p.id}')">🛒</button>
-      <button class="cart-item-remove" onclick="toggleWish('${p.id}')">🗑️</button>
     </div>`;
   }).join('');
 }
@@ -1852,24 +1839,24 @@ function checkout() {
   const summary = document.getElementById('order-summary');
   if (summary) {
     summary.innerHTML = `
-      <div style="font-weight:800;font-size:0.75rem;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px">Récapitulatif Articles</div>
+      <div style="font-weight:900;font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px">Récapitulatif de la commande</div>
       ${cart.map(i => {
       const img = getImgUrl(i.photo_url);
       return `
         <div class="order-summary-item">
-          <div class="order-summary-item-img" style="display:flex;align-items:center;justify-content:center;background:#f3f4f6;font-size:1.2rem">
-            ${img ? `<img src="${img}" style="width:100%;height:100%;object-fit:cover;border-radius:8px">` : (i.emoji || '📦')}
+          <div class="order-summary-item-img" style="display:flex;align-items:center;justify-content:center;background:#f8fafc">
+            ${img ? `<img src="${img}" style="width:100%;height:100%;object-fit:cover;border-radius:10px">` : `<span style="font-size:1.2rem">${i.emoji || '📦'}</span>`}
           </div>
           <div style="flex:1; min-width:0">
-            <div style="font-weight:700;font-size:0.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#111">${i.name}</div>
-            <div style="font-size:0.75rem;color:#6b7280;margin-top:2px">${i.qty} × ${formatPrice(i.price)}</div>
+            <div style="font-weight:800;font-size:0.85rem;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${i.name}</div>
+            <div style="font-size:0.8rem;font-weight:600;color:var(--accent);margin-top:2px">${i.qty} × ${formatPrice(i.price)}</div>
           </div>
-          <div style="font-weight:800;font-size:0.85rem;flex-shrink:0;color:#111">${formatPrice(i.price * i.qty)}</div>
+          <div style="font-weight:900;font-size:0.9rem;color:var(--text)">${formatPrice(i.price * i.qty)}</div>
         </div>`;
     }).join('')}
       <div class="order-summary-total">
-        <span style="color:#6b7280;font-weight:600;font-size:0.9rem">Total à payer</span>
-        <span style="color:#f97316;font-size:1.1rem">${formatPrice(total)}</span>
+        <span style="font-weight:800;color:var(--text-muted)">Total à payer</span>
+        <span style="font-size:1.3rem;color:var(--accent)">${formatPrice(total)}</span>
       </div>`;
   }
   toggleCart();
@@ -2527,4 +2514,51 @@ async function sendContactMessage() {
   } finally {
     if (btn) { btn.textContent = 'Envoyer le message →'; btn.disabled = false; }
   }
+}
+
+/* ── Premium Carousel Logic ── */
+let carouselIdx = 0;
+const BANNERS = [
+  { img: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070', title: 'Savourez le meilleur', sub: 'Livraison express de vos plats préférés' },
+  { img: 'https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=2070', title: 'Mode & Tendance', sub: 'Découvrez la nouvelle collection 2026' },
+  { img: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1787', title: 'Beauté & Soins', sub: 'Les meilleurs produits pour votre éclat' },
+  { img: 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=2074', title: 'Courses Faciles', sub: 'Vos produits frais livrés chez vous' }
+];
+
+function initCarousel() {
+  const track = document.getElementById('carousel-track');
+  const dots = document.getElementById('carousel-dots');
+  if (!track || !dots) return;
+
+  track.innerHTML = BANNERS.map(b => `
+    <div class="carousel-slide">
+      <img src="${b.img}" alt="${b.title}">
+      <div class="carousel-overlay">
+        <h3 class="carousel-title">${b.title}</h3>
+        <p class="carousel-sub">${b.sub}</p>
+      </div>
+    </div>
+  `).join('');
+
+  dots.innerHTML = BANNERS.map((_, i) => `
+    <div class="dot ${i === 0 ? 'active' : ''}" onclick="gotoSlide(${i})"></div>
+  `).join('');
+
+  setInterval(() => {
+    carouselIdx = (carouselIdx + 1) % BANNERS.length;
+    updateCarousel();
+  }, 5000);
+}
+
+function updateCarousel() {
+  const track = document.getElementById('carousel-track');
+  const dots = document.querySelectorAll('.dot');
+  if (!track) return;
+  track.style.transform = `translateX(-${carouselIdx * 100}%)`;
+  dots.forEach((d, i) => d.classList.toggle('active', i === carouselIdx));
+}
+
+function gotoSlide(i) {
+  carouselIdx = i;
+  updateCarousel();
 }

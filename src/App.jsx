@@ -1,41 +1,45 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
+import Navbar from './components/Navbar';
 
 // Lazy-load les pages React restantes
 const Landing = React.lazy(() => import('./pages/Landing'));
 const JoinShopPage = React.lazy(() => import('./pages/JoinShopPage'));
 const SearchResults = React.lazy(() => import('./pages/SearchResults'));
+const TelegramDashboard = React.lazy(() => import('./pages/TelegramDashboard'));
+
 
 function PageLoader() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#080b10]">
-      <div className="relative">
-        <div className="w-16 h-16 rounded-full border-2 border-orange-500/20" />
-        <Loader2 className="w-16 h-16 text-orange-500 animate-spin absolute top-0 left-0" />
+    <div className="flex flex-col items-center justify-center bg-[#080b10] animate-in fade-in duration-500">
+      <div className="instant-loader">
+        <div className="w-16 h-16 rounded-full border-[3px] border-orange-500/10 border-t-orange-500 animate-spin" />
+        <p className="mt-6 text-orange-500 font-black uppercase tracking-[0.2em] text-[10px]">Démarrage Velmo...</p>
       </div>
-      <p className="mt-4 text-slate-500 font-bold uppercase tracking-[0.2em] text-[10px]">Chargement Velmo...</p>
     </div>
   );
 }
 
 /**
  * Redirige vers la page boutique Vanilla (HTML/JS) dans /market/shop.html
- * Gère le slug de la boutique et éventuellement l'ID du produit.
  */
 function VanillaShopRedirect() {
   const { slug, productId } = useParams();
   const [searchParams] = useSearchParams();
   
   useEffect(() => {
-    let url = `/market/shop.html?s=${encodeURIComponent(slug)}`;
+    const s = slug || searchParams.get('s');
+    if (!s) { window.location.replace('/'); return; }
+
+    let url = `/market/shop.html?s=${encodeURIComponent(s)}`;
     if (productId) url += `&p=${encodeURIComponent(productId)}`;
     
-    // Transférer les autres paramètres de recherche si présents
     searchParams.forEach((value, key) => {
       if (key !== 's' && key !== 'p') url += `&${key}=${encodeURIComponent(value)}`;
     });
     
+    // Ajout d'un flag pour éviter les boucles
     window.location.replace(url);
   }, [slug, productId, searchParams]);
 
@@ -44,7 +48,6 @@ function VanillaShopRedirect() {
 
 /**
  * Redirige vers l'index du Market Vanilla pour les commandes/recus
- * Ouvre les modals correspondantes via des query params.
  */
 function VanillaMarketRedirect({ type }) {
   const { orderId } = useParams();
@@ -58,29 +61,33 @@ function VanillaMarketRedirect({ type }) {
 
 export default function App() {
   return (
-    <React.Suspense fallback={<PageLoader />}>
-      <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path="/search" element={<SearchResults />} />
-        
-        {/* Redirections vers le shop Vanilla */}
-        <Route path="/s/:slug/p/:productId" element={<VanillaShopRedirect />} />
-        <Route path="/s/:slug" element={<VanillaShopRedirect />} />
-        <Route path="/b/:slug/p/:productId" element={<VanillaShopRedirect />} />
-        <Route path="/b/:slug" element={<VanillaShopRedirect />} />
-        
-        {/* Redirections vers le marketplace Vanilla (Suivi/Reçu) */}
-        <Route path="/order/:orderId" element={<VanillaMarketRedirect type="track" />} />
-        <Route path="/receipt/:orderId" element={<VanillaMarketRedirect type="receipt" />} />
-        
-        <Route path="/join" element={<JoinShopPage />} />
-        
-        {/* Catch-all pour les URLs directes type velmo.pro/ma-boutique */}
-        <Route path="/:slug/p/:productId" element={<VanillaShopRedirect />} />
-        <Route path="/:slug" element={<VanillaShopRedirect />} />
-        
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </React.Suspense>
+    <div className="bg-[#080b10]">
+      <Navbar />
+      <React.Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/search" element={<SearchResults />} />
+          
+          {/* Redirections instantanées vers le shop Vanilla */}
+          <Route path="/s/:slug/p/:productId" element={<VanillaShopRedirect />} />
+          <Route path="/s/:slug" element={<VanillaShopRedirect />} />
+          <Route path="/b/:slug/p/:productId" element={<VanillaShopRedirect />} />
+          <Route path="/b/:slug" element={<VanillaShopRedirect />} />
+          
+          {/* Marketplace Vanilla (Suivi/Reçu) */}
+          <Route path="/order/:orderId" element={<VanillaMarketRedirect type="track" />} />
+          <Route path="/receipt/:orderId" element={<VanillaMarketRedirect type="receipt" />} />
+          
+          <Route path="/join" element={<JoinShopPage />} />
+          <Route path="/tambo" element={<TelegramDashboard />} />
+
+          {/* Catch-all pour les URLs directes */}
+          <Route path="/:slug/p/:productId" element={<VanillaShopRedirect />} />
+          <Route path="/:slug" element={<VanillaShopRedirect />} />
+          
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </React.Suspense>
+    </div>
   );
 }

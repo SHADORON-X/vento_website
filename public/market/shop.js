@@ -47,6 +47,22 @@ async function sbPost(table, data) {
   });
 }
 
+async function sbRpc(fn, params) {
+  const url = `${SB_URL}/rest/v1/rpc/${fn}`;
+  return sbRetry(async () => {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(params)
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || `${res.status} ${res.statusText}`);
+    }
+    return res.json();
+  });
+}
+
 // ===== STATE =====
 let SHOP = null;
 let PRODUCTS = [];
@@ -55,6 +71,15 @@ let cart = [];
 let wishlist = JSON.parse(localStorage.getItem('velmo_wish') || '[]');
 let currentCat = 'all';
 let currentSort = 'default';
+
+// ID Unique Persistant (UUID v4 - Format compatible base de données)
+let customerId = localStorage.getItem('velmo_customer_id');
+if (!customerId || customerId.startsWith('web-')) {
+  customerId = ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  );
+  localStorage.setItem('velmo_customer_id', customerId);
+}
 
 let imgObserver = null;
 if ('IntersectionObserver' in window) {
@@ -1078,26 +1103,31 @@ function shopCardHTML(p) {
   const disc = discount(p.price, p.oldPrice);
   const inCart = cart.some(i => String(i.id) === String(p.id));
   const img = getImgUrl(p.photo_url);
-  const btnLabel = inCart ? '✓ Dans le panier' : 'Ajouter au panier';
 
   const media = p.video_url
-    ? `<video src="${p.video_url}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'"></video>
-       <span class="pcard-video-badge">▶ Vidéo</span>`
-    : (img ? lazyImg(img, p.name.replace(/"/g, "'"), '') : `<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:2.5rem">${p.emoji}</div>`);
+    ? `<video src="${p.video_url}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'"></video>`
+    : (img ? lazyImg(img, p.name.replace(/"/g, "'"), '') : `<div style="font-size:3rem;display:flex;align-items:center;justify-content:center;height:100%">${p.emoji || '📦'}</div>`);
 
   return `
 <div class="pcard" id="pcard-${p.id}">
   <div class="pcard-img" onclick="openProduct('${p.id}')">
     ${media}
-    ${disc > 0 ? `<span class="pcard-disc">-${disc}%</span>` : ''}
+    ${disc > 0 ? `<span class="pcard-badge">-${disc}%</span>` : ''}
+    
+    <!-- Floating Add Button -->
+    <div class="pcard-add ${inCart ? 'in-cart' : ''}" 
+         onclick="event.stopPropagation();addToCart('${p.id}')">
+      ${inCart 
+        ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><path d="M20 6L9 17l-5-5"/></svg>' 
+        : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'}
+    </div>
   </div>
-  <div class="pcard-body">
+  <div class="pcard-body" onclick="openProduct('${p.id}')">
     <p class="pcard-name">${p.name}</p>
-    <p class="pcard-price">${formatPrice(p.price)}</p>
-    ${p.oldPrice ? `<p class="pcard-old">${formatPrice(p.oldPrice)}</p>` : ''}
-    <button class="pcard-btn ${inCart ? 'in-cart' : ''}"
-      onclick="event.stopPropagation();addToCart('${p.id}')">
-      ${btnLabel}</button>
+    <div class="pcard-price-row" style="display:flex;align-items:center;gap:6px">
+      <span class="pcard-price">${formatPrice(p.price)}</span>
+      ${inCart ? '<span style="font-size:9px;font-weight:900;color:var(--success)">✓ AJOUTÉ</span>' : ''}
+    </div>
   </div>
 </div>`;
 }
@@ -1379,47 +1409,45 @@ function updateFloatingCart(count, totalVal) {
   if (ft && totalVal !== null) ft.textContent = formatPrice(totalVal);
 }
 function renderCart() {
-  const items = document.getElementById('cart-items');
-  const footer = document.getElementById('cart-footer');
+  const container = document.getElementById('cart-items');
   const empty = document.getElementById('cart-empty');
-  if (!items) return;
+  const footer = document.getElementById('cart-footer');
+  if (!container) return;
   if (!cart.length) {
     if (empty) empty.style.display = 'flex';
     if (footer) footer.style.display = 'none';
-    items.querySelectorAll('.cart-item').forEach(el => el.remove());
+    container.innerHTML = '';
+    if (empty) container.appendChild(empty);
     return;
   }
   if (empty) empty.style.display = 'none';
   if (footer) footer.style.display = 'block';
-  items.querySelectorAll('.cart-item').forEach(el => el.remove());
-  let sub = 0;
-  cart.forEach(item => {
-    sub += item.price * item.qty;
-    const div = document.createElement('div');
-    div.className = 'cart-item';
-    div.innerHTML = `
-      <div class="cart-item-img" style="background:var(--gray);border-radius:8px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:1.4rem;flex-shrink:0">
-        ${item.photo_url ? `<img src="${getImgUrl(item.photo_url)}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">` : item.emoji}
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  container.innerHTML = cart.map(i => {
+    const img = getImgUrl(i.photo_url);
+    return `
+    <div class="cart-item">
+      <div class="cart-item-img" style="background:#f1f5f9;display:flex;align-items:center;justify-content:center">
+        ${img ? `<img src="${img}" alt="${i.name}" style="width:100%;height:100%;object-fit:cover;border-radius:12px">` : `<span style="font-size:2rem">${i.emoji || '📦'}</span>`}
       </div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.name}</div>
-        <div style="font-size:.78rem;color:var(--orange);font-weight:700;margin-top:2px">${formatPrice(item.price)}</div>
-        <div class="qty-controls" style="margin-top:5px;gap:6px">
-          <button class="qty-btn" style="width:24px;height:24px;font-size:.85rem" onclick="changeQty('${item.id}',-1)">−</button>
-          <span class="qty-val" style="min-width:22px;font-size:.82rem">${item.qty}</span>
-          <button class="qty-btn" style="width:24px;height:24px;font-size:.85rem" onclick="changeQty('${item.id}',1)">+</button>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${i.name}</div>
+        <div class="cart-item-price">${formatPrice(i.price)}</div>
+        <div class="cart-item-actions">
+          <div class="qty-pill">
+            <button class="qty-btn" onclick="changeQty('${i.id}',-1)">−</button>
+            <span class="qty-val">${i.qty}</span>
+            <button class="qty-btn" onclick="changeQty('${i.id}',1)">+</button>
+          </div>
+          <button class="modal-close" style="position:static;width:28px;height:28px" onclick="removeFromCart('${i.id}')">🗑️</button>
         </div>
       </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0">
-        <span style="font-size:.82rem;font-weight:700">${formatPrice(item.price * item.qty)}</span>
-        <button onclick="removeFromCart('${item.id}')" style="background:none;border:none;color:var(--text2);font-size:.75rem;cursor:pointer;padding:0">✕ Retirer</button>
-      </div>`;
-    items.appendChild(div);
-  });
-  const stEl = document.getElementById('cart-subtotal');
-  const totEl = document.getElementById('cart-total');
-  if (stEl) stEl.textContent = formatPrice(sub);
-  if (totEl) totEl.textContent = formatPrice(sub);
+    </div>`;
+  }).join('');
+  const sub = document.getElementById('cart-subtotal');
+  const tot = document.getElementById('cart-total');
+  if (sub) sub.textContent = formatPrice(total);
+  if (tot) tot.textContent = formatPrice(total);
 }
 function toggleCart() {
   const d = document.getElementById('cart-drawer');
@@ -1455,28 +1483,31 @@ function updateWishBadge() {
   if (wc) wc.textContent = wishlist.length;
 }
 function renderWishlist() {
-  const el = document.getElementById('wish-items');
-  if (!el) return;
-  el.innerHTML = '';
-  const wished = wishlist.map(id => PRODUCTS.find(p => String(p.id) === id)).filter(Boolean);
-  if (!wished.length) { el.innerHTML = '<div class="cart-empty"><span>💙</span><p>Aucun favori</p></div>'; return; }
-  wished.forEach(p => {
-    const div = document.createElement('div');
-    div.className = 'cart-item';
-    div.innerHTML = `
-      <div style="background:${catColor(p.cat)};border-radius:8px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;overflow:hidden">
-        ${p.photo_url ? `<img src="${getImgUrl(p.photo_url)}" style="width:100%;height:100%;object-fit:cover">` : p.emoji}
+  const container = document.getElementById('wish-items');
+  if (!container) return;
+  if (!wishlist.length) {
+    container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-muted)"><span style="font-size:3rem">💙</span><p style="margin-top:10px;font-weight:700">Aucun favori pour l'instant</p></div>`;
+    return;
+  }
+  container.innerHTML = wishlist.map(id => {
+    const p = PRODUCTS.find(x => String(x.id) === String(id));
+    if (!p) return '';
+    const img = getImgUrl(p.photo_url);
+    return `
+    <div class="cart-item">
+      <div class="cart-item-img" style="background:#f1f5f9;display:flex;align-items:center;justify-content:center">
+        ${img ? `<img src="${img}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;border-radius:12px">` : `<span style="font-size:1.8rem">${p.emoji || '📦'}</span>`}
       </div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:.82rem;font-weight:600">${p.name}</div>
-        <div style="font-size:.78rem;color:var(--orange);font-weight:700;margin-top:2px">${formatPrice(p.price)}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${p.name}</div>
+        <div class="cart-item-price">${formatPrice(p.price)}</div>
+        <div class="cart-item-actions">
+           <button class="btn-primary" style="height:32px;width:auto;font-size:11px;padding:0 12px;margin:0" onclick="addToCart('${p.id}')">📦 Ajouter</button>
+           <button class="modal-close" style="position:static;width:28px;height:28px" onclick="toggleWish('${p.id}')">🗑️</button>
+        </div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
-        <button onclick="addToCart('${p.id}')" style="background:var(--orange);color:#fff;border:none;border-radius:6px;padding:5px 10px;font-size:.72rem;font-weight:700;cursor:pointer">Ajouter</button>
-        <button onclick="toggleWish('${p.id}')" style="background:none;border:none;color:var(--text2);font-size:.72rem;cursor:pointer">✕</button>
-      </div>`;
-    el.appendChild(div);
-  });
+    </div>`;
+  }).join('');
 }
 function toggleWishlistPanel() {
   const p = document.getElementById('wishlist-panel');
@@ -1518,28 +1549,28 @@ function renderClosedBanner() {
 function checkout() {
   if (SHOP && SHOP.is_online_active === false) { showToast('🔴 Cette boutique ne prend pas de commandes pour le moment'); return; }
   if (!cart.length) { showToast('⚠️ Votre panier est vide'); return; }
-  const summary = document.getElementById('order-summary');
   const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const summary = document.getElementById('order-summary');
   if (summary) {
     summary.innerHTML = `
-      <div style="font-weight:800;font-size:0.75rem;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px">Ma Commande</div>
+      <div style="font-weight:900;font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px">Récapitulatif de la commande</div>
       ${cart.map(i => {
       const img = getImgUrl(i.photo_url);
       return `
         <div class="order-summary-item">
-          <div class="order-summary-item-img" style="display:flex;align-items:center;justify-content:center;background:#f3f4f6;font-size:1.2rem">
-            ${img ? `<img src="${img}" style="width:100%;height:100%;object-fit:cover;border-radius:8px">` : (i.emoji || '📦')}
+          <div class="order-summary-item-img" style="display:flex;align-items:center;justify-content:center;background:#f8fafc">
+            ${img ? `<img src="${img}" style="width:100%;height:100%;object-fit:cover;border-radius:10px">` : `<span style="font-size:1.2rem">${i.emoji || '📦'}</span>`}
           </div>
           <div style="flex:1; min-width:0">
-            <div style="font-weight:700;font-size:0.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#111">${i.name}</div>
-            <div style="font-size:0.75rem;color:#6b7280;margin-top:2px">${i.qty} × ${formatPrice(i.price)}</div>
+            <div style="font-weight:800;font-size:0.85rem;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${i.name}</div>
+            <div style="font-size:0.8rem;font-weight:600;color:var(--accent);margin-top:2px">${i.qty} × ${formatPrice(i.price)}</div>
           </div>
-          <div style="font-weight:800;font-size:0.85rem;flex-shrink:0;color:#111">${formatPrice(i.price * i.qty)}</div>
+          <div style="font-weight:900;font-size:0.9rem;color:var(--text)">${formatPrice(i.price * i.qty)}</div>
         </div>`;
     }).join('')}
       <div class="order-summary-total">
-        <span style="color:#6b7280;font-weight:600;font-size:0.9rem">Total à payer</span>
-        <span style="color:var(--orange);font-size:1.1rem">${formatPrice(total)}</span>
+        <span style="font-weight:800;color:var(--text-muted)">Total à payer</span>
+        <span style="font-size:1.3rem;color:var(--accent)">${formatPrice(total)}</span>
       </div>`;
   }
 
@@ -1611,7 +1642,7 @@ async function placeOrder() {
   const payment = document.getElementById('co-payment')?.value || 'Paiement à la livraison';
   const delivery = document.getElementById('co-delivery')?.value || 'delivery';
 
-  // SOLIDITY : Validation
+  // 1. Validation
   if (!name || name.length < 3) { showToast('⚠️ Nom trop court'); return; }
   if (phone.replace(/\D/g, '').length < 8) { showToast('⚠️ Numéro de téléphone invalide'); return; }
   if (delivery === 'delivery' && (!address || address.length < 5)) { showToast('⚠️ Adresse de livraison requise'); return; }
@@ -1628,54 +1659,60 @@ async function placeOrder() {
 
   const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
 
-  // STOCK CHECK
+  // 2. GPS (Optionnel, comme sur mobile)
+  let gpsCoords = null;
   try {
-    const ids = cart.map(i => i.id).join(',');
-    const liveStocks = await sbGet('products', `id=in.(${ids})&select=id,name,quantity`);
-    for (const item of cart) {
-      const live = liveStocks.find(ls => ls.id === item.id);
-      if (live && live.quantity !== null && live.quantity < item.qty) {
-        showToast(`❌ Plus assez de stock pour "${item.name}"`);
-        if (btn) { btn.disabled = false; btn.innerHTML = `✅ Confirmer la commande <span class="btn-price">${formatPrice(total)}</span>`; }
-        return;
-      }
+    if (navigator.geolocation) {
+      const pos = await new Promise((res, rej) => {
+        navigator.geolocation.getCurrentPosition(res, rej, { timeout: 3000 });
+      });
+      gpsCoords = JSON.stringify({ lat: pos.coords.latitude, lng: pos.coords.longitude });
     }
-    const itemsSnap = [...cart];
-    const ref = 'CMD-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+  } catch (e) { console.warn("GPS skipped:", e.message); }
 
-    await sbPost('customer_orders', {
-      shop_id: SHOP.id,
-      customer_name: cleanName,
-      customer_phone: phone,
-      customer_address: cleanAddress || null,
-      delivery_method: delivery,
-      notes: payment ? `Paiement: ${payment}` : null,
-      total_amount: total,
-      status: 'pending',
-      short_ref: ref,
-      items_json: itemsSnap.map(i => ({
-        id: i.id, name: i.name, price: i.price,
-        quantity: i.qty, photo_url: i.photo_url || null,
-      })),
+  try {
+    const itemsSnap = [...cart];
+    const ref = 'VL-' + Math.floor(Math.random() * 90000 + 10000);
+
+    // 3. Appel RPC (LOGIQUE STRICTE MOBILE)
+    const result = await sbRpc('place_customer_order', {
+      p_shop_id: SHOP.id,
+      p_customer_name: cleanName,
+      p_customer_phone: phone,
+      p_total_amount: total,
+      p_items_json: JSON.stringify(itemsSnap.map(i => ({
+        product_id: i.id, // Comme sur mobile
+        name: i.name,
+        price: i.price,
+        quantity: i.qty, // Comme sur mobile
+        photo: i.photo_url || null // Comme sur mobile
+      }))),
+      p_notes: payment ? `Paiement: ${payment}` : null,
+      p_customer_address: cleanAddress || null,
+      p_customer_id: customerId,
+      p_delivery_fee: 0,
+      p_payment_method: 'cash',
+      p_short_ref: ref,
+      p_delivery_method: delivery,
+      p_gps_location: gpsCoords
     });
 
-    // Analytics
-    if (typeof vaTrack === 'function') {
-      vaTrack('checkout_done', { shopId: SHOP.id, meta: { ref, total, name: cleanName } });
+    if (result && (result.success === true || result.order_id)) {
+      // Vider le panier
+      cart = [];
+      saveCart(); updateCartBadge(); renderCart();
+      closeModal('modal-checkout');
+      fireConfetti();
+      showOrderConfirmation({ ref, name: cleanName, phone, address: cleanAddress, delivery, payment, total, items: itemsSnap });
+    } else {
+      throw new Error(result?.error || 'Échec de la commande');
     }
-
-    // Vider le panier
-    cart = [];
-    saveCart(); updateCartBadge(); renderCart();
-    closeModal('modal-checkout');
-    fireConfetti();
-    showOrderConfirmation({ ref, name: cleanName, phone, address: cleanAddress, delivery, payment, total, items: itemsSnap });
 
   } catch (err) {
     console.error('Submit Fail:', err);
     if (btn) {
       btn.disabled = false;
-      btn.innerHTML = '⚠️ Erreur Réseau. WhatsApp ?';
+      btn.innerHTML = '⚠️ Erreur. Commander via WhatsApp ?';
       btn.onclick = () => {
         const waMsg = encodeURIComponent(`Bonjour ${SHOP?.name || 'Velmo'},\nJe veux commander en direct :\n${cart.map(i => `- ${i.qty}x ${i.name}`).join('\n')}\nTotal: ${formatPrice(total)}\nClient: ${cleanName} (${phone})`);
         window.open(`https://wa.me/${SHOP?.phone || '224623531387'}?text=${waMsg}`, '_blank');
