@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Routes, Route, Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import Navbar from './components/Navbar';
+import { useSite } from './context/SiteContext';
 
 // Lazy-load les pages React restantes
 const Landing = React.lazy(() => import('./pages/Landing'));
@@ -60,8 +61,10 @@ function VanillaMarketRedirect({ type }) {
 }
 
 export default function App() {
+  const { theme } = useSite();
+  const isDark = theme === 'dark';
   return (
-    <div className="bg-[#080b10]">
+    <div className={isDark ? 'bg-[#080b10]' : 'bg-[#f8fafc]'}>
       <Navbar />
       <React.Suspense fallback={<PageLoader />}>
         <Routes>

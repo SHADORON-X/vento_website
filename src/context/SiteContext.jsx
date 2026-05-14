@@ -4,7 +4,7 @@ import { translations } from '../i18n/translations';
 const SiteContext = createContext(null);
 
 export function SiteProvider({ children }) {
-  const [theme, setTheme] = useState(() => localStorage.getItem('velmo-theme') || 'dark');
+  const [theme, setTheme] = useState(() => localStorage.getItem('velmo-theme') || 'light');
   const [lang, setLang] = useState(() => localStorage.getItem('velmo-lang') || 'fr');
 
   // Apply theme class to <html>

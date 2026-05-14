@@ -17,9 +17,21 @@
   <!-- Preconnect Supabase + Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://cqpcwqqjbcgklrvnqpxr.supabase.co" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" />
   
+  <script>
+    /* Anti-FOUC : applique le thème sauvegardé avant que React se charge */
+    (function() {
+      var t = localStorage.getItem('velmo-theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+      if (t === 'dark') document.documentElement.classList.add('dark');
+    })();
+  </script>
   <style>
-    body { background: #080b10; margin: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: #f8fafc; margin: 0; font-family: system-ui, -apple-system, sans-serif; }
+    html.dark body { background: #080b10; }
     #root:empty { display: flex; align-items: center; justify-content: center; height: 100vh; }
     .instant-loader { display: flex; flex-direction: column; align-items: center; gap: 20px; animation: fadeIn 0.5s ease-out; }
     .loader-ring { width: 64px; height: 64px; border-radius: 50%; border: 3px solid rgba(249, 115, 22, 0.1); border-top-color: #f97316; animation: spin 0.8s linear infinite; }

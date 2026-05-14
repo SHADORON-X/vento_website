@@ -27,8 +27,8 @@ const heroContainer = {
   show: { transition: { staggerChildren: 0.1, delayChildren: 0.05 } },
 };
 const heroItem = {
-  hidden: { opacity: 0, y: 20, filter: 'blur(10px)' },
-  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] } },
 };
 
 // ─── UI Helpers ──────────────────────────────────────────────────────────────
@@ -82,10 +82,9 @@ export default function Landing() {
       </Helmet>
 
       {/* ════ HERO SECTION ════ */}
-      <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-orange-500/10 blur-[120px] rounded-full" />
-          <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-blue-500/5 blur-[100px] rounded-full" />
+      <section className="relative pt-28 pb-16 md:pt-40 md:pb-28 overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-orange-500/8 blur-[80px] rounded-full will-change-transform" />
         </div>
 
         <div className="container relative z-10 text-center">

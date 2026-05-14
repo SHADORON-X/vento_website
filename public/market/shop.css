@@ -1212,3 +1212,13 @@
   background: rgba(255, 255, 255, .12);
   color: #ccc;
 }
+
+/* ── Lazy image fade-in ── */
+.lazy-fade {
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  will-change: opacity;
+}
+.lazy-fade.loaded {
+  opacity: 1;
+}

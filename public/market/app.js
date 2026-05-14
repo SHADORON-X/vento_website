@@ -39,16 +39,16 @@ const imgObserver = typeof IntersectionObserver !== 'undefined'
         imgObserver.unobserve(img);
       }
     });
-  }, { rootMargin: '200px' })
+  }, { rootMargin: '400px' }) // 400px = précharge avant même d'être visible (idéal 3G)
   : null;
 
 function lazyImg(src, alt, cls = '') {
   if (!src) return '';
   const finalCls = cls + ' lazy-fade';
   if (imgObserver) {
-    return `<img data-src="${src}" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'/%3E" alt="${alt}" class="${finalCls}" loading="lazy" onload="this.classList.add('loaded')">`;
+    return `<img data-src="${src}" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'/%3E" alt="${alt}" class="${finalCls}" width="300" height="300" loading="lazy" decoding="async" onload="this.classList.add('loaded')">`;
   }
-  return `<img src="${src}" alt="${alt}" class="${cls}" loading="lazy">`;
+  return `<img src="${src}" alt="${alt}" class="${cls}" width="300" height="300" loading="lazy" decoding="async">`;
 }
 
 function observeImages() {

@@ -2187,3 +2187,19 @@ header.sticky {
   font-weight: 600;
   color: var(--text-muted);
 }
+
+/* ── Lazy image fade-in ── */
+.lazy-fade {
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  will-change: opacity;
+}
+.lazy-fade.loaded {
+  opacity: 1;
+}
+
+/* ── Performance : rendu différé hors viewport ── */
+.products-grid {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 600px;
+}
