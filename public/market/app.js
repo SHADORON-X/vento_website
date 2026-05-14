@@ -430,15 +430,15 @@ function mapCategory(category) {
   return 'autre';
 }
 
-// 🔥 POINT 6 : SEO DYNAMIQUE (Visibility)
+// 🔥 SEO DYNAMIQUE
 function updateSEO(title, desc = '', product = null) {
   const fullTitle = title ? `${title} — VELMO MARKET` : 'VELMO MARKET — La marketplace de Guinée';
   document.title = fullTitle;
 
   const mDesc = document.getElementById('meta-desc');
-  if (mDesc && desc) mDesc.content = desc;
+  const autoDesc = desc || 'VELMO MARKET — Achetez et vendez en Guinée. Électronique, Mode, Beauté, Alimentation. Livraison rapide à domicile.';
+  if (mDesc) mDesc.content = autoDesc;
 
-  // OpenGraph & Twitter
   const ogTitle = document.getElementById('og-title');
   const ogDesc = document.getElementById('og-desc');
   const ogImg = document.getElementById('og-image');
@@ -446,7 +446,7 @@ function updateSEO(title, desc = '', product = null) {
   const twImg = document.getElementById('tw-image');
 
   if (ogTitle) ogTitle.content = fullTitle;
-  if (ogDesc && desc) ogDesc.content = desc;
+  if (ogDesc) ogDesc.content = autoDesc;
   if (twTitle) twTitle.content = fullTitle;
 
   if (product) {

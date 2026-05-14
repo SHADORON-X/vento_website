@@ -77,8 +77,41 @@ export default function Landing() {
   return (
     <div className={`${isDark ? 'bg-[#080b10] text-white' : 'bg-[#f8fafc] text-slate-900'}`}>
       <Helmet>
-        <title>Velmo — Logiciel de Caisse & Gestion pour Petits Commerces</title>
-        <meta name="description" content="Velmo est le logiciel de caisse #1 pour les commerçants en Afrique. Gérez vos stocks, ventes et dettes sans internet." />
+        <title>Velmo — Logiciel de Caisse & Marketplace pour Commerçants d'Afrique</title>
+        <meta name="description" content="Velmo est le logiciel de caisse #1 pour commerçants africains. POS hors-ligne, gestion stock, dettes, WhatsApp automatique et boutique en ligne. Disponible en Guinée et Afrique." />
+        <meta name="keywords" content="logiciel de caisse guinée, velmo, gestion boutique afrique, pos mobile, gestion stock conakry, boutique en ligne guinée, marketplace afrique" />
+        <link rel="canonical" href="https://velmo.org/" />
+
+        {/* Open Graph */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://velmo.org/" />
+        <meta property="og:title" content="Velmo — Logiciel de Caisse & Marketplace Afrique" />
+        <meta property="og:description" content="Gérez votre boutique sans internet. Ventes, stocks, dettes, WhatsApp et boutique en ligne en un seul outil." />
+        <meta property="og:image" content="https://velmo.org/market/logo-social.png" />
+        <meta property="og:locale" content="fr_GN" />
+        <meta property="og:site_name" content="Velmo" />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Velmo — Logiciel de Caisse & Marketplace Afrique" />
+        <meta name="twitter:description" content="POS hors-ligne, gestion stock, dettes, WhatsApp auto et boutique en ligne pour commerçants africains." />
+        <meta name="twitter:image" content="https://velmo.org/market/logo-social.png" />
+
+        {/* JSON-LD structured data */}
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          "name": "Velmo",
+          "operatingSystem": "Windows, Android, Web",
+          "applicationCategory": "BusinessApplication",
+          "description": "Logiciel de caisse et marketplace pour commerçants d'Afrique. Gestion de stock, dettes, ventes hors-ligne, boutique en ligne.",
+          "url": "https://velmo.org",
+          "offers": [
+            { "@type": "Offer", "price": "500000", "priceCurrency": "GNF", "name": "Velmo Standard" },
+            { "@type": "Offer", "price": "900000", "priceCurrency": "GNF", "name": "Velmo Pro" }
+          ],
+          "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.8", "ratingCount": "320" }
+        })}</script>
       </Helmet>
 
       {/* ════ HERO SECTION ════ */}

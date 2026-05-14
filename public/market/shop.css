@@ -538,11 +538,61 @@
   display: none;
 }
 
-/* Grid area */
+/* ── Grid produits boutique ── */
 #sh-products {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
   max-width: 1100px;
   margin: 0 auto;
-  padding: 20px 14px;
+  padding: 16px 12px 32px;
+  /* Reset content-visibility hérité de .products-grid global */
+  content-visibility: visible;
+  contain-intrinsic-size: none;
+}
+
+@media (min-width: 480px) {
+  #sh-products { grid-template-columns: repeat(3, 1fr); gap: 14px; padding: 16px 14px 32px; }
+}
+@media (min-width: 768px) {
+  #sh-products { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+}
+@media (min-width: 1024px) {
+  #sh-products { grid-template-columns: repeat(5, 1fr); gap: 18px; padding: 20px 16px 40px; }
+}
+
+/* Cartes produits sur page boutique : légèrement plus compactes */
+#sh-products .pcard {
+  border-radius: 16px;
+}
+
+#sh-products .pcard-img {
+  aspect-ratio: 1;
+  background: #f8fafc;
+}
+
+#sh-products .pcard-body {
+  padding: 10px 10px 12px;
+}
+
+#sh-products .pcard-name {
+  font-size: 12px;
+  height: auto;
+  max-height: 2.8em;
+  -webkit-line-clamp: 2;
+}
+
+#sh-products .pcard-price {
+  font-size: 14px;
+  font-weight: 900;
+}
+
+#sh-products .pcard-old-price {
+  font-size: 11px;
+  font-weight: 600;
+  color: #aaa;
+  text-decoration: line-through;
+  margin-top: 1px;
 }
 
 /* Loader */

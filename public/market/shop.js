@@ -135,16 +135,23 @@ function catColor(cat) {
 }
 function formatPrice(n) { return Math.round(n).toLocaleString('fr-FR') + ' GNF'; }
 
-// 🔥 POINT 6 : SEO DYNAMIQUE
+// 🔥 SEO DYNAMIQUE
 function updateSEO(title, desc = '', product = null) {
   if (!SHOP) return;
   const fullTitle = title ? `${title} — ${SHOP.name}` : `${SHOP.name} — VELMO MARKET`;
   document.title = fullTitle;
 
-  const mDesc = document.getElementById('sh-meta-desc');
-  if (mDesc && desc) mDesc.content = desc;
+  const titleEl = document.getElementById('sh-title');
+  if (titleEl) titleEl.textContent = fullTitle;
 
-  // OpenGraph & Twitter
+  const mDesc = document.getElementById('sh-meta-desc');
+  const autoDesc = desc || `Découvrez les produits de ${SHOP.name} sur VELMO MARKET. Commandez en ligne avec livraison.`;
+  if (mDesc) mDesc.content = autoDesc;
+
+  // Canonical URL dynamique
+  const canonical = document.getElementById('sh-canonical');
+  if (canonical && SHOP.slug) canonical.href = `https://velmo.org/s/${SHOP.slug}`;
+
   const ogTitle = document.getElementById('sh-og-title');
   const ogDesc = document.getElementById('sh-og-desc');
   const ogImg = document.getElementById('sh-og-image');
@@ -152,15 +159,46 @@ function updateSEO(title, desc = '', product = null) {
   const twImg = document.getElementById('sh-tw-image');
 
   if (ogTitle) ogTitle.content = fullTitle;
-  if (ogDesc && desc) ogDesc.content = desc;
+  if (ogDesc) ogDesc.content = autoDesc;
   if (twTitle) twTitle.content = fullTitle;
+
+  // Image OG = cover de la boutique par défaut
+  const shopImg = SHOP.cover ? getImgUrl(SHOP.cover) : (SHOP.logo ? getImgUrl(SHOP.logo) : null);
+  if (shopImg) {
+    if (ogImg) ogImg.content = shopImg;
+    if (twImg) twImg.content = shopImg;
+  }
 
   if (product) {
     const imgUrl = getImgUrl(product.photo_url);
     if (ogImg && imgUrl) ogImg.content = imgUrl;
     if (twImg && imgUrl) twImg.content = imgUrl;
     injectJSONLD(product);
+  } else {
+    injectShopJSONLD();
   }
+}
+
+// JSON-LD pour la boutique (store page)
+function injectShopJSONLD() {
+  if (!SHOP) return;
+  let script = document.getElementById('json-ld-shop');
+  if (!script) {
+    script = document.createElement('script');
+    script.id = 'json-ld-shop';
+    script.type = 'application/ld+json';
+    document.head.appendChild(script);
+  }
+  script.text = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Store",
+    "name": SHOP.name,
+    "description": SHOP.description || `Boutique ${SHOP.name} sur VELMO MARKET`,
+    "url": `https://velmo.org/s/${SHOP.slug}`,
+    "image": SHOP.logo ? getImgUrl(SHOP.logo) : undefined,
+    "telephone": SHOP.phone || undefined,
+    "address": { "@type": "PostalAddress", "addressCountry": "GN" }
+  });
 }
 
 // 🕸️ JSON-LD FOR GOOGLEBOT
@@ -1098,36 +1136,38 @@ function switchShopTab(tab, btn) {
 // ===== CARD BUILDER =====
 function buildCatRowCards(prods) { return prods.map(p => shopCardHTML(p)).join(''); }
 
-// ── Clean product card (matches marketplace style) ──────────
+// ── Clean product card — page boutique ──────────────────────
 function shopCardHTML(p) {
   const disc = discount(p.price, p.oldPrice);
   const inCart = cart.some(i => String(i.id) === String(p.id));
+  const oos = p.qty_stock !== null && p.qty_stock <= 0;
   const img = getImgUrl(p.photo_url);
 
   const media = p.video_url
     ? `<video src="${p.video_url}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'"></video>`
-    : (img ? lazyImg(img, p.name.replace(/"/g, "'"), '') : `<div style="font-size:3rem;display:flex;align-items:center;justify-content:center;height:100%">${p.emoji || '📦'}</div>`);
+    : (img
+        ? lazyImg(img, p.name.replace(/"/g, "'"), '')
+        : `<div style="font-size:2.8rem;display:flex;align-items:center;justify-content:center;height:100%;background:linear-gradient(135deg,#fff5ee,#ffe0cc)">${p.emoji || '📦'}</div>`);
 
   return `
-<div class="pcard" id="pcard-${p.id}">
-  <div class="pcard-img" onclick="openProduct('${p.id}')">
+<div class="pcard" id="pcard-${p.id}" ${oos ? 'style="opacity:.6"' : ''}>
+  <div class="pcard-img" onclick="${oos ? '' : `openProduct('${p.id}')`}" style="cursor:${oos ? 'default' : 'pointer'}">
     ${media}
     ${disc > 0 ? `<span class="pcard-badge">-${disc}%</span>` : ''}
-    
-    <!-- Floating Add Button -->
-    <div class="pcard-add ${inCart ? 'in-cart' : ''}" 
-         onclick="event.stopPropagation();addToCart('${p.id}')">
-      ${inCart 
-        ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><path d="M20 6L9 17l-5-5"/></svg>' 
-        : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'}
+    ${oos ? `<div class="pcard-oos" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);color:#fff;font-size:11px;font-weight:900;letter-spacing:.06em">RUPTURE</div>` : ''}
+    <div class="pcard-add ${inCart ? 'in-cart' : ''}"
+         onclick="event.stopPropagation();${oos ? '' : `addToCart('${p.id}')`}"
+         style="${oos ? 'opacity:.4;cursor:default' : ''}">
+      ${inCart
+        ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><path d="M20 6L9 17l-5-5"/></svg>'
+        : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'}
     </div>
   </div>
-  <div class="pcard-body" onclick="openProduct('${p.id}')">
+  <div class="pcard-body" onclick="${oos ? '' : `openProduct('${p.id}')`}" style="cursor:${oos ? 'default' : 'pointer'}">
     <p class="pcard-name">${p.name}</p>
-    <div class="pcard-price-row" style="display:flex;align-items:center;gap:6px">
-      <span class="pcard-price">${formatPrice(p.price)}</span>
-      ${inCart ? '<span style="font-size:9px;font-weight:900;color:var(--success)">✓ AJOUTÉ</span>' : ''}
-    </div>
+    <span class="pcard-price">${formatPrice(p.price)}</span>
+    ${p.oldPrice ? `<p class="pcard-old-price">${formatPrice(p.oldPrice)}</p>` : ''}
+    ${inCart ? '<p style="font-size:9px;font-weight:900;color:var(--success);margin-top:2px">✓ AJOUTÉ</p>' : ''}
   </div>
 </div>`;
 }
